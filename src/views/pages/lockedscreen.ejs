@@ -1,0 +1,33 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'Locked Screen',
+    currentPage: 'lockedscreen',
+    content: `
+    
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Design</li>
+            <li class="breadcrumb-item">UI Components</li>
+            <li class="breadcrumb-item">Core Elements</li>
+            <li class="breadcrumb-item active" aria-current="page">Locked Screen</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        Locked Screen
+        <small>
+            Provide contextual feedback messages for common user actions with a variety of customizable and flexible alert options.
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-action="playsound" data-soundpath="media/sound/" data-soundfile="alerts-voice.mp3">
+                <svg class="sa-icon">
+                    <use href="img/sprite.svg#volume-2"/>
+                </svg>
+            </button>
+        </small>
+    </h1> 
+    <div class="main-content">
+
+
+    </div>
+
+
+
+    `
+}) %>

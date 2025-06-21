@@ -1,0 +1,399 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'Visibility Generator',
+    currentPage: 'visibilitygenerator',
+    additionalJS: [
+        'scripts/visibilitygenerator.js'
+    ],
+    content: `
+    
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Config</li>
+            <li class="breadcrumb-item">System Utilities</li>
+            <li class="breadcrumb-item active" aria-current="page">Visibility Generator</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        Visibility Generator
+        <small>
+            Create responsive visibility classes for elements across screen sizes.
+        </small>
+    </h1> 
+    <div class="main-content">
+        <style>
+        .form-section {
+            margin-bottom: 1rem;
+        }
+        .output-section {
+            padding: 1.5rem;
+            background-color: var(--bs-body-bg);
+            border-radius: 8px;
+            border: 1px solid var(--bs-border-color);
+        }
+        .class-list {
+            font-weight: bold;
+            color: var(--primary);
+            padding: 0.75rem;
+            background-color: var(--light-50);
+            border-radius: 4px;
+            border-left: 4px solid var(--primary-500);
+        }
+        .css-output {
+            white-space: pre-wrap;
+            background-color: var(--light-50);
+            color: var(--bs-body-color);
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        #displayTypeSection {
+            display: none; /* Hidden by default, shown when "Visible" is selected */
+        }
+        /* Styling for the test div */
+        #testDiv {
+            padding: 20px;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 60px;
+            background-color: var(--info-500);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .breakpoint-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 12px;
+            background: var(--dark-100);
+            color: #fff;
+        }
+        .breakpoint-indicator.active {
+            background: var(--success-500);
+        }
+        .visual-breakpoint {
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--primary-500);
+            color: white;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .option-card {
+            border: 1px solid var(--bs-border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background-color: var(--bs-body-bg);
+        }
+        .option-title {
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary-100);
+            border: none;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 12px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-button:hover {
+            background: var(--primary-200);
+        }
+        .demo-container {
+            margin-top: 1rem;
+            border: 1px dashed var(--bs-border-color);
+            padding: 15px;
+            border-radius: 8px;
+            position: relative;
+            background: var(--bs-body-bg);
+        }
+        .demo-container::before {
+            content: "Preview";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--bs-body-bg);
+            padding: 0 8px;
+            font-size: 12px;
+            color: var(--secondary);
+        }
+        .current-breakpoint {
+            background: var(--success-100);
+            color: var(--success-700);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .bp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        @media (max-width: 576px) {
+            .bp-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        </style>
+
+        <div class="alert alert-info">
+            <h5 class="alert-heading d-flex align-items-center"><i class="sa sa-info me-2"></i>About Visibility Classes</h5>
+            <p class="mb-0">Bootstrap provides utility classes to control the visibility and display properties of elements based on screen size. 
+                This tool helps you generate the classes you need for responsive design. Combine display types with breakpoints to create
+                elements that show or hide at specific screen sizes.</p>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-5">
+                <div class="option-card">
+                    <div class="option-title">Visibility Mode</div>
+                    <div class="form-section">
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="visibilityHidden" name="visibilityMode" value="hidden" checked>
+                            <label class="form-check-label" for="visibilityHidden">Hidden</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="visibilityVisible" name="visibilityMode" value="visible">
+                            <label class="form-check-label" for="visibilityVisible">Visible</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="option-card" id="displayTypeSection">
+                    <div class="option-title">Display Type</div>
+                    <div class="form-section">
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="block" name="displayType" value="block" checked>
+                            <label class="form-check-label" for="block">Block</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="flex" name="displayType" value="flex">
+                            <label class="form-check-label" for="flex">Flex</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="inline" name="displayType" value="inline">
+                            <label class="form-check-label" for="inline">Inline</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="option-card">
+                    <div class="option-title">
+                        <span>Breakpoints</span>
+                        <small class="float-end text-muted">Current: <span id="currentBreakpoint">...</span></small>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="all" value="all">
+                            <label class="form-check-label fw-bold" for="all">All Breakpoints</label>
+                        </div>
+                    </div>
+                    
+                    <div class="bp-grid">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input breakpoint-checkbox" id="xs" value="xs">
+                            <label class="form-check-label" for="xs">XS (≤576px)</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input breakpoint-checkbox" id="sm" value="sm">
+                            <label class="form-check-label" for="sm">SM (≥576px)</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input breakpoint-checkbox" id="md" value="md">
+                            <label class="form-check-label" for="md">MD (≥768px)</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input breakpoint-checkbox" id="lg" value="lg">
+                            <label class="form-check-label" for="lg">LG (≥992px)</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input breakpoint-checkbox" id="xl" value="xl">
+                            <label class="form-check-label" for="xl">XL (≥1200px)</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input breakpoint-checkbox" id="xxl" value="xxl">
+                            <label class="form-check-label" for="xxl">XXL (≥1400px)</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input breakpoint-checkbox" id="xxxl" value="xxxl">
+                            <label class="form-check-label" for="xxxl">XXXL (≥1600px)</label>
+                        </div>
+                    </div>
+                    
+                    <button id="generateBtn" type="button" class="btn btn-primary w-100 mt-3" >
+                        <i class="fal fa-code me-1"></i> Generate Classes
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="output-section" id="output">
+                    <h5 class="mb-3 fw-bold">Generated Classes <small class="text-muted">(Copy these)</small></h5>
+                    <div class="class-list position-relative mb-3" id="classOutput">
+                        <span class="fst-italic text-muted">Select options and click "Generate Classes" to see the result.</span>
+                        <button id="copyClasses" type="button" class="copy-button d-none" >
+                            <i class="fal fa-copy me-1"></i> Copy
+                        </button>
+                    </div>
+                    
+                    <div class="app-fob-showcase-text" data-prefix="Preview">
+                        <div id="breakpointIndicators" class="mb-2">
+                            <span class="breakpoint-indicator" data-bp="xs">xs</span>
+                            <span class="breakpoint-indicator" data-bp="sm">sm</span>
+                            <span class="breakpoint-indicator" data-bp="md">md</span>
+                            <span class="breakpoint-indicator" data-bp="lg">lg</span>
+                            <span class="breakpoint-indicator" data-bp="xl">xl</span>
+                            <span class="breakpoint-indicator" data-bp="xxl">xxl</span>
+                        </div>
+                        <div id="testDiv">
+                            <div>This element will update based on your selections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a class="btn btn-link btn-sm p-0" data-bs-toggle="collapse" href="#cssEquivalent" role="button" aria-expanded="false">
+                            <i class="fal fa-code me-1"></i> Show CSS Equivalent
+                        </a>
+                        <div class="collapse mt-2" id="cssEquivalent">
+                            <div class="position-relative">
+                                <div class="css-output" id="cssOutput">
+                                    <span class="fst-italic text-muted">/* CSS will appear here */</span>
+                                </div>
+                                <button id="copyCSS" type="button" class="copy-button d-none" >
+                                    <i class="fal fa-copy me-1"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Additional script to enhance the page functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Track current breakpoint
+            const currentBreakpointEl = document.getElementById('currentBreakpoint');
+            const breakpointIndicators = document.querySelectorAll('.breakpoint-indicator');
+            
+            // Copy buttons functionality
+            const copyClassesBtn = document.getElementById('copyClasses');
+            const copyCSSBtn = document.getElementById('copyCSS');
+            const classOutput = document.getElementById('classOutput');
+            const cssOutput = document.getElementById('cssOutput');
+            
+            // Copy functionality
+            copyClassesBtn.addEventListener('click', function() {
+                const text = classOutput.textContent;
+                copyToClipboard(text, this);
+            });
+            
+            copyCSSBtn.addEventListener('click', function() {
+                const text = cssOutput.textContent;
+                copyToClipboard(text, this);
+            });
+            
+            function copyToClipboard(text, button) {
+                const originalText = button.innerHTML;
+                navigator.clipboard.writeText(text).then(function() {
+                    button.innerHTML = '<i class="fal fa-check me-1"></i> Copied!';
+                    setTimeout(function() {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                });
+            }
+            
+            // Show/hide display type section based on visibility mode
+            const visibilityRadios = document.querySelectorAll('input[name="visibilityMode"]');
+            const displayTypeSection = document.getElementById('displayTypeSection');
+            
+            visibilityRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'visible') {
+                        displayTypeSection.style.display = 'block';
+                    } else {
+                        displayTypeSection.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Detect current breakpoint
+            function updateCurrentBreakpoint() {
+                let current = 'xs';
+                const width = window.innerWidth;
+                
+                if (width >= 1400) current = 'xxl';
+                else if (width >= 1200) current = 'xl';
+                else if (width >= 992) current = 'lg';
+                else if (width >= 768) current = 'md';
+                else if (width >= 576) current = 'sm';
+                
+                currentBreakpointEl.textContent = current;
+                
+                // Update indicators
+                breakpointIndicators.forEach(indicator => {
+                    const bp = indicator.getAttribute('data-bp');
+                    if ((bp === 'xs' && width < 576) ||
+                        (bp === 'sm' && width >= 576) ||
+                        (bp === 'md' && width >= 768) ||
+                        (bp === 'lg' && width >= 992) ||
+                        (bp === 'xl' && width >= 1200) ||
+                        (bp === 'xxl' && width >= 1400)) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Initial update and listen for resize
+            updateCurrentBreakpoint();
+            window.addEventListener('resize', updateCurrentBreakpoint);
+            
+            // Select all checkboxes when "All Breakpoints" is checked
+            const allCheckbox = document.getElementById('all');
+            const breakpointCheckboxes = document.querySelectorAll('.breakpoint-checkbox');
+            
+            allCheckbox.addEventListener('change', function() {
+                breakpointCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    checkbox.disabled = this.checked;
+                });
+            });
+            
+            // When a class is generated, show the copy buttons
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    if (classOutput.textContent !== 'Select options and click "Generate Classes" to see the result.') {
+                        copyClassesBtn.classList.remove('d-none');
+                        copyCSSBtn.classList.remove('d-none');
+                    }
+                }, 100);
+            });
+        });
+    </script>
+
+    `
+}) %>

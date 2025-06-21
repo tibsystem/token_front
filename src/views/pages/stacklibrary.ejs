@@ -1,0 +1,49 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'Stack Library',
+    currentPage: 'stacklibrary',
+    additionalCSS: [
+        'css/stackgenerator.css',
+        'css/fontawesome.css',
+        'css/fa-light.css',
+        'css/fa-solid.css',
+        'css/fa-regular.css',
+        'css/fa-brands.css',
+        'css/duotone.css'
+    ],
+    additionalJS: [
+        'scripts/stacklibrary.js',
+        'scripts/smartFilter.js'
+    ],
+    additionalScripts: `
+        console.log('Stack Library page initialized');
+    `,
+    content: `
+    
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">SmartAdmin</li>
+            <li class="breadcrumb-item">Icons</li>
+            <li class="breadcrumb-item active" aria-current="page">Stack Library</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        Stack Library
+        <small>
+            Your saved stacked icons collection
+        </small>
+    </h1> 
+    <div class="main-content">
+        <div class="card">
+            <div class="card-body" style="min-height: calc(100vh - 340px);">
+                <div class="mb-3">
+                    <input type="text" id="searchIcons" class="form-control form-control-lg" placeholder="Search saved icons..." autocomplete="off">
+                </div>
+                <div id="stack-library-container">
+                    <!-- Icons will be dynamically loaded here -->
+                    <ul id="iconList" class="list-unstyled row g-4"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    `
+}) %>

@@ -1,0 +1,219 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'Figma File',
+    currentPage: 'figmafile',
+    content: `
+    
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Design</li>
+            <li class="breadcrumb-item">System Utilities</li>
+            <li class="breadcrumb-item">Design Essentials</li>
+            <li class="breadcrumb-item active" aria-current="page">Figma File</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        Figma File <sup class="fs-lg text-muted">(coming soon...)</sup>
+        <small>
+            Full Design System in Figma
+        </small>
+    </h1> 
+    <div class="main-content">
+        <div class="info-container">
+            <strong>Heads up!</strong> The figma file is a comprehensive design system that includes all the components, pages, and styles. We will be including the basic figma file for SmartAdmin in this project, the extensive version of the Figma file will be sold separately.
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- System Designs -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Sytem Designs</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end">
+                            <h5 class="text-white text-end m-0">
+                                Design principles & system maps
+                                <small class="text-white">
+                                    Comprehensive Design Systems
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Atoms -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Atoms</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--warning-700); --gp-color-1: var(--danger-800);">
+                            <h5 class="text-dark text-end m-0">
+                                Buttons, Icons, Typography
+                                <small class="text-dark">
+                                    smallest building blocks of the design system
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- User Flows -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">User Flows</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--info-500); --gp-color-1: var(--primary-800);">
+                            <h5 class="text-white text-end m-0">
+                                Flowcharts & Wireframes
+                                <small class="text-white">
+                                    Journey or workflow through the product
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Design Files -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Design Files</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--danger-500); --gp-color-1: var(--primary-800);">
+                            <h5 class="text-light text-end m-0">
+                                Mockups, Prototypes, Assets
+                                <small class="text-light">
+                                    Finalized design assets or deliverables
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Molecules -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Molecules</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--primary-300); --gp-color-1: var(--primary-800);">
+                            <h5 class="text-light text-end m-0">
+                                Search Bar, Card Layout, Panels etc
+                                <small class="text-light">
+                                    Reusable groups of Atoms
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Organisms -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Organisms</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--danger-900); --gp-color-1: var(--info-600);">
+                            <h5 class="text-light text-end m-0">
+                                Headers, Footers, Forms, or Sidebars
+                                <small class="text-light">
+                                    Complex UI components made of Molecules
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Templates -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Templates</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--dark-500); --gp-color-1: var(--secondary-200);">
+                            <h5 class="text-light text-end m-0">
+                                Reusable Sections
+                                <small class="text-light">
+                                    Pre-designed page layouts using organisms and molecules
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Components -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Components</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--secondary-500); --gp-color-1: var(--warning-900);">
+                            <h5 class="text-light text-end m-0">
+                                Buttons, Modals, Dropdowns
+                                <small class="text-light">
+                                    Reusable UI Interactive elements
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Pages -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Pages</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--success-500); --gp-color-1: var(--warning-800);">
+                            <h5 class="text-light text-end m-0">
+                                Dashboard, Checkout, Profile, etc
+                                <small class="text-light">
+                                    Fully assembled screens or pages for the product
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Style Guide -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Style Guide</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--info-500); --gp-color-1: var(--info-700);">
+                            <h5 class="text-light text-end m-0">
+                                Color Palette, Typography, Icons, etc
+                                <small class="text-light">
+                                    Centralized documentation of design tokens and rules
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-6 col-xxl-3">
+                <!-- Prototypes -->
+                <div class="card mb-g">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Prototypes</h5>
+                        <div class="card-text height-sm bg-placeholder rounded-3 p-2 d-flex align-items-end justify-content-end"
+                        style="--body-bg: var(--primary-900); --gp-color-1: var(--danger-200);">
+                            <h5 class="text-light text-end m-0">
+                                Clickable flows or animations
+                                <small class="text-light">
+                                    Interactive versions of designs for testing or presentations
+                                </small>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    `
+}) %>

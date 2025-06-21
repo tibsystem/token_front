@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    	<%- include('head.ejs'); %>
+	</head>
+	<body>
+		<%- include('saveloadscript.ejs'); %>
+		<section class="app-wrap">
+      		<%- include('app-header.ejs'); %>
+			<%- include('app-sidebar.ejs'); %>
+			<section class="app-body">
+				<main class="app-content">
+					<div class="content-wrapper">
+						<%- content %>
+					</div>
+					<div class="content-wrapper-right">
+						test
+					</div>
+				</main>
+				<%- include('app-footer.ejs'); %>
+			</section>
+			<%- include('app-drawer.ejs'); %>
+			<%- include('app-settings.ejs'); %>
+		</section>
+		<div class="backdrop" data-action="toggle-swap" data-toggleclass="app-mobile-menu-open"></div>
+    	<%- include('app-scripts.ejs'); %>
+	</body>
+</html>

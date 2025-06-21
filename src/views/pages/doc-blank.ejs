@@ -1,0 +1,168 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'smartApp.js',
+    currentPage: 'smartappjs',
+    additionalJS: [
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js'
+    ],
+    additionalCSS: [
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/night-owl.min.css'
+    ],
+    additionalScripts: `
+        document.addEventListener('DOMContentLoaded', function() {
+            hljs.highlightAll();
+        });
+    `,
+    content: `
+    
+    <style>
+        pre {
+            padding: 1rem 0;
+            border-radius: 0.5rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        pre code.hljs {
+            padding: 1.5em;
+            font-size: 0.875rem;
+        }
+
+        .hljs-comment {
+            color: #6d9d9d;
+        }
+
+        .code-example {
+            margin: 1.5rem 0;
+        }
+        .concept-section {
+            margin-bottom: 3rem;
+        }
+        .concept-title.with-lead {
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        .sidebar {
+            position: sticky;
+            top: 1rem;
+        }
+        .main-content {
+            line-height: 1.6;
+        }
+        .concept-title {
+            color: var(--primary-500);
+            font-size: 1.5rem;
+        }
+        .example-output {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .pro-tip {
+            background-color: rgba(var(--bs-success-rgb), 0.2);
+            border-left: 4px solid var(--success-500);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .warning {
+            background-color: var(--warning-100);
+            border-left: 4px solid var(--warning-700);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .demo-sidebar a {
+            display: block;
+            padding: 0.25rem 0;
+            color: var(--bs-gray-900);
+        }
+        .demo-sidebar a:hover {
+            color: var(--primary-500);
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px; /* Distance from the top of the viewport */
+            align-self: flex-start; /* Keeps sidebar at the top of its flex container */
+            max-height: calc(100vh - 40px); /* Prevents overlapping footer, adjust as needed */
+            overflow-y: auto; /* Adds scrolling if sidebar content is tall */
+            padding: 15px 0; /* Optional padding for spacing */
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .sidebar a {
+            color: #0d6efd; /* Bootstrap link color, matches your screenshot */
+            text-decoration: none;
+            display: block;
+            padding: 8px 0;
+        }
+
+        .sidebar a:hover {
+            text-decoration: underline;
+            color: #0a58ca; /* Darker blue on hover */
+        }
+
+        /* Ensure sidebar stays within viewport and doesn’t overlap footer */
+        @media (max-width: 991px) {
+            .sidebar {
+                position: static; /* Non-sticky on small screens */
+                top: auto;
+                max-height: none;
+                padding: 15px;
+            }
+        }
+
+        /* Highlight.js styles (if used) */
+        pre code {
+            background-color: #2d2d2d;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            display: block;
+        }
+
+        /* Tip box styling */
+        .tip-box {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+    </style>
+
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Design</li>
+            <li class="breadcrumb-item">Documentation</li>
+            <li class="breadcrumb-item active" aria-current="page">Core Plugins</li>
+        </ol>
+    </nav>
+    <div class="main-content">
+
+    <h1 class="subheader-title">Core Plugins</h1>
+           
+    <div class="row">
+        <div class="order-2 order-xl-1 col-lg-12 col-xl-9">          
+           
+
+            </div>
+
+            <div class="order-1 order-xl-2 col-lg-12 col-xl-3 position-relative">
+                <!-- Sidebar (Right Side) - Sticky Navigation -->
+                <h3>Contents</h3>
+                <ul>
+                    
+                </ul>
+            
+            </div>
+        </div>
+    </div>
+
+    `
+}) %>

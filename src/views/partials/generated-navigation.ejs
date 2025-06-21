@@ -1,0 +1,811 @@
+<%
+// Simple function to check if page is in group
+function isInGroup(group, currentPage) {
+  return group.includes(currentPage);
+}
+%>
+
+<ul id="js-nav-menu" class="nav-menu">
+
+    <li class="nav-title"><span>Insights</span></li>
+
+    <li class="nav-item <%= isInGroup(['controlcenterdashboard', 'subscriptiondashboard', 'marketingdashboard', 'projectmanagementdashboard'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Dashboards" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#trello"></use></svg>
+            <span class="nav-link-text" data-i18n="">Dashboards</span>
+            <span class="badge bg-danger-700 badge-end">New</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'controlcenterdashboard' ? 'active' : '' %>">
+                <a href="controlcenterdashboard.html">
+                    <span class="nav-link-text" data-i18n="">Control Center</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'subscriptiondashboard' ? 'active' : '' %>">
+                <a href="subscriptiondashboard.html">
+                    <span class="nav-link-text" data-i18n="">Subscription & Billing</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'marketingdashboard' ? 'active' : '' %>">
+                <a href="marketingdashboard.html">
+                    <span class="nav-link-text" data-i18n="">Marketing & Sales</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'projectmanagementdashboard' ? 'active' : '' %>">
+                <a href="projectmanagementdashboard.html">
+                    <span class="nav-link-text" data-i18n="">Project Management</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-title"><span>Config</span></li>
+
+    <li class="<%= currentPage === 'appintel' ? 'active' : '' %>">
+        <a href="appintel.html">
+            <svg class="sa-icon"><use href="img/sprite.svg#cpu"></use></svg>
+            <span class="nav-link-text">Application Intel</span>
+        </a>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['buildnotes', 'gettingstarted', 'smartappjs', 'smartnavigationjs', 'smartfilterjs', 'sortablejs', 'bootstrapbundlejs', 'smartslimscrolljs', 'wavesjs', 'apexbarchartjs', 'easypiechartjs', 'fullcalendarjs', 'peitychartsjs', 'smarttablesjs', 'streamlinejs'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Documentation" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#book-open"></use></svg>
+            <span class="nav-link-text" data-i18n="">Documentation</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'buildnotes' ? 'active' : '' %>">
+                <a href="buildnotes.html">
+                    <span class="nav-link-text" data-i18n="">Build notes</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'gettingstarted' ? 'active' : '' %>">
+                <a href="gettingstarted.html">
+                    <span class="nav-link-text" data-i18n="">Getting Started</span>
+                </a>
+            </li>
+            <li class="<%= isInGroup(['smartappjs', 'smartnavigationjs', 'smartfilterjs', 'sortablejs', 'bootstrapbundlejs', 'smartslimscrolljs', 'wavesjs'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Core Plugins" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Core Plugins</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'smartappjs' ? 'active' : '' %>">
+                        <a href="smartappjs.html">
+                            <span class="nav-link-text" data-i18n="">App DOM</span>
+                            <span class="badge bg-danger badge-end">P</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'smartnavigationjs' ? 'active' : '' %>">
+                        <a href="smartnavigationjs.html">
+                            <span class="nav-link-text" data-i18n="">Smart Navigation</span>
+                            <span class="badge bg-danger badge-end">P</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'smartfilterjs' ? 'active' : '' %>">
+                        <a href="smartfilterjs.html">
+                            <span class="nav-link-text" data-i18n="">Smart Filter</span>
+                            <span class="badge bg-warning text-dark badge-end">D</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'sortablejs' ? 'active' : '' %>">
+                        <a href="sortablejs.html">
+                            <span class="nav-link-text" data-i18n="">Sortable</span>
+                            <span class="badge bg-warning text-dark badge-end">D</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'bootstrapbundlejs' ? 'active' : '' %>">
+                        <a href="bootstrapbundlejs.html">
+                            <span class="nav-link-text" data-i18n="">Bootstrap Bundle</span>
+                            <span class="badge bg-warning text-dark badge-end">D</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'smartslimscrolljs' ? 'active' : '' %>">
+                        <a href="smartslimscrolljs.html">
+                            <span class="nav-link-text" data-i18n="">Smart Slim Scroll</span>
+                            <span class="badge bg-success badge-end">O</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'wavesjs' ? 'active' : '' %>">
+                        <a href="wavesjs.html">
+                            <span class="nav-link-text" data-i18n="">Waves</span>
+                            <span class="badge bg-success badge-end">O</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= isInGroup(['apexbarchartjs', 'easypiechartjs', 'fullcalendarjs', 'peitychartsjs', 'smarttablesjs', 'streamlinejs'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Addons & Other Plugins" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Addons & Other Plugins</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'apexbarchartjs' ? 'active' : '' %>">
+                        <a href="apexbarchartjs.html">
+                            <span class="nav-link-text" data-i18n="">apexbarchart.js</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'easypiechartjs' ? 'active' : '' %>">
+                        <a href="easypiechartjs.html">
+                            <span class="nav-link-text" data-i18n="">easypiechart.js</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'fullcalendarjs' ? 'active' : '' %>">
+                        <a href="fullcalendarjs.html">
+                            <span class="nav-link-text" data-i18n="">fullcalendar.js</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'peitychartsjs' ? 'active' : '' %>">
+                        <a href="peitychartsjs.html">
+                            <span class="nav-link-text" data-i18n="">peitycharts.js</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'smarttablesjs' ? 'active' : '' %>">
+                        <a href="smarttablesjs.html">
+                            <span class="nav-link-text" data-i18n="">smartTables.js</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'streamlinejs' ? 'active' : '' %>">
+                        <a href="streamlinejs.html">
+                            <span class="nav-link-text" data-i18n="">streamline.js</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-title"><span>Design</span></li>
+
+    <li class="nav-item <%= isInGroup(['alerts', 'accordions', 'badges', 'buttons', 'buttongroup', 'cards', 'breadcrumbs', 'dropdowns', 'navbars', 'pagination', 'scrollspy', 'collapse', 'modal', 'tabsandpills', 'tooltips', 'popovers', 'toasts', 'progressbars', 'spinners', 'carousels', 'panels', 'listfilter', 'sidepanels'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="UI Components" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#layers"></use></svg>
+            <span class="nav-link-text" data-i18n="">UI Components</span>
+        </a>
+
+        <ul>
+            <li class="<%= isInGroup(['alerts', 'accordions', 'badges', 'buttons', 'buttongroup', 'cards'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Core elements" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Core elements</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'alerts' ? 'active' : '' %>">
+                        <a href="alerts.html">
+                            <span class="nav-link-text" data-i18n="">Alerts</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'accordions' ? 'active' : '' %>">
+                        <a href="accordions.html">
+                            <span class="nav-link-text" data-i18n="">Accordions</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'badges' ? 'active' : '' %>">
+                        <a href="badges.html">
+                            <span class="nav-link-text" data-i18n="">Badges</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'buttons' ? 'active' : '' %>">
+                        <a href="buttons.html">
+                            <span class="nav-link-text" data-i18n="">Buttons</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'buttongroup' ? 'active' : '' %>">
+                        <a href="buttongroup.html">
+                            <span class="nav-link-text" data-i18n="">Button Group</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'cards' ? 'active' : '' %>">
+                        <a href="cards.html">
+                            <span class="nav-link-text" data-i18n="">Cards</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= isInGroup(['breadcrumbs', 'dropdowns', 'navbars', 'pagination', 'scrollspy'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Menu & Links" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Menu & Links</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'breadcrumbs' ? 'active' : '' %>">
+                        <a href="breadcrumbs.html">
+                            <span class="nav-link-text" data-i18n="">Breadcrumbs</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'dropdowns' ? 'active' : '' %>">
+                        <a href="dropdowns.html">
+                            <span class="nav-link-text" data-i18n="">Dropdowns</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'navbars' ? 'active' : '' %>">
+                        <a href="navbars.html">
+                            <span class="nav-link-text" data-i18n="">Navbars</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'pagination' ? 'active' : '' %>">
+                        <a href="pagination.html">
+                            <span class="nav-link-text" data-i18n="">Pagination</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'scrollspy' ? 'active' : '' %>">
+                        <a href="scrollspy.html">
+                            <span class="nav-link-text" data-i18n="">ScrollSpy</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= isInGroup(['collapse', 'modal', 'tabsandpills', 'tooltips', 'popovers', 'toasts'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Interactive Features" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Interactive Features</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'collapse' ? 'active' : '' %>">
+                        <a href="collapse.html">
+                            <span class="nav-link-text" data-i18n="">Collapse</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'modal' ? 'active' : '' %>">
+                        <a href="modal.html">
+                            <span class="nav-link-text" data-i18n="">Modal</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'tabsandpills' ? 'active' : '' %>">
+                        <a href="tabsandpills.html">
+                            <span class="nav-link-text" data-i18n="">Tabs & Pills</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'tooltips' ? 'active' : '' %>">
+                        <a href="tooltips.html">
+                            <span class="nav-link-text" data-i18n="">Tooltips</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'popovers' ? 'active' : '' %>">
+                        <a href="popovers.html">
+                            <span class="nav-link-text" data-i18n="">Popovers</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'toasts' ? 'active' : '' %>">
+                        <a href="toasts.html">
+                            <span class="nav-link-text" data-i18n="">Toasts</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= isInGroup(['progressbars', 'spinners', 'carousels'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Visual Feedback" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Visual Feedback</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'progressbars' ? 'active' : '' %>">
+                        <a href="progressbars.html">
+                            <span class="nav-link-text" data-i18n="">Progress Bars</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'spinners' ? 'active' : '' %>">
+                        <a href="spinners.html">
+                            <span class="nav-link-text" data-i18n="">Spinners</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'carousels' ? 'active' : '' %>">
+                        <a href="carousels.html">
+                            <span class="nav-link-text" data-i18n="">Carousels</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= isInGroup(['panels', 'listfilter', 'sidepanels'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Advanced Features" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Advanced Features</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'panels' ? 'active' : '' %>">
+                        <a href="panels.html">
+                            <span class="nav-link-text" data-i18n="">Panels</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'listfilter' ? 'active' : '' %>">
+                        <a href="listfilter.html">
+                            <span class="nav-link-text" data-i18n="">List Filter</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'sidepanels' ? 'active' : '' %>">
+                        <a href="sidepanels.html">
+                            <span class="nav-link-text" data-i18n="">Side Panels</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['borders', 'displayproperty', 'responsivegrid', 'position', 'colorpalette', 'typography', 'sizing', 'spacing', 'figmafile', 'flexbox', 'helpers', 'visibilitygenerator'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="System Utilities" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#package"></use></svg>
+            <span class="nav-link-text" data-i18n="">System Utilities</span>
+        </a>
+
+        <ul>
+            <li class="<%= isInGroup(['borders', 'displayproperty', 'responsivegrid', 'position'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Layout Adjustments" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Layout Adjustments</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'borders' ? 'active' : '' %>">
+                        <a href="borders.html">
+                            <span class="nav-link-text" data-i18n="">Borders</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'displayproperty' ? 'active' : '' %>">
+                        <a href="displayproperty.html">
+                            <span class="nav-link-text" data-i18n="">Display Property</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'responsivegrid' ? 'active' : '' %>">
+                        <a href="responsivegrid.html">
+                            <span class="nav-link-text" data-i18n="">Responsive Grid</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'position' ? 'active' : '' %>">
+                        <a href="position.html">
+                            <span class="nav-link-text" data-i18n="">Position</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= isInGroup(['colorpalette', 'typography', 'sizing', 'spacing', 'figmafile'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Design Essentials" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Design Essentials</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'colorpalette' ? 'active' : '' %>">
+                        <a href="colorpalette.html">
+                            <span class="nav-link-text" data-i18n="">Color Palette</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'typography' ? 'active' : '' %>">
+                        <a href="typography.html">
+                            <span class="nav-link-text" data-i18n="">Typography</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'sizing' ? 'active' : '' %>">
+                        <a href="sizing.html">
+                            <span class="nav-link-text" data-i18n="">Sizing</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'spacing' ? 'active' : '' %>">
+                        <a href="spacing.html">
+                            <span class="nav-link-text" data-i18n="">Spacing</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'figmafile' ? 'active' : '' %>">
+                        <a href="figmafile.html">
+                            <span class="nav-link-text" data-i18n="">Figma File</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= isInGroup(['flexbox', 'helpers', 'visibilitygenerator'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Interactive Features" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Interactive Features</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'flexbox' ? 'active' : '' %>">
+                        <a href="flexbox.html">
+                            <span class="nav-link-text" data-i18n="">Flexbox</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'helpers' ? 'active' : '' %>">
+                        <a href="helpers.html">
+                            <span class="nav-link-text" data-i18n="">Helpers</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'visibilitygenerator' ? 'active' : '' %>">
+                        <a href="visibilitygenerator.html">
+                            <span class="nav-link-text" data-i18n="">Visibility Generator</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['systemicons', 'stackgenerator', 'stacklibrary', 'fontawesome', 'smartadminicons'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Iconography" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#heart"></use></svg>
+            <span class="nav-link-text" data-i18n="">Iconography</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'systemicons' ? 'active' : '' %>">
+                <a href="systemicons.html">
+                    <span class="nav-link-text" data-i18n="">System Icons</span>
+                </a>
+            </li>
+            <li class="<%= isInGroup(['fontawesome', 'smartadminicons'], currentPage) ? 'active' : '' %>">
+                <a href="javascript:void(0);" title="Font Icons" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Font Icons</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'fontawesome' ? 'active' : '' %>">
+                        <a href="fontawesome.html">
+                            <span class="nav-link-text" data-i18n="">FontAwesome 5.3</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'smartadminicons' ? 'active' : '' %>">
+                        <a href="smartadminicons.html">
+                            <span class="nav-link-text" data-i18n="">SmartAdmin Icons 1.0</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= currentPage === 'stackgenerator' ? 'active' : '' %>">
+                <a href="stackgenerator.html">
+                    <span class="nav-link-text" data-i18n="">Stack Generator</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'stacklibrary' ? 'active' : '' %>">
+                <a href="stacklibrary.html">
+                    <span class="nav-link-text" data-i18n="">Stack Library</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['basictables', 'tablesstylegenerator'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Tables" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#table"></use></svg>
+            <span class="nav-link-text" data-i18n="">Tables</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'basictables' ? 'active' : '' %>">
+                <a href="basictables.html">
+                    <span class="nav-link-text" data-i18n="">Basic Tables</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'tablesstylegenerator' ? 'active' : '' %>">
+                <a href="tablesstylegenerator.html">
+                    <span class="nav-link-text" data-i18n="">Tables Style Generator</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['inputs', 'checkboxandradio', 'groups', 'validation'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Forms" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#edit"></use></svg>
+            <span class="nav-link-text" data-i18n="">Forms</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'inputs' ? 'active' : '' %>">
+                <a href="inputs.html">
+                    <span class="nav-link-text" data-i18n="">Inputs</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'checkboxandradio' ? 'active' : '' %>">
+                <a href="checkboxandradio.html">
+                    <span class="nav-link-text" data-i18n="">Checkbox & Radio</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'groups' ? 'active' : '' %>">
+                <a href="groups.html">
+                    <span class="nav-link-text" data-i18n="">Groups</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'validation' ? 'active' : '' %>">
+                <a href="validation.html">
+                    <span class="nav-link-text" data-i18n="">Validation</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-title"><span>Data Visualization</span></li>
+
+    <li class="nav-item <%= isInGroup(['apexareachart', 'apexbarchart', 'apexboxwhiskerchart', 'apexbubblechart', 'apexcandlestickchart', 'apexcolumnchart', 'apexfunnelchart', 'apexheatmapchart', 'apexlinechart', 'apexmixedcombochart', 'apexpiedonut', 'apexpolarareachart', 'apexradarchart', 'apexradialbarscirclechart', 'apexrangeareachart', 'apexscatterchart', 'apexslopechart', 'apexsparkline', 'apextimelinechart', 'apextreemapchart'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Apex Charts" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#pie-chart"></use></svg>
+            <span class="nav-link-text" data-i18n="">Apex Charts</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'apexareachart' ? 'active' : '' %>">
+                <a href="apexareachart.html">
+                    <span class="nav-link-text" data-i18n="">Area Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexbarchart' ? 'active' : '' %>">
+                <a href="apexbarchart.html">
+                    <span class="nav-link-text" data-i18n="">Bar Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexboxwhiskerchart' ? 'active' : '' %>">
+                <a href="apexboxwhiskerchart.html">
+                    <span class="nav-link-text" data-i18n="">Box & Whisker Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexbubblechart' ? 'active' : '' %>">
+                <a href="apexbubblechart.html">
+                    <span class="nav-link-text" data-i18n="">Bubble Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexcandlestickchart' ? 'active' : '' %>">
+                <a href="apexcandlestickchart.html">
+                    <span class="nav-link-text" data-i18n="">Candlestick Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexcolumnchart' ? 'active' : '' %>">
+                <a href="apexcolumnchart.html">
+                    <span class="nav-link-text" data-i18n="">Column Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexfunnelchart' ? 'active' : '' %>">
+                <a href="apexfunnelchart.html">
+                    <span class="nav-link-text" data-i18n="">Funnel Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexheatmapchart' ? 'active' : '' %>">
+                <a href="apexheatmapchart.html">
+                    <span class="nav-link-text" data-i18n="">Heatmap Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexlinechart' ? 'active' : '' %>">
+                <a href="apexlinechart.html">
+                    <span class="nav-link-text" data-i18n="">Line Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexmixedcombochart' ? 'active' : '' %>">
+                <a href="apexmixedcombochart.html">
+                    <span class="nav-link-text" data-i18n="">Mixed/Combo Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexpiedonut' ? 'active' : '' %>">
+                <a href="apexpiedonut.html">
+                    <span class="nav-link-text" data-i18n="">Pie/Donuts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexpolarareachart' ? 'active' : '' %>">
+                <a href="apexpolarareachart.html">
+                    <span class="nav-link-text" data-i18n="">Polar Area Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexradarchart' ? 'active' : '' %>">
+                <a href="apexradarchart.html">
+                    <span class="nav-link-text" data-i18n="">Radar Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexradialbarscirclechart' ? 'active' : '' %>">
+                <a href="apexradialbarscirclechart.html">
+                    <span class="nav-link-text" data-i18n="">RadialBars/Circle Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexrangeareachart' ? 'active' : '' %>">
+                <a href="apexrangeareachart.html">
+                    <span class="nav-link-text" data-i18n="">Range Area Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexscatterchart' ? 'active' : '' %>">
+                <a href="apexscatterchart.html">
+                    <span class="nav-link-text" data-i18n="">Scatter Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexslopechart' ? 'active' : '' %>">
+                <a href="apexslopechart.html">
+                    <span class="nav-link-text" data-i18n="">Slope Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apexsparkline' ? 'active' : '' %>">
+                <a href="apexsparkline.html">
+                    <span class="nav-link-text" data-i18n="">Sparklines</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apextimelinechart' ? 'active' : '' %>">
+                <a href="apextimelinechart.html">
+                    <span class="nav-link-text" data-i18n="">Timeline Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'apextreemapchart' ? 'active' : '' %>">
+                <a href="apextreemapchart.html">
+                    <span class="nav-link-text" data-i18n="">Treemap Charts</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['peitycharts', 'streamline', 'easypiechart'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Data Bites" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#grid"></use></svg>
+            <span class="nav-link-text" data-i18n="">Data Bites</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'peitycharts' ? 'active' : '' %>">
+                <a href="peitycharts.html">
+                    <span class="nav-link-text" data-i18n="">Peity Charts</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'streamline' ? 'active' : '' %>">
+                <a href="streamline.html">
+                    <span class="nav-link-text" data-i18n="">Streamline</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'easypiechart' ? 'active' : '' %>">
+                <a href="easypiechart.html">
+                    <span class="nav-link-text" data-i18n="">Easy Pie Chart</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="<%= currentPage === 'fullcalendar' ? 'active' : '' %>">
+        <a href="fullcalendar.html">
+            <svg class="sa-icon"><use href="img/sprite.svg#calendar"></use></svg>
+            <span class="nav-link-text">Full Calendar</span>
+        </a>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['smarttablesminimal', 'smarttablesresponsive', 'smarttablesimportexportdata', 'smarttablesjsonsource', 'smarttablesmanagerecords', 'smarttablesfuzzymatching', 'smarttablesserverside'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Smart Tables" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#database"></use></svg>
+            <span class="nav-link-text" data-i18n="">Smart Tables</span>
+            <span class="badge bg-primary-500 badge-end">1.2.7</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'smarttablesminimal' ? 'active' : '' %>">
+                <a href="smarttablesminimal.html">
+                    <span class="nav-link-text" data-i18n="">Minimal Settings</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'smarttablesresponsive' ? 'active' : '' %>">
+                <a href="smarttablesresponsive.html">
+                    <span class="nav-link-text" data-i18n="">Responsive Settings</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'smarttablesimportexportdata' ? 'active' : '' %>">
+                <a href="smarttablesimportexportdata.html">
+                    <span class="nav-link-text" data-i18n="">Import & Export Data</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'smarttablesjsonsource' ? 'active' : '' %>">
+                <a href="smarttablesjsonsource.html">
+                    <span class="nav-link-text" data-i18n="">JSON Data Source</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'smarttablesmanagerecords' ? 'active' : '' %>">
+                <a href="smarttablesmanagerecords.html">
+                    <span class="nav-link-text" data-i18n="">Manage Records</span>
+                    <span class="badge bg-warning text-dark badge-end">New</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'smarttablesfuzzymatching' ? 'active' : '' %>">
+                <a href="smarttablesfuzzymatching.html">
+                    <span class="nav-link-text" data-i18n="">Fuzzy Matching</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'smarttablesserverside' ? 'active' : '' %>">
+                <a href="smarttablesserverside.html">
+                    <span class="nav-link-text" data-i18n="">Server-Side Mode</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-title"><span>Layouts</span></li>
+
+    <li class="nav-item <%= isInGroup(['allauthpages', 'emaildesign', 'errorpages', 'profile'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Access Control" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#slash"></use></svg>
+            <span class="nav-link-text" data-i18n="">Access Control</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'allauthpages' ? 'active' : '' %>">
+                <a href="allauthpages.html">
+                    <span class="nav-link-text" data-i18n="">Authentication Pages</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'emaildesign' ? 'active' : '' %>">
+                <a href="emaildesign.html">
+                    <span class="nav-link-text" data-i18n="">Email Templates</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'errorpages' ? 'active' : '' %>">
+                <a href="errorpages.html">
+                    <span class="nav-link-text" data-i18n="">Error Pages</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'profile' ? 'active' : '' %>">
+                <a href="profile.html">
+                    <span class="nav-link-text" data-i18n="">User Profile</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['messenger', 'systemmail', 'usercontact'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Communication" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#message-square"></use></svg>
+            <span class="nav-link-text" data-i18n="">Communication</span>
+        </a>
+
+        <ul>
+            <li class="<%= currentPage === 'messenger' ? 'active' : '' %>">
+                <a href="messenger.html">
+                    <span class="nav-link-text" data-i18n="">Messenger & Chat</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'systemmail' ? 'active' : '' %>">
+                <a href="systemmail.html">
+                    <span class="nav-link-text" data-i18n="">System Mail</span>
+                </a>
+            </li>
+            <li class="<%= currentPage === 'usercontact' ? 'active' : '' %>">
+                <a href="usercontact.html">
+                    <span class="nav-link-text" data-i18n="">User Contact</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item <%= isInGroup(['search', 'forum', 'forum-threads', 'forum-discussion'], currentPage) ? 'active' : '' %>">
+        <a href="#" title="Miscellaneous" data-filter-tags="">
+            <svg class="sa-icon"><use href="img/sprite.svg#archive"></use></svg>
+            <span class="nav-link-text" data-i18n="">Miscellaneous</span>
+        </a>
+
+        <ul>
+            <li class="<%= isInGroup(['forum', 'forum-threads', 'forum-discussion'], currentPage) ? 'active' : '' %>">
+                <a href="#" title="Forum Views" data-filter-tags="">
+                    <span class="nav-link-text" data-i18n="">Forum Views</span>
+                </a>
+
+                <ul>
+                    <li class="<%= currentPage === 'forum' ? 'active' : '' %>">
+                        <a href="forum.html">
+                            <span class="nav-link-text" data-i18n="">General</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'forum-threads' ? 'active' : '' %>">
+                        <a href="forum-threads.html">
+                            <span class="nav-link-text" data-i18n="">Threads</span>
+                        </a>
+                    </li>
+                    <li class="<%= currentPage === 'forum-discussion' ? 'active' : '' %>">
+                        <a href="forum-discussion.html">
+                            <span class="nav-link-text" data-i18n="">Discussions</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </li>
+            <li class="<%= currentPage === 'search' ? 'active' : '' %>">
+                <a href="search.html">
+                    <span class="nav-link-text" data-i18n="">Search</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ul>

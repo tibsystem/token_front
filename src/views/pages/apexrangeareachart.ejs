@@ -1,0 +1,160 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'Apex Range Area Chart',
+    currentPage: 'apexrangeareachart',
+    additionalCSS: [
+        'css/apexcharts.css'
+    ],
+    additionalModules: [
+        'scripts/apexrangeareachart.js'
+    ], 
+    content: `
+    
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Data Visualization</li>
+            <li class="breadcrumb-item">Apex Charts</li>
+            <li class="breadcrumb-item active" aria-current="page">Apex Range Area Chart</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        Apex Range Area Chart
+        <small>
+            This range area design—ideal for highlighting trends within defined boundaries — perfect for showcasing data fluctuations in a structured format.
+        </small>
+    </h1> 
+    <div class="main-content">
+        <div class="row">
+            <div class="col-sm-6">
+                <!-- Basic Range Area -->
+                <div id="panel-1" class="panel panel-icon">
+                    <div class="panel-hdr">
+                        <h2> Basic <span class="fw-light"><i>Range Area</i></span>
+                        </h2>
+                        <div class="panel-toolbar">
+                            <button type="button" class="btn btn-panel" data-action="panel-collapse" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Toggle">
+                                <svg class="sa-icon">
+                                    <use class="panel-collapsed-icon" href="img/sprite.svg#minus-circle"></use>
+                                    <use class="panel-expand-icon" href="img/sprite.svg#plus-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-fullscreen" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Fullscreen">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#stop-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-close" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Close">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#x-circle"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-container">
+                        <div class="panel-content">
+                            <div id="basic-range-area-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datetime Range Area -->
+                <div id="panel-3" class="panel panel-icon">
+                    <div class="panel-hdr">
+                        <h2> Datetime <span class="fw-light"><i>Range Area</i></span>
+                        </h2>
+                        <div class="panel-toolbar">
+                            <button type="button" class="btn btn-panel" data-action="panel-collapse" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Toggle">
+                                <svg class="sa-icon">
+                                    <use class="panel-collapsed-icon" href="img/sprite.svg#minus-circle"></use>
+                                    <use class="panel-expand-icon" href="img/sprite.svg#plus-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-fullscreen" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Fullscreen">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#stop-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-close" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Close">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#x-circle"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-container">
+                        <div class="panel-content">
+                            <div id="datetime-range-area-chart"></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col-sm-6">
+                <!-- Combo Range Area -->
+                <div id="panel-2" class="panel panel-icon">
+                    <div class="panel-hdr">
+                        <h2> Combo <span class="fw-light"><i>Range Area</i></span>
+                        </h2>
+                        <div class="panel-toolbar">
+                            <button type="button" class="btn btn-panel" data-action="panel-collapse" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Toggle">
+                                <svg class="sa-icon">
+                                    <use class="panel-collapsed-icon" href="img/sprite.svg#minus-circle"></use>
+                                    <use class="panel-expand-icon" href="img/sprite.svg#plus-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-fullscreen" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Fullscreen">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#stop-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-close" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Close">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#x-circle"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-container">
+                        <div class="panel-content">
+                            <div id="combo-range-area-chart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multiple Range Area -->
+                <div id="panel-4" class="panel panel-icon">
+                    <div class="panel-hdr">
+                        <h2> Multiple <span class="fw-light"><i>Range Area</i></span>
+                        </h2>
+                        <div class="panel-toolbar">
+                            <button type="button" class="btn btn-panel" data-action="panel-collapse" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Toggle">
+                                <svg class="sa-icon">
+                                    <use class="panel-collapsed-icon" href="img/sprite.svg#minus-circle"></use>
+                                    <use class="panel-expand-icon" href="img/sprite.svg#plus-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-fullscreen" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Fullscreen">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#stop-circle"></use>
+                                </svg>
+                            </button>
+                            <button type="button" class="btn btn-panel" data-action="panel-close" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,10" data-bs-original-title="Close">
+                                <svg class="sa-icon">
+                                    <use href="img/sprite.svg#x-circle"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-container">
+                        <div class="panel-content">
+                            <div id="multiple-range-area-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    `
+}) %> 

@@ -1,0 +1,85 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'Email Design',
+    currentPage: 'emaildesign',
+    content: `
+    
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Layouts</li>
+            <li class="breadcrumb-item">Authentication</li>
+            <li class="breadcrumb-item active" aria-current="page">Email Design</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        Email Design
+        <small>
+            Variety of email designs for different scenarios
+        </small>
+    </h1> 
+    <div class="main-content">
+        <div class="info-container">
+            <p class="mb-0">
+                You can find your email templates inside the source directory <code>PathToSmartAdmin/src/e-templates</code>
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+
+                <div class="card m-auto border mb-g">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        Order Confirmation
+                    </div>
+                    <div class="card-body">
+                        <img src="img/email-order.webp" alt="Login Page" class="img-fluid inverse-color">
+                    </div>
+                </div>
+
+                <div class="card m-auto border  mb-g">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        New Device Detected
+                    </div>
+                    <div class="card-body">
+                        <img src="img/new-device.webp" alt="New Device Detected" class="img-fluid inverse-color">
+                    </div>
+                </div>
+
+                <div class="card m-auto border">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        Verify Email
+                    </div>
+                    <div class="card-body">
+                        <img src="img/verify-email.webp" alt="Verify Email" class="img-fluid inverse-color">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-6">
+
+                <div class="card m-auto border mb-g">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        Password Change Request
+                    </div>
+                    <div class="card-body">
+                        <img src="img/password-request.webp" alt="Password Change Request" class="img-fluid inverse-color">
+                    </div>
+                </div>
+
+                <div class="card m-auto border">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        One Time Code
+                    </div>
+                    <div class="card-body">
+                        <img src="img/password-reset.webp" alt="Password Reset" class="img-fluid inverse-color">
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>    
+
+    </div>
+
+
+
+    `
+}) %>

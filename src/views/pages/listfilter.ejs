@@ -1,0 +1,357 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'Smart Filter',
+    currentPage: 'listfilter',
+    additionalJS: [
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js'
+    ],
+    additionalCSS: [
+        'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/night-owl.min.css',
+        'css/demo-docs.css'
+    ],
+    additionalScripts: `
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add styles for suggestions
+            const style = document.createElement('style');
+            style.textContent = [
+                '.suggestions-container {',
+                '    margin: -0.5rem 0 1rem 0;',
+                '    font-size: 0.9rem;',
+                '    color: #666;',
+                '    padding: 0',
+                '}',
+                '.did-you-mean {',
+                '    padding: 0.25rem 0;',
+                '    font-weight: 500;',
+                '    color: var(--danger-500);',
+                '}',
+                '.did-you-mean a {',
+                '    color: #2196F3;',
+                '    text-decoration: none;',
+                '    font-weight: 500;',
+                '}',
+                '.did-you-mean a:hover {',
+                '    text-decoration: underline;',
+                '}'
+            ].join('\\n');
+            document.head.appendChild(style);
+
+            // Highlight.js
+            hljs.highlightAll();
+
+            // Helper function to safely initialize ListFilter
+            function initListFilter(listId, inputId, options) {
+                const list = document.querySelector(listId);
+                const input = document.querySelector(inputId);
+                
+                if (!list || !input) {
+                    console.warn('ListFilter initialization failed: ' + (!list ? 'List element' : 'Input element') + ' not found');
+                    return null;
+                }
+
+                try {
+                    // Add suggestions container if it doesn't exist
+                    const suggestionsContainer = document.createElement('div');
+                    suggestionsContainer.id = inputId + 'Suggestions';
+                    suggestionsContainer.className = 'suggestions-container';
+                    
+                    // Find the input-group div and insert the suggestions container after it
+                    const inputGroup = input.closest('.input-group');
+                    if (inputGroup && inputGroup.parentNode) {
+                        inputGroup.parentNode.insertBefore(suggestionsContainer, inputGroup.nextSibling);
+                    }
+
+                    // Add Levenshtein distance function
+                    function levenshteinDistance(a, b) {
+                        if (a.length === 0) return b.length;
+                        if (b.length === 0) return a.length;
+                        const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+                        for (let i = 0; i <= b.length; i++) matrix[i][0] = i;
+                        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+                        for (let i = 1; i <= b.length; i++) {
+                            for (let j = 1; j <= a.length; j++) {
+                                matrix[i][j] = b.charAt(i - 1) === a.charAt(j - 1) ?
+                                    matrix[i - 1][j - 1] :
+                                    Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+                            }
+                        }
+                        return matrix[b.length][a.length];
+                    }
+
+                    // Add find suggestions function
+                    function findSuggestions(searchTerm, items) {
+                        if (!searchTerm || searchTerm.length < 2) return [];
+                        searchTerm = searchTerm.toLowerCase();
+                        return items
+                            .map(item => {
+                                const text = item.querySelector('.nav-link-text')?.textContent.toLowerCase() || '';
+                                return {
+                                    text: text,
+                                    distance: levenshteinDistance(searchTerm, text)
+                                };
+                            })
+                            .filter(item => {
+                                const maxDistance = Math.min(Math.floor(searchTerm.length * 0.4), 3);
+                                return item.distance > 0 && item.distance <= maxDistance;
+                            })
+                            .sort((a, b) => a.distance - b.distance)
+                            .slice(0, 3)
+                            .map(item => item.text);
+                    }
+
+                    // Modify the onFilter callback to include suggestions
+                    const originalOnFilter = options.onFilter;
+                    options.onFilter = function(filter) {
+                        if (originalOnFilter) originalOnFilter(filter);
+                        
+                        const suggestionsContainer = document.getElementById(inputId + 'Suggestions');
+                        if (!suggestionsContainer) {
+                            console.error('Suggestions container not found');
+                            return;
+                        }
+                        
+                        const visibleItems = list.querySelectorAll('li:not(.js-filter-hide)');
+                        const suggestions = findSuggestions(filter, Array.from(list.querySelectorAll('li')));
+                        
+                        if (filter.length >= 2 && visibleItems.length < 10 && suggestions.length > 0) {
+                            // Get the first suggestion and capitalize it
+                            const suggestion = suggestions[0];
+                            const capitalizedSuggestion = suggestion.charAt(0).toUpperCase() + suggestion.slice(1);
+                            
+                            suggestionsContainer.innerHTML = [
+                                '<div class="did-you-mean">',
+                                '    Did you mean: <a href="#" class="suggestion-link">' + capitalizedSuggestion + '</a>',
+                                '</div>'
+                            ].join('\\n');
+
+                            // Add click event listener to the suggestion link
+                            const suggestionLink = suggestionsContainer.querySelector('.suggestion-link');
+                            if (suggestionLink) {
+                                suggestionLink.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    input.value = suggestion;
+                                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                                    suggestionsContainer.innerHTML = '';
+                                });
+                            }
+                        } else {
+                            suggestionsContainer.innerHTML = '';
+                        }
+                    };
+
+                    return new ListFilter(listId, inputId, options);
+                } catch (error) {
+                    console.error('ListFilter initialization error:', error);
+                    return null;
+                }
+            }
+
+            // File Explorer Example with Nested Structure
+            initListFilter('#fileExplorer', '#fileFilterInput', {
+                messageSelector: '#fileFilterMessage',
+                debounceWait: 150,
+                minLength: 1,
+                onFilter: function(filter) {
+                    console.log('File filter:', filter);
+                }
+            });
+
+            // Did you mean suggestions example
+            initListFilter('#suggestionsNav', '#suggestionsFilterInput', {
+                messageSelector: '#suggestionsFilterMessage',
+                debounceWait: 200,
+                minLength: 1,
+                onFilter: function(filter) {
+                    console.log('Suggestions filter:', filter);
+                }
+            });
+        });
+    `,
+    content: `
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Components</li>
+            <li class="breadcrumb-item active" aria-current="page">Smart Filter</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        Smart Filter
+        <small>Advanced navigation filtering with fuzzy search capabilities</small>
+    </h1>
+
+    <div class="row">
+
+        <!-- Did you mean suggestions example -->
+        <div class="col-xl-6">
+            <div class="panel panel-icon">
+                <div class="panel-hdr">
+                    <h2>Did you mean suggestions</h2>
+                    <div class="panel-toolbar">
+                        <button type="button" class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse">
+                            <svg class="sa-icon">
+                                <use class="panel-collapsed-icon" href="img/sprite.svg#minus-circle"></use>
+                                <use class="panel-expand-icon" href="img/sprite.svg#plus-circle"></use>
+                            </svg>
+                        </button>
+                        <button type="button" class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen">
+                            <svg class="sa-icon">
+                                <use href="img/sprite.svg#stop-circle"></use>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="panel-tag">
+                            Try typing <strong>"javas"</strong> to see suggestions. 
+                            You can also finetune this for better suggestions via an separate json file. 
+                            Checkout this in the works in our <a href="systemicons.html">Icon Filter</a> page.
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="sa sa-magnifier"></i>
+                            </span>
+                            <input type="text" id="suggestionsFilterInput" class="form-control" placeholder="Search with suggestions...">
+                            <span id="suggestionsFilterMessage" class="input-group-text text-sm"></span>
+                        </div>
+                        <nav class="nav-menu">
+                            <ul id="suggestionsNav" class="nav-menu-list list-unstyled list-spaced">
+                                <li class="nav-title">Programming Languages</li>
+                                <li><a href="#"><span class="nav-link-text">JavaScript</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">TypeScript</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Python</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Java</span></a></li>
+                                
+                                <li class="nav-title">Framework Components</li>
+                                <li><a href="#"><span class="nav-link-text">Components</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Compnent</span></a></li>
+                                
+                                <li class="nav-title">Authentication Terms</li>
+                                <li><a href="#"><span class="nav-link-text">Auth</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Authenticate</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Authntication</span></a></li>
+                                
+                                <li class="nav-title">Development Tools</li>
+                                <li><a href="#"><span class="nav-link-text">Develop</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Developer</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Devlopment</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Developement</span></a></li>
+                                
+                                <li class="nav-title">Configuration Items</li>
+                                <li><a href="#"><span class="nav-link-text">Config</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Configure</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Configuraton</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Configration</span></a></li>
+                                
+                                <li class="nav-title">Database Terms</li>
+                                <li><a href="#"><span class="nav-link-text">Database</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Data</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Databse</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">Datatbase</span></a></li>
+                                <li><a href="#"><span class="nav-link-text">DataBase</span></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Explorer Example -->
+        <div class="col-xl-6">
+            <div class="panel panel-icon">
+                <div class="panel-hdr">
+                    <h2>File Explorer with Nested Structure</h2>
+                    <div class="panel-toolbar">
+                        <button type="button" class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse">
+                            <svg class="sa-icon">
+                                <use class="panel-collapsed-icon" href="img/sprite.svg#minus-circle"></use>
+                                <use class="panel-expand-icon" href="img/sprite.svg#plus-circle"></use>
+                            </svg>
+                        </button>
+                        <button type="button" class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen">
+                            <svg class="sa-icon">
+                                <use href="img/sprite.svg#stop-circle"></use>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-container show">
+                    <div class="panel-content">
+                        <div class="panel-tag">
+                            Search through nested file structure with automatic parent folder expansion. Try typing partial words or misspelled terms (e.g., "btn" for "Button.js")
+                        </div>
+                        <div class="input-group input-group-lg mb-3">
+                            <span class="input-group-text">
+                                <i class="sa sa-folder"></i>
+                            </span>
+                            <input type="text" id="fileFilterInput" class="form-control" placeholder="Search files...">
+                            <span id="fileFilterMessage" class="input-group-text"></span>
+                        </div>
+                        <nav class="nav-menu">
+                            <ul id="fileExplorer" class="nav-menu-list list-unstyled list-spaced">
+                                <li class="nav-title">Project Root</li>
+                                <li>
+                                    <a href="#"><span class="nav-link-text">src/</span></a>
+                                    <ul>
+                                        <li>
+                                            <a href="#"><span class="nav-link-text">components/</span></a>
+                                            <ul>
+                                                <li><a href="#"><span class="nav-link-text">Button.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">Card.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">Modal.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">Form.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">Table.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">Chart.js</span></a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#"><span class="nav-link-text">utils/</span></a>
+                                            <ul>
+                                                <li><a href="#"><span class="nav-link-text">helpers.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">constants.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">validation.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">formatting.js</span></a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="#"><span class="nav-link-text">services/</span></a>
+                                            <ul>
+                                                <li><a href="#"><span class="nav-link-text">api.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">auth.js</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">storage.js</span></a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#"><span class="nav-link-text">public/</span></a>
+                                    <ul>
+                                        <li><a href="#"><span class="nav-link-text">index.html</span></a></li>
+                                        <li><a href="#"><span class="nav-link-text">styles.css</span></a></li>
+                                        <li><a href="#"><span class="nav-link-text">assets/</span></a>
+                                            <ul>
+                                                <li><a href="#"><span class="nav-link-text">images/</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">fonts/</span></a></li>
+                                                <li><a href="#"><span class="nav-link-text">icons/</span></a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#"><span class="nav-link-text">tests/</span></a>
+                                    <ul>
+                                        <li><a href="#"><span class="nav-link-text">unit/</span></a></li>
+                                        <li><a href="#"><span class="nav-link-text">integration/</span></a></li>
+                                        <li><a href="#"><span class="nav-link-text">e2e/</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    `
+}) %>

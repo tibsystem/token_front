@@ -1,0 +1,639 @@
+{
+  "version": 1.0,
+  "lists": [
+    {
+      "title": "Insights"
+    },
+    {
+      "title": "Dashboards",
+      "badgeStyle": "badge bg-danger-700 badge-end",
+      "badgeText": "New",
+      "icon": "trello",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Control Center",
+          "href": "controlcenterdashboard.html"
+        },
+        {
+          "title": "Subscription & Billing",
+          "href": "subscriptiondashboard.html"
+        },
+        {
+          "title": "Marketing & Sales",
+          "href": "marketingdashboard.html"
+        },
+        {
+          "title": "Project Management",
+          "href": "projectmanagementdashboard.html"
+        }
+      ]
+    },
+    {
+      "title": "Config"
+    },
+    {
+      "title": "Application Intel",
+      "icon": "cpu",
+	    "href": "appintel.html"
+    },
+    {
+      "title": "Documentation",
+      "icon": "book-open",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Build notes",
+          "href": "buildnotes.html"
+        },
+        {
+          "title": "Getting Started",
+          "href": "gettingstarted.html"
+        },
+        {
+          "title": "Core Plugins",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "App DOM",
+              "href": "smartappjs.html",
+              "badgeStyle": "badge bg-danger badge-end",
+              "badgeText": "P"
+            },
+            {
+              "title": "Smart Navigation",
+              "href": "smartnavigationjs.html",
+              "badgeStyle": "badge bg-danger badge-end",
+              "badgeText": "P"
+            },
+            {
+              "title": "Smart Filter",
+              "href": "smartfilterjs.html",
+              "badgeStyle": "badge bg-warning text-dark badge-end",
+              "badgeText": "D"
+            },
+            {
+              "title": "Sortable",
+              "href": "sortablejs.html",
+              "badgeStyle": "badge bg-warning text-dark badge-end",
+              "badgeText": "D"
+            },
+            {
+              "title": "Bootstrap Bundle",
+              "href": "bootstrapbundlejs.html",
+              "badgeStyle": "badge bg-warning text-dark badge-end",
+              "badgeText": "D"
+            },
+            {
+              "title": "Smart Slim Scroll",
+              "href": "smartslimscrolljs.html",
+              "badgeStyle": "badge bg-success badge-end",
+              "badgeText": "O"
+            },
+            {
+              "title": "Waves",
+              "href": "wavesjs.html",
+              "badgeStyle": "badge bg-success badge-end",
+              "badgeText": "O"
+            }
+          ]
+        },
+        {
+          "title": "Addons & Other Plugins",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "apexbarchart.js",
+              "href": "apexbarchartjs.html"
+            },
+            {
+              "title": "easypiechart.js",
+              "href": "easypiechartjs.html"
+            },
+            {
+              "title": "fullcalendar.js",
+              "href": "fullcalendarjs.html"
+            },
+            {
+              "title": "peitycharts.js",
+              "href": "peitychartsjs.html"
+            },
+            {
+              "title": "smartTables.js",
+              "href": "smarttablesjs.html"
+            },
+            {
+              "title": "streamline.js",
+              "href": "streamlinejs.html"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Design"
+    },
+    {
+      "title": "UI Components",
+      "icon": "layers",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Core elements",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Alerts",
+              "href": "alerts.html"
+            },
+            {
+              "title": "Accordions",
+              "href": "accordions.html"
+            },
+            {
+              "title": "Badges",
+              "href": "badges.html"
+            },
+            {
+              "title": "Buttons",
+              "href": "buttons.html"
+            },
+            {
+              "title": "Button Group",
+              "href": "buttongroup.html"
+            },
+            {
+              "title": "Cards",
+              "href": "cards.html"
+            }
+          ]
+        },
+        {
+          "title": "Menu & Links",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Breadcrumbs",
+              "href": "breadcrumbs.html"
+            },
+            {
+              "title": "Dropdowns",
+              "href": "dropdowns.html"
+            },
+            {
+              "title": "Navbars",
+              "href": "navbars.html"
+            },
+            {
+              "title": "Pagination",
+              "href": "pagination.html"
+            },
+            {
+              "title": "ScrollSpy",
+              "href": "scrollspy.html"
+            }
+          ]
+        },
+        {
+          "title": "Interactive Features",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Collapse",
+              "href": "collapse.html"
+            },
+            {
+              "title": "Modal",
+              "href": "modal.html"
+            },
+            {
+              "title": "Tabs & Pills",
+              "href": "tabsandpills.html"
+            },
+            {
+              "title": "Tooltips",
+              "href": "tooltips.html"
+            },
+            {
+              "title": "Popovers",
+              "href": "popovers.html"
+            },
+            {
+              "title": "Toasts",
+              "href": "toasts.html"
+            }
+          ]
+        },
+        {
+          "title": "Visual Feedback",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Progress Bars",
+              "href": "progressbars.html"
+            },
+            {
+              "title": "Spinners",
+              "href": "spinners.html"
+            },
+            {
+              "title": "Carousels",
+              "href": "carousels.html"
+            }
+          ]
+        },
+        {
+          "title": "Advanced Features",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Panels",
+              "href": "panels.html"
+            },
+            {
+              "title": "List Filter",
+              "href": "listfilter.html"
+            },
+            {
+              "title": "Side Panels",
+              "href": "sidepanels.html"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "System Utilities",
+      "icon": "package",
+      "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Layout Adjustments",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Borders",
+              "href": "borders.html"
+            },
+            {
+              "title": "Display Property",
+              "href": "displayproperty.html"
+            },
+            {
+              "title": "Responsive Grid",
+              "href": "responsivegrid.html"
+            },
+            {
+              "title": "Position",
+              "href": "position.html"
+            }
+          ]
+        },
+        {
+          "title": "Design Essentials",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Color Palette",
+              "href": "colorpalette.html"
+            },
+            {
+              "title": "Typography",
+              "href": "typography.html"
+            },
+            {
+              "title": "Sizing",
+              "href": "sizing.html"
+            },
+            {
+              "title": "Spacing",
+              "href": "spacing.html"
+            },
+            {
+              "title": "Figma File",
+              "href": "figmafile.html"
+            }
+          ]
+        },
+        {
+          "title": "Interactive Features",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "Flexbox",
+              "href": "flexbox.html"
+            },
+            {
+              "title": "Helpers",
+              "href": "helpers.html"
+            },
+            {
+              "title": "Visibility Generator",
+              "href": "visibilitygenerator.html"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Iconography",
+      "icon": "heart",
+      "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "System Icons",
+          "href": "systemicons.html"
+        },
+        {
+          "title": "Font Icons",
+		      "href": "javascript:void(0);",
+          "items": [
+            {
+              "title": "FontAwesome 5.3",
+              "href": "fontawesome.html"
+            },
+            {
+              "title": "SmartAdmin Icons 1.0",
+              "href": "smartadminicons.html"
+            }
+          ]
+        },
+        {
+          "title": "Stack Generator",
+          "href": "stackgenerator.html"
+        },
+        {
+          "title": "Stack Library",
+          "href": "stacklibrary.html"
+        }
+      ]
+    },
+    {
+      "title": "Tables",
+      "icon": "table",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Basic Tables",
+          "href": "basictables.html"
+        },
+        {
+          "title": "Tables Style Generator",
+          "href": "tablesstylegenerator.html"
+        }
+      ]
+    },
+    {
+      "title": "Forms",
+      "icon": "edit",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Inputs",
+          "href": "inputs.html"
+        },
+        {
+          "title": "Checkbox & Radio",
+          "href": "checkboxandradio.html"
+        },
+        {
+          "title": "Groups",
+          "href": "groups.html"
+        },
+        {
+          "title": "Validation",
+          "href": "validation.html"
+        }
+      ]
+    },
+    {
+      "title": "Data Visualization"
+    },
+    {
+      "title": "Apex Charts",
+      "icon": "pie-chart",
+      "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Area Charts",
+          "href": "apexareachart.html"
+        },
+        {
+          "title": "Bar Charts",
+          "href": "apexbarchart.html"
+        },
+        {
+          "title": "Box & Whisker Charts",
+          "href": "apexboxwhiskerchart.html"
+        },
+        {
+          "title": "Bubble Charts",
+          "href": "apexbubblechart.html"
+        },
+        {
+          "title": "Candlestick Charts",
+          "href": "apexcandlestickchart.html"
+        },
+        {
+          "title": "Column Charts",
+          "href": "apexcolumnchart.html"
+        },
+        {
+          "title": "Funnel Charts",
+          "href": "apexfunnelchart.html"
+        },
+        {
+          "title": "Heatmap Charts",
+          "href": "apexheatmapchart.html"
+        },
+        {
+          "title": "Line Charts",
+          "href": "apexlinechart.html"
+        },
+        {
+          "title": "Mixed/Combo Charts",
+          "href": "apexmixedcombochart.html"
+        },
+        {
+          "title": "Pie/Donuts",
+          "href": "apexpiedonut.html"
+        },
+        {
+          "title": "Polar Area Charts",
+          "href": "apexpolarareachart.html"
+        },
+        {
+          "title": "Radar Charts",
+          "href": "apexradarchart.html"
+        },
+        {
+          "title": "RadialBars/Circle Charts",
+          "href": "apexradialbarscirclechart.html"
+        },
+        {
+          "title": "Range Area Charts",
+          "href": "apexrangeareachart.html"
+        },
+        {
+          "title": "Scatter Charts",
+          "href": "apexscatterchart.html"
+        },
+        {
+          "title": "Slope Charts",
+          "href": "apexslopechart.html"
+        },
+        {
+          "title": "Sparklines",
+          "href": "apexsparkline.html"
+        },
+        {
+          "title": "Timeline Charts",
+          "href": "apextimelinechart.html"
+        },
+        {
+          "title": "Treemap Charts",
+          "href": "apextreemapchart.html"
+        }
+      ]
+    },
+    {
+      "title": "Data Bites",
+      "icon": "grid",
+      "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Peity Charts",
+          "href": "peitycharts.html"
+        },
+        {
+          "title": "Streamline",
+          "href": "streamline.html"
+        },
+        {
+          "title": "Easy Pie Chart",
+          "href": "easypiechart.html"
+        }
+      ]
+    },
+    {
+      "title": "Full Calendar",
+      "icon": "calendar",
+      "href": "fullcalendar.html"
+    },
+    {
+      "title": "Smart Tables",
+      "icon": "database",
+      "href": "javascript:void(0);",
+      "badgeStyle": "badge bg-primary-500 badge-end",
+      "badgeText": "1.2.7",
+      "items": [
+        {
+          "title": "Minimal Settings",
+          "href": "smarttablesminimal.html"
+        },
+        {
+          "title": "Responsive Settings",
+          "href": "smarttablesresponsive.html"
+        },
+        {
+          "title": "Import & Export Data",
+          "href": "smarttablesimportexportdata.html"
+        },
+        {
+          "title": "JSON Data Source",
+          "href": "smarttablesjsonsource.html"
+        },
+        {
+          "title": "Manage Records",
+          "badgeStyle": "badge bg-warning text-dark badge-end",
+          "badgeText": "New",
+          "href": "smarttablesmanagerecords.html"
+        },
+        {
+          "title": "Fuzzy Matching",
+          "href": "smarttablesfuzzymatching.html"
+        },
+        {
+          "title": "Server-Side Mode",
+          "href": "smarttablesserverside.html"
+        }
+      ]
+    },
+    {
+      "title": "Layouts"
+    },
+    {
+      "title": "Access Control",
+      "icon": "slash",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Authentication Pages",
+          "href": "allauthpages.html"
+        },
+        {
+          "title": "Email Templates",
+          "href": "emaildesign.html"
+        },
+        
+        {
+          "title": "Error Pages",
+          "href": "errorpages.html"
+        },
+        
+        {
+          "title": "User Profile",
+          "href": "profile.html"
+        }
+      ]
+    },
+    {
+      "title": "Communication",
+      "icon": "message-square",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Messenger & Chat",
+          "href": "messenger.html"
+        },
+        {
+          "title": "System Mail",
+          "href": "systemmail.html"
+        },
+        {
+          "title": "User Contact",
+          "href": "usercontact.html"
+        }
+      ]
+    },
+    {
+      "title": "Miscellaneous",
+      "icon": "archive",
+	    "href": "javascript:void(0);",
+      "items": [
+        {
+          "title": "Forum Views",
+          "href": "#",
+          "items": [
+            {
+              "title": "General",
+              "href": "forum.html"
+            },
+            {
+              "title": "Threads",
+              "href": "forum-threads.html"
+            },
+            {
+              "title": "Discussions",
+              "href": "forum-discussion.html"
+            }
+          ]
+        },
+        {
+          "title": "Search",
+          "href": "search.html"
+        }
+      ]
+    }
+  ]
+}

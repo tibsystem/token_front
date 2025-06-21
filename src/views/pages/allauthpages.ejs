@@ -1,0 +1,70 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'All Auth. Pages',
+    currentPage: 'allauthpages',
+    content: `
+    
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Layouts</li>
+            <li class="breadcrumb-item">Authentication</li>
+            <li class="breadcrumb-item active" aria-current="page">All Auth. Pages</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title">
+        All Authentication pages
+        <small>
+            All your authentication pages under one roof!
+        </small>
+    </h1> 
+    <div class="main-content">
+
+        <div class="row">
+            <div class="col-sm-6">
+
+                <div class="card m-auto border mb-g">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        <h5 class="m-0">Login Page</h5>
+                        <a href="login.html" class="btn btn-sm btn-outline-secondary">
+                            <i class="sa sa-eye"></i> View
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <img src="img/login.webp" alt="Login Page" class="img-fluid">
+                    </div>
+                </div>
+
+                <div class="card m-auto border">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        <h5 class="m-0">Forget Password Page</h5>
+                        <a href="forgetpassword.html" class="btn btn-sm btn-outline-secondary">
+                            <i class="sa sa-eye"></i> View
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <img src="img/forgetpassword.webp" alt="Forget Password Page" class="img-fluid">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-6">
+
+                <div class="card m-auto border">
+                    <div class="card-header d-flex align-items-center justify-content-between"> 
+                        <h5 class="m-0">Register Page</h5>
+                        <a href="register.html" class="btn btn-sm btn-outline-secondary">
+                            <i class="sa sa-eye"></i> View
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <img src="img/register.webp" alt="Register Page" class="img-fluid">
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>       
+
+    </div>
+
+    `
+}) %>

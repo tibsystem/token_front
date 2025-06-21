@@ -1,0 +1,123 @@
+<%- include('../partials/base.ejs', {
+    pageTitle: 'SmartTables',
+    currentPage: 'smarttables',
+    additionalJS: [
+        'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js',
+    ],
+    loadModules: `
+        import { SmartTables } from './scripts/smartTables.bundle.js';
+        import { RowHighlightPlugin } from './scripts/smarttables.plugin.rowHighlight.js';
+
+        // Wait for the DOM to load before initializing
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize SmartTables with the table ID and options
+            const table = new SmartTables('myTable', {
+                data: {
+                    type: "json",
+                    source: "json/smarttable-data.json",
+                    columns: [
+                        { data: "ID", title: "ID" },
+                        { data: "FirstName", title: "First Name" },
+                        { data: "LastName", title: "Last Name" },
+                        { data: "Gender", title: "Gender" },
+                        { data: "Phone", title: "Phone" },
+                        { 
+                            data: "Status", 
+                            title: "Status",
+                            render: function(value) {
+                                let statusClass = {
+                                    "Available": "badge bg-success",
+                                    "Busy": "badge bg-warning text-dark",
+                                    "Do not disturb": "badge bg-danger",
+                                    "Offline": "badge bg-secondary"
+                                }[value] || "badge bg-dark";
+                                return '<span class="' + statusClass + '">' + value + '</span>';
+                            }
+                        },
+                        { 
+                            data: "Due", 
+                            title: "Due",
+                            render: function(value) {
+                                return '$' + parseFloat(value).toFixed(2);
+                            }
+                        },
+                        { data: "Product", title: "Product" },
+                        { data: "Department", title: "Department" },
+                        { data: "Company", title: "Company" },
+                        { data: "Email", title: "Email" },
+                        { data: "Address", title: "Address" },
+                        { data: "City", title: "City" },
+                        { data: "CreatedDate", title: "Created Date" }
+                    ]
+                },
+                plugins: [RowHighlightPlugin],
+                rowHighlight: {
+                    hoverEffect: false,
+                    conditions: [
+                        {
+                            column: 5, // Status column index
+                            operator: 'equals',
+                            value: 'Busy'
+                        },
+                        {
+                            column: 6, // Due column index
+                            operator: 'greater',
+                            value: '300'
+                        }
+                    ],
+                    highlightClass: 'st-row-highlight',
+                    hoverClass: 'st-row-hover'
+                },
+                perPage: 15,
+                search: true,
+                sort: true,
+                pagination: true,
+                export: true,
+                print: true,
+                import: true,
+                debug: true,
+                loading: {
+                    enabled: true,
+                    duration: 1000 // Show loading for 1 second during initialization
+                },
+                responsive: {
+                    enabled: true,
+                    breakpoint: 768,
+                    columnPriorities: {
+                        0: 1,  // ID - highest priority (never hide)
+                        1: 2,  // First Name - second highest priority
+                        2: 3,  // Last Name - third priority
+                        3: 4,  // Gender - fourth priority
+                        4: 5,  // Phone - fifth priority
+                        5: 6   // Status - lowest priority (hide first)
+                    }
+                }
+            });
+        });
+    `,    
+    content: `
+       
+    <nav class="app-breadcrumb" aria-label="breadcrumb">
+        <ol class="breadcrumb ms-0">
+            <li class="breadcrumb-item">Design</li>
+            <li class="breadcrumb-item">Smart Tables</li>
+            <li class="breadcrumb-item active" aria-current="page">JSON Data Source</li>
+        </ol>
+    </nav>
+    <h1 class="subheader-title position-relative">
+        ST: JSON Data Source 
+        <!-- <sup class="badge bg-primary badge-subheader position-absolute top-0">v1.0.0</sup> -->
+        <small>
+            Loading the table with External JSON data source with over 1000 records. 
+        </small>
+    </h1> 
+    <div class="main-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <table id="myTable" class="table table-striped table-bordered table-hover d-none"></table>
+            </div>
+        </div>
+    </div>  
+
+    `
+}) %>
