@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function AdminLogin({ onLogin }) {
+export default function AdminLogin({ onLogin, onNavigateRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -55,7 +55,13 @@ export default function AdminLogin({ onLogin }) {
           </a>
           <div className="ms-auto d-flex gap-2">
             <a href="#" className="btn btn-link text-white border-0 text-decoration-none">Login</a>
-            <a href="#" className="btn btn-link text-white border-0 text-decoration-none">Register</a>
+            <a
+              href="#"
+              className="btn btn-link text-white border-0 text-decoration-none"
+              onClick={onNavigateRegister}
+            >
+              Register
+            </a>
           </div>
         </div>
       </nav>
