@@ -1,0 +1,23 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useAppSettings } from '@/config/app-settings';
+  
+export default function PageOptionWithMixedMenu() {
+  const { updateSettings } = useAppSettings();
+  
+  useEffect(() => {
+    updateSettings({ appTopMenu: true });
+    
+    return () => {
+      updateSettings({ appTopMenu: false });
+    };
+    
+    // eslint-disable-next-line
+  }, []);
+  
+  return (
+    <>
+    </>
+  )
+}

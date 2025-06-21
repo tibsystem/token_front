@@ -1,0 +1,40 @@
+'use client';
+
+import { useEffect } from 'react';
+import Chart from 'chart.js/auto';
+
+function ChartJs() {
+  useEffect(() => {
+    const themeColorRgb = (getComputedStyle(document.body).getPropertyValue('--bs-app-theme-rgb')).trim();
+    const gray900Rgb = (getComputedStyle(document.body).getPropertyValue('--bs-gray-900-rgb')).trim();
+    const bodyColorRgb = (getComputedStyle(document.body).getPropertyValue('--bs-body-color-rgb')).trim();
+    
+    const chartContainer = document.getElementById('chart');
+    if (chartContainer) {
+      chartContainer.innerHTML = '<canvas id="pieChart"></canvas>';
+      const chartElm = document.getElementById('pieChart') as HTMLCanvasElement;
+      if (chartElm) {
+        chart = new Chart(chartElm, {
+          type: 'pie',
+          data: {
+            labels: ['Total Visitor', 'New Visitor', 'Returning Visitor'],
+            datasets: [{
+              data: [300, 50, 100],
+              backgroundColor: ['rgba('+ themeColorRgb +', .5)', 'rgba('+ bodyColorRgb +', .2)', 'rgba('+ themeColorRgb +', .5)'],
+              hoverBackgroundColor: ['rgba('+ themeColorRgb +', 1)', 'rgba('+ bodyColorRgb +', 1)', 'rgba('+ gray900Rgb +', 1)'],
+              borderWidth: 0
+            }]
+          }
+        });
+      }
+    }
+  }, []);
+  
+  return (
+    <>
+      <div id="chart"></div>
+    </>
+  )
+}
+
+export default ChartJs;

@@ -1,0 +1,24 @@
+'use client';
+
+import { useEffect } from 'react';
+
+export default function PageOptionWithBoxedLayout() {
+  useEffect(() => {
+    if (document) {
+      document.body.classList.add('boxed-layout');
+    }
+    
+    return () => {
+      if (document) {
+        document.body.classList.remove('boxed-layout');
+      }
+    };
+    
+    // eslint-disable-next-line
+  }, []);
+  
+  return (
+    <>
+    </>
+  )
+}

@@ -1,0 +1,24 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useAppSettings } from '@/config/app-settings';
+  
+export default function PageOptionWithRightSidebar() {
+  const { updateSettings } = useAppSettings();
+  
+  useEffect(() => {
+    updateSettings({ appSidebarEnd: true });
+    
+    return () => {
+      controller.abort();
+      updateSettings({ appSidebarEnd: false });
+    };
+    
+    // eslint-disable-next-line
+  }, []);
+  
+  return (
+    <>
+    </>
+  )
+}

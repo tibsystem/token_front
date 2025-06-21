@@ -1,0 +1,16 @@
+import 'quill/dist/quill.snow.css';
+
+export default function FormPlugins() {
+  const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
+  const value = '';
+  
+  function setValue(value) {
+  
+  }
+  
+  return (
+    <div className="h-200px mb-5">
+      <ReactQuill theme="snow" className="h-100" value={value} onChange={setValue} />
+    </div>
+  )
+}

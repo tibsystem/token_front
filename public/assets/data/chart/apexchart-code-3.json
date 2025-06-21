@@ -1,0 +1,38 @@
+export default function ChartApex() {
+  const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
+  const gray600 = (window.getComputedStyle(document.body).getPropertyValue('--bs-gray-600')).trim();
+  const pink = (window.getComputedStyle(document.body).getPropertyValue('--bs-pink')).trim();
+  const bodyColor = (window.getComputedStyle(document.body).getPropertyValue('--bs-body-color')).trim();
+  const bodyFontFamily = (window.getComputedStyle(document.body).getPropertyValue('--bs-body-font-family')).trim();
+  const bodyFontWeight = (window.getComputedStyle(document.body).getPropertyValue('--bs-body-font-weight')).trim();
+  const borderColor = (window.getComputedStyle(document.body).getPropertyValue('--bs-border-color')).trim();
+  
+  // area chart
+  const areaChartOptions = {
+    chart: { zoom: { enabled: false } },
+    dataLabels: { enabled: false },
+    stroke: { curve: 'smooth' as const, width: 3 },
+    colors: [pink, gray600],
+    grid: { borderColor: borderColor },
+    xaxis: { 
+      type: 'datetime' as const, categories: ['2025-09-19T00:00:00', '2025-09-19T01:30:00', '2025-09-19T02:30:00', '2025-09-19T03:30:00', '2025-09-19T04:30:00', '2025-09-19T05:30:00', '2025-09-19T06:30:00'],
+      axisBorder: { show: true, color: borderColor, height: 1, width: '100%', offsetX: 0, offsetY: -1 },
+      axisTicks: { show: true, borderType: 'solid', color: borderColor, height: 6, offsetX: 0, offsetY: 0 },
+      labels: { style: { colors: bodyColor, fontSize: '12px', fontFamily: bodyFontFamily, fontWeight: bodyFontWeight, cssClass: 'apexcharts-xaxis-label' } }
+    },
+    yaxis: { labels: { style: { colors: bodyColor, fontSize: '12px', fontFamily: bodyFontFamily, fontWeight: bodyFontWeight, cssClass: 'apexcharts-xaxis-label' } } },
+    legend: { fontFamily: bodyFontFamily, labels: { colors: bodyColor } },
+    tooltip: { x: { format: 'dd/MM/yy HH:mm' } }
+  };
+  
+  const areaChartData = [
+    { name: 'series1', data: [31, 40, 28, 51, 42, 109, 100] }, 
+    { name: 'series2', data: [11, 32, 45, 32, 34, 52, 41] }
+  ];
+  
+  return (
+    <>
+      <ApexChart type="area" options={areaChartOptions} series={areaChartData} />
+    </>
+  )
+}

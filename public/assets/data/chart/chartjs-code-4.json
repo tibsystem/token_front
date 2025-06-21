@@ -1,0 +1,41 @@
+'use client';
+
+import { useEffect } from 'react';
+import Chart from 'chart.js/auto';
+
+function ChartJs() {
+  useEffect(() => {
+    const themeColorRgb = (getComputedStyle(document.body).getPropertyValue('--bs-app-theme-rgb')).trim();
+    const gray800Rgb = (getComputedStyle(document.body).getPropertyValue('--bs-gray-800-rgb')).trim();
+    const gray500Rgb = (getComputedStyle(document.body).getPropertyValue('--bs-gray-500-rgb')).trim();
+    const gray300Rgb = (getComputedStyle(document.body).getPropertyValue('--bs-gray-300-rgb')).trim();
+    const bodyColorRgb = (getComputedStyle(document.body).getPropertyValue('--bs-body-color-rgb')).trim();
+    
+    const chartContainer = document.getElementById('chart');
+    if (chartContainer) {
+      chartContainer.innerHTML = '<canvas id="polarAreaChart"></canvas>';
+      const chartElm = document.getElementById('polarAreaChart') as HTMLCanvasElement;
+      if (chartElm) {
+        chart = new Chart(chartElm, {
+          type: 'polarArea',
+          data: {
+            datasets: [{
+              data: [11, 16, 7, 3, 14],
+              backgroundColor: ['rgba('+ themeColorRgb +', .5)', 'rgba('+ bodyColorRgb +', .2)', 'rgba('+ gray300Rgb+', .5)', 'rgba('+ gray500Rgb +', .5)', 'rgba('+ gray800Rgb +', .5)'],
+              borderWidth: 0
+            }],
+            labels: ['IE', 'Safari', 'Chrome', 'Firefox', 'Opera']
+          }
+        });
+      }
+    }
+  }, []);
+  
+  return (
+    <>
+      <div id="chart"></div>
+    </>
+  )
+}
+
+export default ChartJs;

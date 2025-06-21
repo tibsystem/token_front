@@ -1,0 +1,23 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useAppSettings } from '@/config/app-settings';
+  
+export default function PageOptionWithHoverSidebar() {
+  const { updateSettings } = useAppSettings();
+  
+  useEffect(() => {
+    updateSettings({ appSidebarHover: true });
+    
+    return () => {
+      updateSettings({ appSidebarHover: false });
+    };
+    
+    // eslint-disable-next-line
+  }, []);
+  
+  return (
+    <>
+    </>
+  )
+}

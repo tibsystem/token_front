@@ -1,0 +1,9 @@
+export default function PageOptionWithFooter() {
+  return (
+    <>
+      <div id="footer" className="app-footer mx-0 px-0">
+        &copy; 2025 Color Admin Responsive Admin Template - Sean Ngu All Rights Reserved
+      </div>
+    </>
+  )
+}

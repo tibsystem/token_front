@@ -1,0 +1,47 @@
+'use client';
+
+import { useEffect } from 'react';
+import Chart from 'chart.js/auto';
+
+function ChartJs() {
+  useEffect(() => {
+    const themeColor = (getComputedStyle(document.body).getPropertyValue('--bs-app-theme')).trim();
+    const themeColorRgb = (getComputedStyle(document.body).getPropertyValue('--bs-app-theme-rgb')).trim();
+    const bodyBg = (getComputedStyle(document.body).getPropertyValue('--bs-body-bg')).trim();
+    
+    const chartContainer = document.getElementById('chart');
+    if (chartContainer) {
+      chartContainer.innerHTML = '<canvas id="lineChart"></canvas>';
+      const chartElm = document.getElementById('lineChart') as HTMLCanvasElement;
+      if (chartElm) {
+        chart = new Chart(chartElm, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              backgroundColor: 'rgba('+ themeColorRgb +', .2)',
+              borderColor: themeColor,
+              borderWidth: 1.5,
+              pointBackgroundColor: bodyBg,
+              pointBorderWidth: 1.5,
+              pointRadius: 4,
+              pointHoverBackgroundColor: themeColor,
+              pointHoverBorderColor: bodyBg,
+              pointHoverRadius: 7,
+              label: 'Total Sales',
+              data: [12, 19, 4, 5, 2, 3]
+            }]
+          }
+        });
+      }
+    }
+  }, []);
+  
+  return (
+    <>
+      <div id="chart"></div>
+    </>
+  )
+}
+
+export default ChartJs;

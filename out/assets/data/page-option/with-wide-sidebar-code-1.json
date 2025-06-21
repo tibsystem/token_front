@@ -1,0 +1,23 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useAppSettings } from '@/config/app-settings';
+  
+export default function PageOptionWithWideSidebar() {
+  const { updateSettings } = useAppSettings();
+  
+  useEffect(() => {
+    updateSettings({ appSidebarWide: true });
+    
+    return () => {
+      updateSettings({ appSidebarWide: false });
+    };
+    
+    // eslint-disable-next-line
+  }, []);
+  
+  return (
+    <>
+    </>
+  )
+}

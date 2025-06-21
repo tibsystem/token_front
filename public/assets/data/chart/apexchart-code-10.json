@@ -1,0 +1,28 @@
+export default function ChartApex() {
+  const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
+  const themeRgb = (window.getComputedStyle(document.body).getPropertyValue('--bs-app-theme-rgb')).trim();
+  const indigoRgb = (window.getComputedStyle(document.body).getPropertyValue('--bs-indigo-rgb')).trim();
+  const pinkRgb = (window.getComputedStyle(document.body).getPropertyValue('--bs-pink-rgb')).trim();
+  const orangeRgb = (window.getComputedStyle(document.body).getPropertyValue('--bs-warning-rgb')).trim();
+  const bodyColor = (window.getComputedStyle(document.body).getPropertyValue('--bs-body-color')).trim();
+  const bodyColorRgb = (window.getComputedStyle(document.body).getPropertyValue('--bs-body-color-rgb')).trim();
+  const bodyFontFamily = (window.getComputedStyle(document.body).getPropertyValue('--bs-body-font-family')).trim();
+  
+  // pie chart
+  const pieChartOptions = {
+    dataLabels: { dropShadow: { enabled: false, top: 1, left: 1, blur: 1, opacity: 1 } },
+    stroke: { show: false },
+    colors: [ 'rgba('+ pinkRgb +', .75)',  'rgba('+ orangeRgb +', .75)',  'rgba('+ themeRgb +', .75)', 'rgba('+ bodyColorRgb +', .5)',  'rgba('+ indigoRgb +', .75)'],
+    labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+    legend: { fontFamily: bodyFontFamily, labels: { colors: bodyColor } },
+    title: { text: 'HeatMap Chart (Single color)', style: { fontSize:  '14px', fontWeight:  'bold', fontFamily:  bodyFontFamily, color: bodyColor } }
+  };
+  
+  const pieChartData = [44, 55, 13, 43, 22];
+
+  return (
+    <>
+      <ApexChart type="pie" options={pieChartOptions} series={pieChartData} />
+    </>
+  )
+}

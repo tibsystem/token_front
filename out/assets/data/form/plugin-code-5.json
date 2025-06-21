@@ -1,0 +1,44 @@
+import { useState } from 'react';
+
+export default function FormPlugins() {
+  const SketchPicker = dynamic(() => import('react-color').then((mod) => mod.SketchPicker), { ssr: false });
+  const ChromePicker = dynamic(() => import('react-color').then((mod) => mod.ChromePicker), { ssr: false });
+  const [sketchBackgroundColor, setSketchBackgroundColor] = useState<string>('#348fe2');
+  const [chromeBackgroundColor, setChromeBackgroundColor] = useState<string>('#8753de');
+  
+  function handleSketchChangeComplete(color: { hex: string }) {
+    setSketchBackgroundColor(color.hex);
+  }
+  
+  function handleChromeChangeComplete(color: { hex: string }) {
+    setChromeBackgroundColor(color.hex);
+  };
+  
+  render() {
+    return (
+      <div>
+        <!-- SketchPicker -->
+        <div className="input-group">
+          <input type="text" className="form-control" readOnly value={sketchBackgroundColor} />
+          <div className="dropdown-menu dropdown-menu-end p-0 border-0">
+            <SketchPicker color={ sketchBackgroundColor } onChangeComplete={(color) => handleSketchChangeComplete(color)}></SketchPicker>
+          </div>
+          <span className="input-group-text" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+            <i style={{width: '16px', height: '16px', display: 'block', background: sketchBackgroundColor}}></i>
+          </span>
+        </div>
+        
+        <!-- ChromePicker -->
+        <div className="input-group">
+          <input type="text" className="form-control" readOnly value={chromeBackgroundColor} />
+          <div className="dropdown-menu dropdown-menu-end p-0 border-0">
+            <ChromePicker color={ chromeBackgroundColor } onChangeComplete={(color) => handleChromeChangeComplete(color) }></ChromePicker>
+          </div>
+          <span className="input-group-text" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+            <i style={{width: '16px', height: '16px', display: 'block', background: chromeBackgroundColor}}></i>
+          </span>
+        </div>
+      </div>
+    )
+  }
+}
