@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import AdminLogin from './AdminLogin';
+import Register from './Register';
 
 export default function App() {
-  const [isLogged, setIsLogged] = useState(false);
+  const [page, setPage] = useState('login');
 
-  if (!isLogged) {
-    return <AdminLogin onLogin={() => setIsLogged(true)} />;
+  if (page === 'login') {
+    return <AdminLogin onLogin={() => setPage('home')} onNavigateRegister={() => setPage('register')} />;
+  }
+
+  if (page === 'register') {
+    return <Register onRegister={() => setPage('home')} onNavigateLogin={() => setPage('login')} />;
   }
 
   return (
