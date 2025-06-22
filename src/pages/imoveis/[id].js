@@ -40,7 +40,8 @@ export default function ImovelPage() {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
           id_investidor = payload.id || payload.user_id || payload.sub;
-        } catch (e) {}
+        } catch {
+        }
       }
       const now = new Date();
       const pad = (n) => n.toString().padStart(2, '0');

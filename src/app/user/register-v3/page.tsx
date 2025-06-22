@@ -29,7 +29,7 @@ export default function RegisterV3() {
 				appContentClass: 'p-0'
 			});
 		};
-	}, []);
+       }, [updateSettings]);
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
