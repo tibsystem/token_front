@@ -6,7 +6,10 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
+    // Prioriza admin_token se existir
+    const adminToken = localStorage.getItem('admin_token');
+    const userToken = localStorage.getItem('token');
+    const token = adminToken || userToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -38,6 +38,7 @@ export default function LoginV1() {
         email,
         senha,
       });
+      console.log('Resposta do backend no login:', data);
       if (data.token) {
         localStorage.setItem('token', data.token);
         router.push('/dashboard');

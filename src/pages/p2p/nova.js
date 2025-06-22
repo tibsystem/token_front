@@ -7,18 +7,31 @@ export default function NovaOfertaPage() {
   const [propertyId, setPropertyId] = useState('');
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState('');
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/p2p/listings', {
-        property_id: propertyId,
-        amount,
-        price,
-      });
+      // Recupera o vendedor_id do token salvo (ajuste conforme seu backend)
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      let vendedor_id = null;
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          vendedor_id = payload.id || payload.user_id || payload.sub;
+        } catch (e) {}
+      }
+      const payload = {
+        vendedor_id,
+        id_imovel: Number(propertyId),
+        qtd_tokens: Number(amount),
+        valor_unitario: Number(price)
+      };
+      await api.post('/p2p/listings', payload);
       router.push('/p2p/ofertas');
     } catch (error) {
       console.error(error);
+      setError('Erro ao criar oferta');
       alert('Erro ao criar oferta');
     }
   };
@@ -48,6 +61,7 @@ export default function NovaOfertaPage() {
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 w-full">
           Criar Oferta
         </button>
+        {error && <div className="text-red-500 mt-2">{error}</div>}
       </form>
     </div>
   );
