@@ -10,7 +10,7 @@ export default function LoginV1() {
         const { updateSettings } = useAppSettings();
   const router = useRouter();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setsenha] = useState('');
   const [error, setError] = useState('');
 	
 	useEffect(() => {
@@ -36,7 +36,7 @@ export default function LoginV1() {
     try {
       const { data } = await api.post('/auth/investor-login', {
         email,
-        password,
+        senha,
       });
       if (data.token) {
         localStorage.setItem('token', data.token);
@@ -88,14 +88,14 @@ export default function LoginV1() {
             </div>
             <div className="form-floating mb-15px">
               <input
-                type="password"
+                type="senha"
                 className="form-control h-45px fs-13px"
-                placeholder="Password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="senha"
+                id="senha"
+                value={senha}
+                onChange={(e) => setsenha(e.target.value)}
               />
-              <label htmlFor="password" className="d-flex align-items-center fs-13px text-gray-600">Password</label>
+              <label htmlFor="senha" className="d-flex align-items-center fs-13px text-gray-600">senha</label>
             </div>
             <div className="form-check mb-30px">
               <input className="form-check-input" type="checkbox" value="1" id="rememberMe" />
