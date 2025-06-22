@@ -14,7 +14,7 @@ import SidebarRight from '@/components/sidebar-right/sidebar-right';
 import ThemePanel from '@/components/theme-panel/theme-panel';
 import { AppSettingsProvider, useAppSettings } from '@/config/app-settings';
 
-function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: React.ReactNode }) {
   const { settings } = useAppSettings();
   
   const handleScroll = useCallback(() => {
