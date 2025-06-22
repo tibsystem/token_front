@@ -6,7 +6,7 @@ import { useAppSettings } from '@/config/app-settings';
 import Link from 'next/link';
 import api from '@/services/api';
 
-export default function LoginV1() {
+export default function RegisterV3() {
         const { updateSettings } = useAppSettings();
   const router = useRouter();
   const [firstName, setFirstName] = useState('');
@@ -36,7 +36,7 @@ export default function LoginV1() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      const { data } = await api.post('/auth/register', {
+      const { data } = await api.post('/auth/investor-register', {
         first_name: firstName,
         last_name: lastName,
         email,
