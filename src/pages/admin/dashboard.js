@@ -18,6 +18,7 @@ export default function AdminDashboard() {
         setInvestidores(Array.isArray(invRes.data) ? invRes.data.length : 0);
         setImoveis(Array.isArray(imvRes.data) ? imvRes.data.length : 0);
       } catch (err) {
+        console.error(err);
         setError('Erro ao carregar dados do dashboard.');
       } finally {
         setLoading(false);

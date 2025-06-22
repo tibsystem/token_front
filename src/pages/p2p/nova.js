@@ -19,7 +19,8 @@ export default function NovaOfertaPage() {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
           vendedor_id = payload.id || payload.user_id || payload.sub;
-        } catch (e) {}
+        } catch {
+        }
       }
       const payload = {
         vendedor_id,

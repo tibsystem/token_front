@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
 import api from '@/services/api';
@@ -55,6 +55,7 @@ export default function AdminLogin() {
         setError('Login inválido');
       }
     } catch (err) {
+      console.error(err);
       setError('Falha no login');
     }
   }
