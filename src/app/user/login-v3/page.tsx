@@ -1,12 +1,17 @@
 'use client';
 
-import { useEffect, FormEvent } from 'react';
-import { redirect } from 'next/navigation';
+import { useEffect, FormEvent, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
 import Link from 'next/link';
+import api from '@/services/api';
 
 export default function LoginV1() {
-	const { updateSettings } = useAppSettings();
+        const { updateSettings } = useAppSettings();
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 	
 	useEffect(() => {
 		updateSettings({
@@ -26,10 +31,21 @@ export default function LoginV1() {
 		// eslint-disable-next-line
 	}, []);
 	
-	function handleSubmit(event: FormEvent<HTMLFormElement>) {
-		event.preventDefault();
-		
-  	redirect('/');
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+      const { data } = await api.post('/auth/investor-login', {
+        email,
+        password,
+      });
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Falha no login');
+    }
   }
   
 	return (
@@ -58,12 +74,27 @@ export default function LoginV1() {
         </div>
         <div className="login-content">
           <form onSubmit={handleSubmit} className="fs-13px">
+            {error && <div className="text-danger mb-2">{error}</div>}
             <div className="form-floating mb-15px">
-              <input type="text" className="form-control h-45px fs-13px" placeholder="Email Address" id="emailAddress" />
+              <input
+                type="email"
+                className="form-control h-45px fs-13px"
+                placeholder="Email Address"
+                id="emailAddress"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <label htmlFor="emailAddress" className="d-flex align-items-center fs-13px text-gray-600">Email Address</label>
             </div>
             <div className="form-floating mb-15px">
-              <input type="password" className="form-control h-45px fs-13px" placeholder="Password" id="password" />
+              <input
+                type="password"
+                className="form-control h-45px fs-13px"
+                placeholder="Password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
               <label htmlFor="password" className="d-flex align-items-center fs-13px text-gray-600">Password</label>
             </div>
             <div className="form-check mb-30px">
