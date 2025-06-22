@@ -5,13 +5,13 @@ import api from '@/services/api';
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setsenha] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await api.post('/auth/investor-login', { email, password });
+      const { data } = await api.post('/auth/investor-login', { email, senha });
       if (data.token) {
         localStorage.setItem('token', data.token);
         router.push('/dashboard');
@@ -35,11 +35,11 @@ export default function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
-          type="password"
+          type="senha"
           className="border p-2 w-full"
           placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={senha}
+          onChange={(e) => setsenha(e.target.value)}
         />
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 w-full">
           Entrar
