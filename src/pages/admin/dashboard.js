@@ -19,12 +19,12 @@ export default function AdminDashboard() {
       try {
         const [invRes, imvRes, transRes] = await Promise.all([
           api.get('/investors'),
-          api.get('/admin/properties'),
-          api.get('/admin/transacoes-financeiras'),
+          api.get('/properties'),
+          api.get('/transacoes-financeiras'),
         ]);
         setInvestidores(Array.isArray(invRes.data) ? invRes.data.length : 0);
         // Debug: log do retorno de imoveis
-        console.log('Retorno de /admin/properties:', imvRes.data);
+        console.log('Retorno de /properties:', imvRes.data);
         setImoveisArray(Array.isArray(imvRes.data) ? imvRes.data : []);
         setImoveis(Array.isArray(imvRes.data) ? imvRes.data.length : 0);
         // Valor negociado total (usando campo 'valor' e 'data_transacao' do novo endpoint)

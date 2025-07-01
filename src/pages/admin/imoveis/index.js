@@ -8,7 +8,7 @@ export default function ImoveisAdminPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/properties')
+    api.get('/properties')
       .then((res) => setImoveis(res.data))
       .catch(() => setError('Erro ao carregar imóveis.'))
       .finally(() => setLoading(false));
@@ -41,7 +41,7 @@ export default function ImoveisAdminPage() {
                 <div className="mb-1 text-sm d-flex align-items-center"><i className="fa fa-cubes me-2 text-purple-600"></i> Tokens: {imovel.qtd_tokens}</div>
                 <div className="mb-1 text-sm d-flex align-items-center"><i className="fa fa-info-circle me-2 text-gray-600"></i> Status: <span className={`px-2 py-1 rounded text-xs font-semibold ${imovel.status === 'ativo' ? 'bg-green-100 text-green-700' : imovel.status === 'inativo' ? 'bg-gray-200 text-gray-600' : 'bg-yellow-100 text-yellow-700'}`}>{imovel.status}</span></div>
                 <div className="mb-1 text-sm d-flex align-items-center"><i className="fa fa-calendar-alt me-2 text-pink-600"></i> Data Tokenização: {imovel.data_tokenizacao}</div>
-                <Link href={`/admin/imoveis/${imovel.id}`} className="mt-auto btn btn-primary w-100">Ver detalhes</Link>
+                <Link href={`/imoveis/${imovel.id}`} className="mt-auto btn btn-primary w-100">Ver detalhes</Link>
               </div>
             </div>
           </li>

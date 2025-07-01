@@ -18,7 +18,7 @@ export default function AdminLogin() {
     if (typeof window !== 'undefined') {
       const adminToken = localStorage.getItem('admin_token');
       if (adminToken) {
-        router.replace('/admin/dashboard');
+        router.replace('/dashboard');
       } else {
         setLoading(false);
       }
@@ -50,7 +50,7 @@ export default function AdminLogin() {
       });
       if (data.token) {
         localStorage.setItem('admin_token', data.token);
-        window.location.href = '/admin/dashboard';
+        window.location.href = '/dashboard';
       } else {
         setError('Login inválido');
       }

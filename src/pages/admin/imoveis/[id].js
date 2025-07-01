@@ -15,7 +15,7 @@ export default function ImovelAdminFinanceiro() {
   useEffect(() => {
     if (!id) return;
     setLoading(true);
-    api.get(`/admin/imoveis/${id}/financeiro`)
+    api.get(`/imoveis/${id}/financeiro`)
       .then(res => setDados(res.data))
       .catch(() => setError('Erro ao carregar dados financeiros do imóvel.'))
       .finally(() => setLoading(false));
@@ -186,7 +186,7 @@ export default function ImovelAdminFinanceiro() {
         )}
       </div>
       <div className="mt-10">
-        <Link href="/admin/imoveis" className="btn btn-outline-secondary h-10 flex items-center px-5 text-base shadow-none"><span className="mr-2">←</span>Voltar</Link>
+        <Link href="/imoveis" className="btn btn-outline-secondary h-10 flex items-center px-5 text-base shadow-none"><span className="mr-2">←</span>Voltar</Link>
       </div>
     </div>
   );

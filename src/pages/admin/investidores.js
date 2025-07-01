@@ -58,7 +58,7 @@ const Investidores = () => {
                   <span>{inv.telefone || 'Não informado'}</span>
                 </div>
                 {/* Adicione outros campos resumidos se necessário */}
-                <Link href={`/admin/investidores/${inv.id}`} className="btn btn-primary mt-auto w-100">Ver Mais</Link>
+                <Link href={`/investidores/${inv.id}`} className="btn btn-primary mt-auto w-100">Ver Mais</Link>
               </div>
             </div>
           </div>
