@@ -4,7 +4,8 @@ import React, { useEffect, useRef, CSSProperties, ReactNode } from 'react';
 
 // Card Component
 export function Card({ children, className = '', style = {} }: { children: ReactNode; className?: string; style?: CSSProperties; }) {
-	return (
+  // Forçar estrutura idêntica ao template Bootstrap
+  return (
     <div className={`card ${className}`} style={style}>
       {children}
     </div>
@@ -13,6 +14,7 @@ export function Card({ children, className = '', style = {} }: { children: React
 
 // Card Header
 export function CardHeader({ children, className = '', style = {} }: { children: ReactNode; className?: string; style?: CSSProperties; }) {
+  // Não envolver children em outro elemento se já for header
   return (
     <div className={`card-header ${className}`} style={style}>
       {children}
@@ -22,6 +24,7 @@ export function CardHeader({ children, className = '', style = {} }: { children:
 
 // Card Body
 export function CardBody({ children, className = '', style = {} }: { children: ReactNode; className?: string; style?: CSSProperties; }) {
+  // Não envolver children em outro elemento se já for body
   return (
     <div className={`card-body ${className}`} style={style}>
       {children}

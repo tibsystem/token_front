@@ -3,6 +3,10 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import '@/styles/nextjs.scss';
 
+// Forçar prioridade do CSS do template sobre o Tailwind
+import '@/styles/nextjs.scss';
+import '@/styles/nextjs.scss';
+
 import { AppSettingsProvider } from '@/config/app-settings';
 import { Layout } from '@/app/layout';
 import { useEffect } from 'react';

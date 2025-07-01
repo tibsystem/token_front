@@ -3,25 +3,26 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import menus from '@/config/app-menu';
 import { useAppSettings } from '@/config/app-settings';
 
+type MenuItem = {
+  path?: string;
+  icon?: string;
+  img?: string;
+  title?: string;
+  label?: string;
+  badge?: string;
+  highlight?: boolean;
+  is_header?: boolean;
+  is_divider?: boolean;
+  role?: string;
+  children?: MenuItem[];
+};
+
 type NavItemProps = {
-  menu: {
-    path?: string;
-    icon?: string;
-    img?: string;
-    title?: string;
-    label?: string;
-    badge?: string;
-    highlight?: boolean;
-    is_header?: boolean;
-    is_divider?: boolean;
-    children?: Array<{
-      path: string;
-      title: string;
-    }>;
-  };
+  menu: MenuItem;
 };
 
 function NavItem({ menu }: NavItemProps) {
@@ -70,8 +71,8 @@ function NavItem({ menu }: NavItemProps) {
 
       {menu.children && (
         <div className="menu-submenu" style={{ 'display' : (isActive) ? ' block' : ''}}>
-          {menu.children.map((submenu, i) => (
-            <NavItem key={i} menu={submenu} />
+          {menu.children.map((submenu) => (
+            <NavItem key={submenu.path} menu={submenu} />
           ))}
         </div>
       )}
@@ -79,8 +80,31 @@ function NavItem({ menu }: NavItemProps) {
   );
 }
 
+function getUserRole() {
+  if (typeof window !== 'undefined') {
+    if (localStorage.getItem('admin_token')) return 'admin';
+    if (localStorage.getItem('token')) return 'investidor';
+  }
+  return null;
+}
+
+function filterMenuByRole(menu: MenuItem[], role: string | null): MenuItem[] {
+  return menu
+    .filter((item) => !item.role || item.role === role)
+    .map((item) => ({
+      ...item,
+      children: item.children ? filterMenuByRole(item.children, role) : undefined,
+    }));
+}
+
 function SidebarNav() {
-	const { settings } = useAppSettings();
+  const { settings } = useAppSettings();
+  const [filteredMenus, setFilteredMenus] = useState<MenuItem[]>(menus);
+
+	useEffect(() => {
+		const userRole = getUserRole();
+		setFilteredMenus(filterMenuByRole(menus, userRole));
+	}, []);
 	
 	const handleSidebarSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const targetValue = e.target.value.toLowerCase();
@@ -170,8 +194,8 @@ function SidebarNav() {
 					<input type="text" className="form-control" placeholder="Sidebar menu filter..." onChange={handleSidebarSearch} />
 				</div>
 			)}
-      {menus.map((menu, i) => (
-        <NavItem key={i} menu={menu} />
+      {filteredMenus.map((menu) => (
+        <NavItem key={menu.path || menu.title} menu={menu} />
       ))}
     </div>
   );

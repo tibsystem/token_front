@@ -1,19 +1,25 @@
 const Menu = [
 	{ is_header: true, title: 'Navigation' },
-	{ path: '/dashboard', icon: 'fa fa-sitemap', title: 'Dashboard'},
-  { path: '/investimentos', icon: 'fa fa-dollar-sign', title: 'Investimentos' },
-  { path: '/imoveis', icon: 'fa fa-building', title: 'Imóveis',
-    children: [
-      { path: '/imoveis', title: 'Lista de Imóveis' }
-    ]
-  },
-  { path: '/p2p', icon: 'fa fa-exchange-alt', title: 'P2P',
-    children: [
-      { path: '/p2p/nova', title: 'Nova Oferta' },
-      { path: '/p2p/ofertas', title: 'Ofertas Disponíveis' }
-    ]
-  },
-
+	// Admin
+	{ path: '/admin/dashboard', icon: 'fa fa-sitemap', title: 'Dashboard', role: 'admin' },
+	{ path: '/admin/investidores', icon: 'fa fa-users', title: 'Investidores', role: 'admin' },
+	{ path: '/admin/imoveis', icon: 'fa fa-building', title: 'Imóveis', role: 'admin',
+		children: [
+			{ path: '/admin/imoveis', title: 'Todos os Imóveis', role: 'admin' },
+			{ path: '/admin/imoveis/cadastrar', title: 'Cadastrar Imóvel', role: 'admin' }
+		]
+	},
+	// Investidor
+	{ path: '/dashboard', icon: 'fa fa-home', title: 'Dashboard', role: 'investidor' },
+	{ path: '/imoveis', icon: 'fa fa-building', title: 'Imóveis', role: 'investidor' },
+	{ path: '/investimentos', icon: 'fa fa-chart-line', title: 'Investimentos', role: 'investidor' },
+	{ path: '/p2p/ofertas', icon: 'fa fa-exchange-alt', title: 'P2P', role: 'investidor',
+		children: [
+			{ path: '/p2p/ofertas', title: 'Ofertas', role: 'investidor' },
+			{ path: '/p2p/nova', title: 'Nova Oferta', role: 'investidor' }
+		]
+	},
+	{ path: '/transacoes-financeiras', icon: 'fa fa-receipt', title: 'Extrato Financeiro', role: 'investidor' },
 ];
 
 export default Menu;

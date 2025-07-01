@@ -24,7 +24,7 @@ type NavItemProps = {
 };
 
 function NavItem({ menu }: NavItemProps) {
-  const currentPath = usePathname();
+  const currentPath = usePathname() || '';
   const isActive = menu.path && currentPath.startsWith(menu.path) && (currentPath === menu.path || currentPath.startsWith(`${menu.path}/`));
 	
 	if (menu.is_header || menu.is_divider) {

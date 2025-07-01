@@ -4,6 +4,7 @@ const adminMenu = [
   { path: '/admin/dashboard', icon: 'fa fa-home', title: 'Dashboard' },
   { path: '/admin/investidores', icon: 'fa fa-users', title: 'Investidores' },
   { path: '/admin/imoveis', icon: 'fa fa-building', title: 'Imóveis' },
+  { path: '/admin/imoveis/cadastrar', icon: 'fa fa-plus', title: 'Cadastrar Imóvel' },
   // Adicione mais itens conforme necessário
 ];
 
