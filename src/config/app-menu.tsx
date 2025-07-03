@@ -3,15 +3,15 @@ const Menu = [
 	// Admin
 	{ path: '/admin/dashboard', icon: 'fa fa-sitemap', title: 'Dashboard', role: 'admin' },
 	{ path: '/admin/investidores', icon: 'fa fa-users', title: 'Investidores', role: 'admin' },
-	{ path: '/admin/imoveis', icon: 'fa fa-building', title: 'Imóveis', role: 'admin',
+	{ path: '/admin/properties', icon: 'fa fa-building', title: 'Imóveis', role: 'admin',
 		children: [
-			{ path: '/admin/imoveis', title: 'Todos os Imóveis', role: 'admin' },
-			{ path: '/admin/imoveis/cadastrar', title: 'Cadastrar Imóvel', role: 'admin' }
+			{ path: '/admin/properties', title: 'Todos os Imóveis', role: 'admin' },
+			{ path: '/admin/properties/register', title: 'Cadastrar Imóvel', role: 'admin' }
 		]
 	},
 	// Investidor
 	{ path: '/dashboard', icon: 'fa fa-home', title: 'Dashboard', role: 'investidor' },
-	{ path: '/imoveis', icon: 'fa fa-building', title: 'Imóveis', role: 'investidor' },
+	{ path: '/properties', icon: 'fa fa-building', title: 'Imóveis', role: 'investidor' },
 	{ path: '/investimentos', icon: 'fa fa-chart-line', title: 'Investimentos', role: 'investidor' },
 	{ path: '/p2p/ofertas', icon: 'fa fa-exchange-alt', title: 'P2P', role: 'investidor',
 		children: [
