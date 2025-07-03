@@ -17,7 +17,7 @@ api.interceptors.request.use((config) => {
       if (adminToken) {
         config.baseURL = 'http://localhost:8000/api/admin';
       } else {
-        config.baseURL = 'http://localhost:8000/api';
+        config.baseURL = 'http://localhost:8000/api/investor';
       }
     }
   }

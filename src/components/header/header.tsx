@@ -88,8 +88,8 @@ export default function Header() {
       {settings.appHeaderMegaMenu && <DropdownMegaMenu />}
 
       <div className="navbar-nav">
-        <SearchForm />
-        <DropdownNotification />
+        {/* <SearchForm /> */}
+        {/* <DropdownNotification /> */}
 
         {settings.appHeaderLanguageBar && <DropdownLanguage />}
 
