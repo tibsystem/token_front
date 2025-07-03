@@ -17,35 +17,45 @@ export default function ImovelPage() {
   const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
-    if (id) {
+    const fetchData = async () => {
+      if (id) {
+        try {
+          setLoading(true);
+          const response = await getOnePropertie(id); // 👈 agora aguardamos
+          setProperty(response);
+
+          if (response.valor_total && response.qtd_tokens_original) {
+            setValorUnitario((Number(response.valor_total) / Number(response.qtd_tokens_original)).toFixed(2));
+          } else {
+            setValorUnitario('');
+          }
+        } catch (err) {
+          if (err?.response?.status === 401) {
+            setError('Sua sessão expirou ou você não tem permissão para acessar este imóvel. Faça login novamente se necessário.');
+          } else {
+            setError('Erro ao carregar imóvel.');
+          }
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    const fetchSettings = async () => {
       try {
-        setLoading(true);
-        const response = getOnePropertie(id);
-        setProperty(response);
-        if (response.valor_total && response.qtd_tokens_original) {
-          setValorUnitario((Number(response.valor_total) / Number(response.qtd_tokens_original)). toFixed(2));
-        } else {
-          setValorUnitario('');
+        const response = await getPlatformSettings();
+        if (response && response.taxa_compra_token) {
+          setTaxaCompra(Number(response.taxa_compra_token));
         }
       } catch (err) {
-        if (err?.response?.status === 401) {
-          setError('Sua sessão expirou ou você não tem permissão para acessar este imóvel. Faça login novamente se necessário.');
-        } else {
-          setError('Erro ao carregar imóvel.');
-        }
-      } finally {
-        setLoading(false);
+        setTaxaCompra(0);
       }
-    }
-    try {
-      const response = getPlatformSettings();
-      if (response && response.taxa_compra_token) {
-        setTaxaCompra(Number(response.taxa_compra_token));
-      }
-    } catch (err) {
-      setTaxaCompra(0);
-    }
+    };
+
+    fetchData();
+    fetchSettings();
   }, [id]);
+
 
   const total = Number(amount) * (Number(valorUnitario) || 0);
   const valorTaxa = total * (taxaCompra / 100);
@@ -95,11 +105,11 @@ export default function ImovelPage() {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
           id_investidor = payload.id || payload.user_id || payload.sub;
-        } catch {}
+        } catch { }
       }
       const now = new Date();
       const pad = (n) => n.toString().padStart(2, '0');
-      const data_compra = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      const data_compra = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
       const payload = {
         id_investidor,
         id_imovel: Number(id),
@@ -127,9 +137,21 @@ export default function ImovelPage() {
         <div className="row g-5">
           <div className="col-lg-7">
             <h1 className="h2 fw-bold mb-3">Gran Vellas Wind</h1>
-            <div className="d-flex gap-2 mb-4">
-              <span className="badge bg-primary-subtle text-primary px-3 py-2">Isento de IR</span>
+            <div className="d-flex flex-wrap gap-2 mb-4">
               <span className="badge bg-secondary-subtle text-secondary px-3 py-2">Novo</span>
+              <span className="badge bg-primary-subtle text-primary px-3 py-2">Isento de IR</span>
+
+              {property?.contract_address && (
+                <a
+                  href={`https://polygonscan.com/token/${property.contract_address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="badge bg-warning-subtle text-secondary px-3 py-2 text-decoration-none d-inline-flex align-items-center"
+                  title="Ver contrato no PolygonScan"
+                >
+                  <i className="fa fa-link me-1"></i> Contrato
+                </a>
+              )}
             </div>
             <p className="mb-4 fs-5 text-primary fw-bold">Rentabilidade Prevista: {infoMock.rentabilidade} a.a.</p>
 
@@ -147,15 +169,6 @@ export default function ImovelPage() {
               ))}
             </div>
 
-            <p className="mb-1 fw-semibold">Progresso</p>
-            <div className="d-flex justify-content-between text-muted small mb-1">
-              <span>R$ {infoMock.vendido.toLocaleString('pt-BR')}</span>
-              <span>R$ {infoMock.total.toLocaleString('pt-BR')} Total</span>
-            </div>
-            <div className="progress mb-4" style={{ height: 8 }}>
-              <div className="progress-bar bg-primary" style={{ width: `${(infoMock.vendido / infoMock.total) * 100}%` }}></div>
-            </div>
-
             <div className="row row-cols-2 g-3 text-muted fs-6">
               <div><strong>Devedor:</strong><br />{infoMock.devedor}</div>
               <div><strong>Periodicidade da Remuneração:</strong><br />{infoMock.periodicidade}</div>
@@ -165,6 +178,15 @@ export default function ImovelPage() {
               <div><strong>Cronograma:</strong><br />{infoMock.cronograma}</div>
               <div><strong>Valor Mínimo:</strong><br />R$ {infoMock.valorMinimo.toLocaleString('pt-BR')}</div>
               <div><strong>Valor Disponível:</strong><br />R$ {infoMock.valorDisponivel.toLocaleString('pt-BR')}</div>
+            </div>
+
+            <p className="mb-1 mt-4 fw-semibold">Progresso</p>
+            <div className="d-flex justify-content-between text-muted small mb-1">
+              <span>R$ {infoMock.vendido.toLocaleString('pt-BR')}</span>
+              <span>R$ {infoMock.total.toLocaleString('pt-BR')} Total</span>
+            </div>
+            <div className="progress mb-4" style={{ height: 8 }}>
+              <div className="progress-bar bg-primary" style={{ width: `${(infoMock.vendido / infoMock.total) * 100}%` }}></div>
             </div>
           </div>
 
