@@ -4,6 +4,7 @@ import api from "@/services/api";
 import { FaHome, FaMapMarkerAlt, FaCoins, FaCubes, FaMicrochip, FaCalendarAlt, FaCheckCircle } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { postProperties } from "@/services/properties/postProperties";
 
 export default function CadastrarImovel() {
   const [form, setForm] = useState({
@@ -16,31 +17,32 @@ export default function CadastrarImovel() {
     status: "ativo",
     data_tokenizacao: ""
   });
-  const [date, setDate] = useState<Date | null>(null);
+  const [date, setDate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleDateChange = (date: Date | null) => {
+  const handleDateChange = (date) => {
     setDate(date);
     setForm({ ...form, data_tokenizacao: date ? date.toISOString().slice(0, 16) : "" });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess(false);
     try {
-      await api.post("/properties", {
+      const data = {
         ...form,
         valor_total: parseFloat(form.valor_total),
         qtd_tokens: parseInt(form.qtd_tokens),
-      });
+      }
+      await postProperties(data);
       setSuccess(true);
       setForm({
         titulo: "",
@@ -53,9 +55,9 @@ export default function CadastrarImovel() {
         data_tokenizacao: ""
       });
       setDate(null);
-    } catch (err: unknown) {
+    } catch (err) {
       if (err && typeof err === 'object' && 'message' in err) {
-        setError((err as { message: string }).message);
+        setError((err).message);
       } else {
         setError('Erro ao cadastrar imóvel');
       }

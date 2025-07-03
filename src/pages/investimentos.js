@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import api from '@/services/api';
+import { getInvestments } from '../services/investments/getInvestments';
 
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -36,10 +36,16 @@ export default function InvestimentosPage() {
       setLoading(false);
       return;
     }
-    api.get(`/investments/${userId}`)
-      .then((res) => setTransacoes(Array.isArray(res.data) ? res.data : [res.data]))
-      .catch(() => setError('Erro ao carregar transações.'))
-      .finally(() => setLoading(false));
+    try {
+      setLoading(true);
+      const response = getInvestments(userId);
+      setTransacoes(Array.isArray(response) ? response : [response]);
+    } catch (err) {
+      // console.error('Erro ao buscar investimentos:', err);
+      setError(err?.response?.data?.message || err.message || 'Erro ao buscar investimentos');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // Dados para o gráfico (evolução por data)

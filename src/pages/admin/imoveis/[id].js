@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import api from '@/services/api';
 import Link from 'next/link';
 import { FaCoins, FaUsers, FaCubes, FaCheckCircle, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
+import { getPropertyFinance } from '../../../services/propertyFinance/getPropertyFinance';
 
 export default function ImovelAdminFinanceiro() {
   const router = useRouter();
@@ -14,11 +15,19 @@ export default function ImovelAdminFinanceiro() {
 
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
-    api.get(`/imoveis/${id}/financeiro`)
-      .then(res => setDados(res.data))
-      .catch(() => setError('Erro ao carregar dados financeiros do imóvel.'))
-      .finally(() => setLoading(false));
+    try {
+      setLoading(true);
+      const response = getPropertyFinance(id);
+      setDados(response);
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        setError('Sua sessão expirou ou você não tem permissão para acessar os dados financeiros deste imóvel. Faça login novamente se necessário.');
+      } else {
+        setError('Erro ao carregar dados financeiros do imóvel.');
+      }
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
 
   if (loading) return <div className="p-4">Carregando...</div>;

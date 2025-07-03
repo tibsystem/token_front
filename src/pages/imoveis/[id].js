@@ -1,6 +1,9 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import api from '@/services/api';
+import { getOnePropertie } from '../../services/properties/getOnePropertie';
+import { getPlatformSettings } from '../../services/platformSettings/getPlatformSettings';
+import { postInvestmentsPurchase } from '../../services/investments/postInvestmentsPurchase';
 
 export default function ImovelPage() {
   const router = useRouter();
@@ -15,32 +18,33 @@ export default function ImovelPage() {
 
   useEffect(() => {
     if (id) {
-      api.get(`/properties/${id}`)
-        .then((res) => {
-          setProperty(res.data);
-          if (res.data.valor_total && res.data.qtd_tokens_original) {
-            setValorUnitario((Number(res.data.valor_total) / Number(res.data.qtd_tokens_original)).toFixed(2));
-          } else {
-            setValorUnitario('');
-          }
-        })
-        .catch((err) => {
-          if (err?.response?.status === 401) {
-            setError('Sua sessão expirou ou você não tem permissão para acessar este imóvel. Faça login novamente se necessário.');
-          } else {
-            setError('Erro ao carregar imóvel.');
-          }
-        })
-        .finally(() => setLoading(false));
-    }
-
-    api.get('/platform-settings')
-      .then(res => {
-        if (res.data && res.data.taxa_compra_token) {
-          setTaxaCompra(Number(res.data.taxa_compra_token));
+      try {
+        setLoading(true);
+        const response = getOnePropertie(id);
+        setProperty(response);
+        if (response.valor_total && response.qtd_tokens_original) {
+          setValorUnitario((Number(response.valor_total) / Number(response.qtd_tokens_original)). toFixed(2));
+        } else {
+          setValorUnitario('');
         }
-      })
-      .catch(() => setTaxaCompra(0));
+      } catch (err) {
+        if (err?.response?.status === 401) {
+          setError('Sua sessão expirou ou você não tem permissão para acessar este imóvel. Faça login novamente se necessário.');
+        } else {
+          setError('Erro ao carregar imóvel.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    try {
+      const response = getPlatformSettings();
+      if (response && response.taxa_compra_token) {
+        setTaxaCompra(Number(response.taxa_compra_token));
+      }
+    } catch (err) {
+      setTaxaCompra(0);
+    }
   }, [id]);
 
   const total = Number(amount) * (Number(valorUnitario) || 0);
@@ -105,7 +109,7 @@ export default function ImovelPage() {
         origem: 'plataforma',
         status: 'ativo',
       };
-      await api.post('/investments/purchase', payload);
+      await postInvestmentsPurchase(payload);
       alert('Compra realizada!');
     } catch (error) {
       console.error(error);

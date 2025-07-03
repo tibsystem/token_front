@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../services/api';
 import Link from 'next/link';
+import { getInvestors } from '../../services/investors/getInvestors';
 
 const Investidores = () => {
   const [investidores, setInvestidores] = useState([]);
@@ -10,8 +10,8 @@ const Investidores = () => {
   useEffect(() => {
     const fetchInvestidores = async () => {
       try {
-        const response = await api.get('/investors');
-        setInvestidores(response.data);
+        const response = await getInvestors();
+        setInvestidores(response);
       } catch (err) {
         console.error('Erro ao buscar investidores:', err, err?.response);
         setError('Erro ao carregar investidores.');

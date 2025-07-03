@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import api from '@/services/api';
 import { Card, CardHeader, CardBody } from '@/components/card/card';
+import { getWallet } from '../services/wallet/getWallet';
+import { getProperties } from '../services/properties/getProperties';
 
 function getUserIdFromToken() {
   if (typeof window !== 'undefined') {
@@ -26,27 +27,29 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        if (typeof window !== 'undefined') {
-          const token = localStorage.getItem('token');
-          console.log('Token salvo no localStorage:', token);
-          const userId = getUserIdFromToken();
-          console.log('ID do usuário logado:', userId);
-        }
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('token');
+        console.log('Token salvo no localStorage:', token);
         const userId = getUserIdFromToken();
-        if (!userId) throw new Error('ID do usuário não encontrado no token. Faça login novamente.');
-        const [walletRes, propRes] = await Promise.all([
-          api.get(`/wallet/${userId}`),
-          api.get('/properties'),
-        ]);
-        setWallet(walletRes.data);
-        setProperties(propRes.data);
-      } catch (err) {
-        console.error('Erro ao buscar dados do dashboard:', err);
-        setError(err?.response?.data?.message || err.message || 'Erro desconhecido');
-      } finally {
-        setLoading(false);
+        console.log('ID do usuário logado:', userId);
       }
+      const userId = getUserIdFromToken();
+      if (!userId) throw new Error('ID do usuário não encontrado no token. Faça login novamente.');
+      try {
+        const responseWallet = await getWallet(userId);
+        setWallet(responseWallet);
+      } catch (err) {
+        console.error('Erro ao buscar carteira:', err);
+        setError(err?.response?.data?.message || err.message || 'Erro ao buscar carteira');
+      }
+      try {
+        const responseProperties = await getProperties();
+        setProperties(responseProperties);
+      } catch (err) {
+        console.error('Erro ao buscar propriedades:', err);
+        setError(err?.response?.data?.message || err.message || 'Erro ao buscar propriedades');
+      }
+      setLoading(false);
     };
     fetchData();
   }, []);
@@ -90,8 +93,8 @@ export default function DashboardPage() {
                 <p>
                   {Array.isArray(wallet.saldo_tokenizado) && wallet.saldo_tokenizado.length > 0
                     ? wallet.saldo_tokenizado.map((item, idx) => (
-                        <span key={idx}>R$ {Number(item).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}<br/></span>
-                      ))
+                      <span key={idx}>R$ {Number(item).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}<br /></span>
+                    ))
                     : 'R$ 0,00'}
                 </p>
                 <div className="text-gray-500">Tokens em carteira</div>
@@ -105,10 +108,10 @@ export default function DashboardPage() {
         <Link href="/imoveis" className="text-blue-600 hover:underline font-medium">Ver todos</Link>
       </div>
       <ul className="row list-unstyled g-4">
-        {properties.filter(imovel => imovel.status !== 'vendido').length === 0 && !loading && (
+        {properties?.filter(imovel => imovel.status !== 'vendido').length === 0 && !loading && (
           <li className="col-12 text-gray-500">Nenhum imóvel disponível.</li>
         )}
-        {properties.filter(imovel => imovel.status !== 'vendido').slice(0, 6).map((imovel) => (
+        {properties?.filter(imovel => imovel.status !== 'vendido').slice(0, 6).map((imovel) => (
           <li key={imovel.id} className="col-lg-4 col-md-6">
             <div className="card h-100 shadow border-0">
               <img

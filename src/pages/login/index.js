@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
 import Link from 'next/link';
 import api from '@/services/api';
+import { postInvestorLogin } from '../../services/login/postInvestorLogin';
 
 export default function LoginV1() {
         const { updateSettings } = useAppSettings();
@@ -34,13 +35,10 @@ export default function LoginV1() {
   async function handleSubmit(event) {
     event.preventDefault();
     try {
-      const { data } = await api.post('/auth/investor-login', {
-        email,
-        senha,
-      });
-      console.log('Resposta do backend no login:', data);
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+      const response = await postInvestorLogin({ email, senha });
+      console.log('Resposta do backend no login:', response);
+      if (response.token) {
+        localStorage.setItem('token', response.token);
         router.push('/dashboard');
       }
     } catch (err) {
@@ -108,7 +106,7 @@ export default function LoginV1() {
               <button type="submit" className="btn btn-theme d-block h-45px w-100 btn-lg fs-14px">Sign me in</button>
             </div>
             <div className="mb-40px pb-40px text-body">
-              Not a member yet? Click <Link href="/user/register-v3" className="text-primary">here</Link> to register.
+              Not a member yet? Click <Link href="/register" className="text-primary">here</Link> to register.
             </div>
             <hr className="bg-gray-600 opacity-2" />
             <div className="text-gray-600 text-center text-gray-500-darker mb-0">

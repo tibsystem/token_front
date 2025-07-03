@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '@/components/sidebar/sidebar';
-import api from '@/services/api';
 import dynamic from 'next/dynamic';
+import { getInvestors } from '../../services/investors/getInvestors';
+import { getFinancialTransactions } from '../../services/financialTransactions/getFinancialTransactions';
+import { getProperties } from '../../services/properties/getProperties';
 
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -17,25 +19,23 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [invRes, imvRes, transRes] = await Promise.all([
-          api.get('/investors'),
-          api.get('/properties'),
-          api.get('/transacoes-financeiras'),
-        ]);
-        setInvestidores(Array.isArray(invRes.data) ? invRes.data.length : 0);
+        const invRes = await getInvestors();
+        const transRes = await getFinancialTransactions();
+        const imvRes = await getProperties();
+        setInvestidores(Array.isArray(invRes) ? invRes.length : 0);
         // Debug: log do retorno de imoveis
-        console.log('Retorno de /properties:', imvRes.data);
-        setImoveisArray(Array.isArray(imvRes.data) ? imvRes.data : []);
-        setImoveis(Array.isArray(imvRes.data) ? imvRes.data.length : 0);
+        // console.log('Retorno de /properties:', imvRes.data);
+        setImoveisArray(Array.isArray(imvRes) ? imvRes : []);
+        setImoveis(Array.isArray(imvRes) ? imvRes.length : 0);
         // Valor negociado total (usando campo 'valor' e 'data_transacao' do novo endpoint)
-        const total = Array.isArray(transRes.data)
-          ? transRes.data.reduce((sum, t) => sum + (Number(t.valor) || 0), 0)
+        const total = Array.isArray(transRes)
+          ? transRes.reduce((sum, t) => sum + (Number(t.valor) || 0), 0)
           : 0;
         setValorNegociado(total);
         // Agrupamento por dia para o gráfico usando 'data_transacao'
         const porDia = {};
-        if (Array.isArray(transRes.data)) {
-          transRes.data.forEach(t => {
+        if (Array.isArray(transRes)) {
+          transRes.forEach(t => {
             const dia = t.data_transacao?.slice(0, 10) || 'Desconhecido';
             porDia[dia] = (porDia[dia] || 0) + (Number(t.valor) || 0);
           });

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import api from '@/services/api';
+import { getProperties } from '../../services/properties/getProperties';
 
 export default function ImoveisPage() {
   const [imoveis, setImoveis] = useState([]);
@@ -8,10 +8,15 @@ export default function ImoveisPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/properties')
-      .then((res) => setImoveis(res.data))
-      .catch(() => setError('Erro ao carregar imóveis.'))
-      .finally(() => setLoading(false));
+    try {
+      setLoading(true);
+      const response = getProperties();
+      setImoveis(Array.isArray(response) ? response : []);
+      setLoading(false);
+    } catch (err) {
+      setError('Erro ao carregar imóveis.');
+      setLoading(false);
+    }
   }, []);
 
   return (

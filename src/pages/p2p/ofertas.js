@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '@/services/api';
+import { getOnePropertie } from '../../services/properties/getOnePropertie';
+import { getP2pListings } from '../../services/p2p/getP2pListings';
+import { postP2pTransactions } from '../../services/p2p/postP2pTransactions';
 
 export default function OfertasP2PPage() {
   const [ofertas, setOfertas] = useState([]);
@@ -24,25 +27,30 @@ export default function OfertasP2PPage() {
   }
 
   useEffect(() => {
-    const uid = getUserIdFromToken();
-    setUserId(uid);
-    api.get('/p2p/listings')
-      .then(async (res) => {
+    const fetchData = async () => {
+      const uid = getUserIdFromToken();
+      setUserId(uid);
+      try {
+        const res = getP2pListings();
         const ofertasList = res.data?.data || [];
         // Busca detalhes dos imóveis para cada oferta
         const imovelIds = [...new Set(ofertasList.map(o => o.id_imovel))];
         const imoveisDetalhes = {};
         await Promise.all(imovelIds.map(async (id) => {
           try {
-            const res = await api.get(`/properties/${id}`);
-            imoveisDetalhes[id] = res.data;
-          } catch {}
+            const res = getOnePropertie(id);
+            imoveisDetalhes[id] = res;
+          } catch { }
         }));
         setImoveis(imoveisDetalhes);
         setOfertas(ofertasList);
-      })
-      .catch(() => setError('Erro ao carregar ofertas.'))
-      .finally(() => setLoading(false));
+      } catch (err) {
+        setError('Erro ao obter ID do usuário.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
   }, []);
 
   const handleBuyTokens = async (listing_id) => {
@@ -51,7 +59,7 @@ export default function OfertasP2PPage() {
         alert('Você precisa estar logado para comprar tokens.');
         return;
       }
-      await api.post('/p2p/transactions', { listing_id, comprador_id: userId });
+      await postP2pTransactions({ listing_id, comprador_id: userId });
       alert('Compra realizada com sucesso!');
     } catch (err) {
       console.error(err);

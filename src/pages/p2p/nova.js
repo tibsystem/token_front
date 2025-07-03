@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '@/services/api';
+import { getInvestments } from '../../services/investments/getInvestments';
+import { getOnePropertie } from '../../services/properties/getOnePropertie';
+import { postP2pListings } from '../../services/p2p/postP2pListings';
 
 export default function NovaOfertaPage() {
   const [imoveis, setImoveis] = useState([]);
@@ -37,14 +40,14 @@ export default function NovaOfertaPage() {
       }
       try {
         // Busca os investimentos do usuário
-        const res = await api.get(`/investments/${userId}`);
-        const investimentos = Array.isArray(res.data) ? res.data : [res.data];
+        const response = getInvestments(userId);
+        const investimentos = Array.isArray(response) ? response : [response];
         // Busca detalhes dos imóveis
         const imoveisDetalhados = await Promise.all(
           investimentos.map(async (inv) => {
-            const propRes = await api.get(`/properties/${inv.id_imovel}`);
+            const response = getOnePropertie(inv.id_imovel);
             return {
-              ...propRes.data,
+              ...response,
               qtd_tokens: inv.qtd_tokens,
               valor_unitario: inv.valor_unitario,
               investimento_id: inv.id
@@ -92,7 +95,7 @@ export default function NovaOfertaPage() {
         qtd_tokens: Number(qtdVenda),
         valor_unitario: Number(precoVenda)
       };
-      await api.post('/p2p/listings', payload);
+      await postP2pListings(payload);
       fecharModal();
       alert('Oferta criada com sucesso!');
     } catch (error) {

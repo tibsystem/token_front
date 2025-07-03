@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/services/api';
 import Link from 'next/link';
+import { getFinancialTransactions } from '../services/financialTransactions/getFinancialTransactions';
 
 function getUserIdFromToken() {
   if (typeof window !== 'undefined') {
@@ -51,10 +52,15 @@ export default function TransacoesFinanceirasPage() {
       setLoading(false);
       return;
     }
-    api.get(`/transacoes-financeiras/`)
-      .then((res) => setTransacoes(Array.isArray(res.data) ? res.data : []))
-      .catch(() => setError('Erro ao carregar transações financeiras.'))
-      .finally(() => setLoading(false));
+    try {
+      setLoading(true);
+      const response = getFinancialTransactions();
+      setTransacoes(Array.isArray(response) ? response : []);
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'Erro ao buscar transações financeiras');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // Agrupa por data

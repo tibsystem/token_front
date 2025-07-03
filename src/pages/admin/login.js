@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
-import api from '@/services/api';
+import { postLogin } from '../../services/login/postLogin';
 
 export default function AdminLogin() {
   const { updateSettings } = useAppSettings();
@@ -44,12 +44,10 @@ export default function AdminLogin() {
     event.preventDefault();
     setError('');
     try {
-      const { data } = await api.post('/auth/login', {
-        email,
-        password,
-      });
-      if (data.token) {
-        localStorage.setItem('admin_token', data.token);
+      const response = await postLogin({email, password});
+      console.log('Resposta do backend no login:', response);
+      if (response.token) {
+        localStorage.setItem('admin_token', response.token);
         window.location.href = '/dashboard';
       } else {
         setError('Login inválido');
