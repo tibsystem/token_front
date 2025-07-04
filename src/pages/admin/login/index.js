@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
-import { postLogin } from '../../services/login/postLogin';
+import { postLogin } from '@/services/login/postLogin';
+import { toast } from 'react-toastify';
 
 export default function AdminLogin() {
   const { updateSettings } = useAppSettings();
@@ -13,7 +16,6 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Redireciona se já estiver autenticado ao montar
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const adminToken = localStorage.getItem('admin_token');
@@ -48,13 +50,17 @@ export default function AdminLogin() {
       console.log('Resposta do backend no login:', response);
       if (response.token) {
         localStorage.setItem('admin_token', response.token);
-        window.location.href = '/dashboard';
+        localStorage.setItem('profileData', JSON.stringify(response.user));
+        console.log(response)
+        toast.success('Login realizado com sucesso')
+        window.location.href = 'admin/dashboard';
       } else {
-        setError('Login inválido');
+        toast.error('Login inválido');
       }
     } catch (err) {
       console.error(err);
       setError('Falha no login');
+      toast.error('Falha no login');
     }
   }
 
@@ -65,7 +71,7 @@ export default function AdminLogin() {
       <div className="news-feed">
         <div className="news-image" style={{backgroundImage: 'url(/assets/img/login-bg/login-bg-11.jpg)'}}></div>
         <div className="news-caption">
-          <h4 className="caption-title"><b>Color</b> Admin App</h4>
+          <h4 className="caption-title"><b>IB3</b> Capital</h4>
           <p>Área exclusiva para administradores da plataforma.</p>
         </div>
       </div>
@@ -73,18 +79,16 @@ export default function AdminLogin() {
         <div className="login-header mb-30px">
           <div className="brand">
             <div className="d-flex align-items-center">
-              <span className="logo"></span>
-              <b>Color</b> Admin
+              <img src="/assets/img/logo-dark.webp" alt="IB3 Capital" className="logo-img" style={{height: '40px', width: 'auto', marginRight: '12px'}} />
             </div>
             <small>Administração da Plataforma</small>
           </div>
           <div className="icon">
-            <i className="fa fa-user-shield"></i>
+            <i className="fa fa-lock"></i>
           </div>
         </div>
         <div className="login-content">
           <form onSubmit={handleSubmit} className="fs-13px">
-            {error && <div className="text-danger mb-2">{error}</div>}
             <div className="form-floating mb-15px">
               <input
                 type="email"
@@ -110,11 +114,11 @@ export default function AdminLogin() {
               <label htmlFor="adminPassword" className="d-flex align-items-center fs-13px text-gray-600">Senha</label>
             </div>
             <div className="mb-15px">
-              <button type="submit" className="btn btn-theme d-block h-45px w-100 btn-lg fs-14px">Entrar</button>
+              <button type="submit" className="btn btn-dark d-block h-45px w-100 btn-lg fs-14px">Entrar</button>
             </div>
             <hr className="bg-gray-600 opacity-2" />
             <div className="text-gray-600 text-center text-gray-500-darker mb-0">
-              &copy; Color Admin Todos os direitos reservados 2025
+              &copy;IB3 Capital  Todos os direitos reservados 2025
             </div>
           </form>
         </div>

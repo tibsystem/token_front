@@ -1,6 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getInvestors } from '../../services/investors/getInvestors';
+import { getInvestors } from '@/services/investors/getInvestors';
+import Breadcrumb from '../../../components/breadcrumb/breadcrumb';
 
 const Investidores = () => {
   const [investidores, setInvestidores] = useState([]);
@@ -26,8 +28,16 @@ const Investidores = () => {
   if (error) return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>;
 
   return (
+
     <div className="p-4 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-theme">Investidores</h1>
+      <Breadcrumb 
+      items={[
+        { label: 'Administração', path: '/admin/dashboard' },
+        { label: 'Investidores', path: '/admin/investors' }
+      ]}
+      
+      className="mb-4" />
+      <h1 className="text-3xl font-bold mb-8 text-dark">Investidores</h1>
       <div className="row g-4">
         {investidores.length === 0 && (
           <div className="col-12 text-gray-500">Nenhum investidor cadastrado.</div>
@@ -57,8 +67,7 @@ const Investidores = () => {
                   <i className="fa fa-phone text-green-600 me-2"></i>
                   <span>{inv.telefone || 'Não informado'}</span>
                 </div>
-                {/* Adicione outros campos resumidos se necessário */}
-                <Link href={`/investidores/${inv.id}`} className="btn btn-primary mt-auto w-100">Ver Mais</Link>
+                <Link href={`/admin/investors/${inv.id}`} className="btn btn-primary mt-auto w-100">Ver Mais</Link>
               </div>
             </div>
           </div>

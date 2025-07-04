@@ -1,10 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import UseProfile from "@/hooks/UseProfile";
 
 export default function DropdownProfile() {
+
+const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile} = UseProfile ();
+
+
+
+
   return (
     <div className="navbar-item navbar-user dropdown">
       <a
@@ -13,13 +21,13 @@ export default function DropdownProfile() {
         data-bs-toggle="dropdown"
       >
         <Image
-          src="/assets/img/user/user-13.jpg"
+          src="/assets/img/user/profile-user.jpeg"
           alt=""
           width="30"
           height="30"
         />
         <span>
-          <span className="d-none d-md-inline fw-bold">Adam Schwartz</span>
+          <span className="d-none d-md-inline fw-bold">{getUserName()}</span>
           <b className="caret"></b>
         </span>
       </a>
@@ -42,9 +50,11 @@ export default function DropdownProfile() {
             if (typeof window !== "undefined") {
               if (localStorage.getItem("token")) {
                 localStorage.removeItem("token");
+                localStorage.removeItem("profileData");
                 window.location.href = "/login";
               } else if (localStorage.getItem("admin_token")) {
                 localStorage.removeItem("admin_token");
+                localStorage.removeItem("profileData");
                 window.location.href = "/admin/login";
               }
             }

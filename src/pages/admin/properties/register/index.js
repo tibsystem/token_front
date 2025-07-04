@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -11,9 +12,17 @@ import {
   FaMicrochip,
   FaCalendarAlt,
   FaCheckCircle,
+  FaImage,
+  FaTimes,
 } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import { ptBR } from "date-fns/locale";
+import Image from "next/image";
+import { toast } from "react-toastify";
+registerLocale("pt-BR", ptBR);
+setDefaultLocale("pt-BR");
 
 export default function CadastrarImovel() {
   const [form, setForm] = useState({
@@ -24,23 +33,113 @@ export default function CadastrarImovel() {
     qtd_tokens: "",
     modelo_smart_id: "",
     status: "ativo",
-    data_tokenizacao: "",
+    data_tokenizacao: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD para o backend
   });
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+  const handleNumberFormat = (e) => {
+    const value = e.target.value.replace(/[^0-9.,]/g, "").replace(/,/g, '.');
+    setForm({ ...form, [e.target.name]: value });
+  }
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length + selectedImages.length > 5) {
+      toast.error("Máximo 5 imagens permitidas");
+      return;
+    }
+  }
+  const formatCurrency = (value) => {
+    const numericValue = value.replace(/\D/g, '');
+    
+    if (!numericValue) return '';
+    
+    const numberValue = parseInt(numericValue) / 100;
+    
+    return numberValue.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    });
+  };
+
+  const handleCurrencyChange = (e) => {
+    const value = e.target.value;
+    const formattedValue = formatCurrency(value);
+    
+    setForm({ 
+      ...form, 
+      valor_total: formattedValue 
+    });
+  };
+
+  const getCurrencyValue = (formattedValue) => {
+    if (!formattedValue) return 0;
+    
+    const numericString = formattedValue
+      .replace(/[R$\s]/g, '') 
+      .replace(/\./g, '')    
+      .replace(',', '.');
+    
+    return parseFloat(numericString) || 0;
+  };
+
 
   const handleDateChange = (date) => {
     setDate(date);
     setForm({
       ...form,
-      data_tokenizacao: date ? date.toISOString().slice(0, 16) : "",
+      data_tokenizacao: date ? date.toISOString().slice(0, 10) : "", // Formato YYYY-MM-DD para o backend
     });
+  };
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (files.length + selectedImages.length > 5) {
+      toast.error("Máximo 5 imagens permitidas");
+      return;
+    }
+
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const invalidFiles = files.filter(file => !validTypes.includes(file.type));
+    
+    if (invalidFiles.length > 0) {
+      toast.error("Apenas arquivos JPEG, PNG e WEBP são permitidos");
+      return;
+    }
+
+    const oversizedFiles = files.filter(file => file.size > 5 * 1024 * 1024);
+    
+    if (oversizedFiles.length > 0) {
+      toast.error("Cada imagem deve ter no máximo 5MB");
+      return;
+    }
+
+    setSelectedImages(prev => [...prev, ...files]);
+
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreviews(prev => [...prev, {
+          file: file,
+          url: e.target.result,
+          name: file.name
+        }]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index) => {
+    setSelectedImages(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -48,14 +147,32 @@ export default function CadastrarImovel() {
     setLoading(true);
     setError("");
     setSuccess(false);
+    
     try {
-      const data = {
-        ...form,
-        valor_total: parseFloat(form.valor_total),
-        qtd_tokens: parseInt(form.qtd_tokens),
-      };
-      await postProperties(data);
+      const formData = new FormData();
+      
+      const valorTotal = getCurrencyValue(form.valor_total);
+      console.log('Valor formatado:', form.valor_total);
+      console.log('Valor numérico:', valorTotal);
+      
+      formData.append('titulo', form.titulo);
+      formData.append('descricao', form.descricao);
+      formData.append('localizacao', form.localizacao);
+      formData.append('valor_total', valorTotal);
+      formData.append('qtd_tokens', parseInt(form.qtd_tokens));
+      formData.append('modelo_smart_id', form.modelo_smart_id);
+      formData.append('status', form.status);
+      formData.append('data_tokenizacao', form.data_tokenizacao);
+      
+      selectedImages.forEach((image, index) => {
+        formData.append(`imagens[${index}]`, image);
+      });
+
+      await postProperties(formData);
+      
       setSuccess(true);
+      toast.success("Imóvel cadastrado com sucesso!");
+      
       setForm({
         titulo: "",
         descricao: "",
@@ -64,14 +181,19 @@ export default function CadastrarImovel() {
         qtd_tokens: "",
         modelo_smart_id: "",
         status: "ativo",
-        data_tokenizacao: "",
+        data_tokenizacao: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD para o backend
       });
-      setDate(null);
+      setDate(new Date());
+      setSelectedImages([]);
+      setImagePreviews([]);
+      
     } catch (err) {
       if (err && typeof err === "object" && "message" in err) {
         setError(err.message);
+        toast.error(`Erro: ${err.message}`);
       } else {
         setError("Erro ao cadastrar imóvel");
+        toast.error("Erro ao cadastrar imóvel");
       }
     } finally {
       setLoading(false);
@@ -130,13 +252,13 @@ export default function CadastrarImovel() {
 
             <div className="form-floating mb-4">
               <input
-                type="number"
+                type="text"
                 className="form-control"
                 name="valor_total"
                 id="valor_total"
                 placeholder="Valor Total"
                 value={form.valor_total}
-                onChange={handleChange}
+                onChange={handleCurrencyChange}
                 min={0}
                 step={0.01}
                 required
@@ -195,21 +317,80 @@ export default function CadastrarImovel() {
               <DatePicker
                 selected={date}
                 onChange={handleDateChange}
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                dateFormat="yyyy-MM-dd HH:mm"
-                placeholderText="Selecione a data e hora"
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Selecione a data"
                 className="form-control py-2 px-3 border rounded shadow-sm"
                 calendarClassName="shadow rounded border"
+                locale="pt-BR"
                 required
               />
             </div>
+
+            <div className="mb-4">
+              <label className="form-label d-flex align-items-center gap-2">
+                <FaImage /> Imagens do Imóvel
+              </label>
+              <div className="border border-dashed border-2 border-primary rounded-3 p-4 text-center">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="d-none"
+                  id="imageUpload"
+                />
+                <label 
+                  htmlFor="imageUpload" 
+                  className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center gap-2 w-100"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <FaImage />
+                  Selecionar Imagens (Máx. 5)
+                </label>
+                <small className="text-muted d-block mt-2">
+                  Formatos aceitos: JPEG, PNG, WEBP (máx. 5MB cada)
+                </small>
+              </div>
+            </div>
+
+            {/* Preview das Imagens */}
+            {imagePreviews.length > 0 && (
+              <div className="mb-4">
+                <h6 className="mb-3">Preview das Imagens:</h6>
+                <div className="row g-3">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="col-6 col-md-4 col-lg-3">
+                      <div className="position-relative">
+                        <Image
+                          src={preview.url}
+                          alt={`Preview ${index + 1}`}
+                          className="img-fluid rounded-3 shadow-sm"
+                          style={{ height: '120px', width: '100%', objectFit: 'cover' }}
+                          width={200}
+                          height={120}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle d-flex align-items-center justify-content-center"
+                          style={{ width: '30px', height: '30px' }}
+                          onClick={() => removeImage(index)}
+                        >
+                          <FaTimes size={12} />
+                        </button>
+                        <div className="mt-1">
+                          <small className="text-muted text-truncate d-block">
+                            {preview.name}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="col-12">
-            {error && <div className="alert alert-danger animate__animated animate__shakeX">{error}</div>}
-            {success && <div className="alert alert-success animate__animated animate__fadeIn">Imóvel cadastrado com sucesso!</div>}
             <button
               type="submit"
               className="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2"

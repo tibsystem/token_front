@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import Link from 'next/link';
@@ -7,9 +9,12 @@ import DropdownProfile from './dropdown/profile';
 import SearchForm from './search/form';
 import DropdownMegaMenu from './dropdown/mega';
 import { useAppSettings } from '@/config/app-settings';
+import UseProfile from '@/hooks/UseProfile';
 
 export default function Header() {
   const { settings, updateSettings } = useAppSettings();
+
+const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile} = UseProfile ();
   
   const toggleAppSidebarEnd = (e: React.MouseEvent) => {
   	e.preventDefault();
@@ -50,7 +55,8 @@ export default function Header() {
           </button>
         )}
         <Link href="/" className="navbar-brand">
-          <span className="navbar-logo"></span> <b>Color</b> Admin
+          <img src="../../assets/img/logo-dark.webp" alt="Logo" className="logo" />  
+            
         </Link>
 
         {settings.appHeaderMegaMenu && (

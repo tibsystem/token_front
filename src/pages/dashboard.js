@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardBody } from '@/components/card/card';

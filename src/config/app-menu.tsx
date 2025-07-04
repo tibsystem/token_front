@@ -1,8 +1,8 @@
 const Menu = [
 	{ is_header: true, title: 'Navigation' },
 	// Admin
-	{ path: '/admin/dashboard', icon: 'fa fa-sitemap', title: 'Dashboard', role: 'admin' },
-	{ path: '/admin/investidores', icon: 'fa fa-users', title: 'Investidores', role: 'admin' },
+	{ path: '/admin/dashboard', icon: 'fa fa-chart-pie', title: 'Dashboard', role: 'admin' },
+	{ path: '/admin/investors', icon: 'fa fa-users', title: 'Investidores', role: 'admin' },
 	{ path: '/admin/properties', icon: 'fa fa-building', title: 'Imóveis', role: 'admin',
 		children: [
 			{ path: '/admin/properties', title: 'Todos os Imóveis', role: 'admin' },

@@ -10,6 +10,10 @@ import '@/styles/nextjs.scss';
 import { AppSettingsProvider } from '@/config/app-settings';
 import { Layout } from '@/app/layout';
 import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
@@ -33,8 +37,22 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
+  
     <AppSettingsProvider>
       <Layout>
+          <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
+
         <Component {...pageProps} />
       </Layout>
     </AppSettingsProvider>

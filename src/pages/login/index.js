@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import { useEffect, FormEvent, useState } from 'react';
@@ -39,6 +40,7 @@ export default function LoginV1() {
       console.log('Resposta do backend no login:', response);
       if (response.token) {
         localStorage.setItem('token', response.token);
+        localStorage.setItem('profileData', JSON.stringify(response.profile));
         router.push('/dashboard');
       }
     } catch (err) {
@@ -110,7 +112,7 @@ export default function LoginV1() {
             </div>
             <hr className="bg-gray-600 opacity-2" />
             <div className="text-gray-600 text-center text-gray-500-darker mb-0">
-              &copy; Color Admin All Right Reserved 2025
+              &copy; IB3 capital All Right Reserved 2025
             </div>
           </form>
         </div>

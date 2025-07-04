@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 
 // Define the structure of the settings
 interface AppSettings {
@@ -80,9 +80,9 @@ const AppSettingsContext = createContext<AppSettingsContextValue | undefined>(
 export const AppSettingsProvider = ({ children }: { children: ReactNode }) => {
 	const [settings, setSettings] = useState(defaultSettings);
 	
-	const updateSettings = (newSettings: Partial<AppSettings>) => {
+	const updateSettings = useCallback((newSettings: Partial<AppSettings>) => {
 		setSettings((prevSettings) => ({ ...prevSettings, ...newSettings }));
-	};
+	}, []);
 	
 	return (
 		<AppSettingsContext.Provider value={{ settings, updateSettings }}>

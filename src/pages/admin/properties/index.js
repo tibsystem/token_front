@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getProperties } from '../../../services/properties/getProperties';
@@ -27,7 +29,7 @@ export default function ImoveisAdminPage() {
     <div className="px-4 py-5">
       <div className="row mb-4">
         <div className="col">
-          <h1 className="text-3xl font-bold mb-8 text-theme">Investidores</h1>
+          <h1 className="text-3xl font-bold mb-8 text-dark">Imoveis</h1>
           <p className="text-muted fs-5">Investimentos selecionados de acordo com o seu perfil</p>
         </div>
       </div>
