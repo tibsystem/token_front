@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getInvestors } from '@/services/investors/getInvestors';
 import Breadcrumb from '../../../components/breadcrumb/breadcrumb';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 const Investidores = () => {
   const [investidores, setInvestidores] = useState([]);
@@ -28,7 +29,7 @@ const Investidores = () => {
   if (error) return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>;
 
   return (
-
+<ProtectedRoute>
     <div className="p-4 max-w-6xl">
       <Breadcrumb 
       items={[
@@ -73,6 +74,7 @@ const Investidores = () => {
         ))}
       </div>
     </div>
+</ProtectedRoute>
   );
 };
 

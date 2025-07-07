@@ -17,7 +17,6 @@ export default function Header() {
   const { settings, updateSettings } = useAppSettings();
   const { isDarkMode } = useDarkMode();
 
-const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile} = UseProfile ();
   
   const toggleAppSidebarEnd = (e: React.MouseEvent) => {
   	e.preventDefault();
@@ -46,6 +45,7 @@ const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfi
 			appTopMenuMobileToggled: true
 		});
   };
+  
   
   return (
     <div id="header" className="app-header" data-bs-theme={settings.appHeaderInverse ? 'dark' : ''}>

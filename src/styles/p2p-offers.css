@@ -1,0 +1,126 @@
+/* Estilos personalizados para a tela de ofertas P2P */
+
+.hover-shadow-lg {
+  transition: all 0.3s ease;
+}
+
+.hover-shadow-lg:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.bg-gradient-dark {
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.bg-light-primary {
+  background-color: rgba(13, 110, 253, 0.1);
+}
+
+.bg-light-success {
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.bg-light-info {
+  background-color: rgba(13, 202, 240, 0.1);
+}
+
+.object-fit-cover {
+  object-fit: cover;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+}
+
+.border-dashed:hover {
+  border-style: solid !important;
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.border-dashed .fa-plus-circle {
+  transition: all 0.3s ease;
+}
+
+.border-dashed:hover .fa-plus-circle {
+  transform: scale(1.1);
+  color: #0d6efd !important;
+}
+
+/* Animações para os cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsividade aprimorada */
+@media (max-width: 768px) {
+  .d-flex.gap-3 {
+    flex-direction: column;
+    gap: 1rem !important;
+  }
+  
+  .d-flex.gap-3 .card {
+    margin-bottom: 0;
+  }
+}
+
+/* Estados de loading melhorados */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Melhorias nos badges */
+.badge {
+  font-size: 0.75em;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Hover effects para botões */
+.btn {
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Card headers personalizados */
+.card-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+/* Melhorias no layout de estatísticas */
+.card.border-0.bg-light-primary,
+.card.border-0.bg-light-success,
+.card.border-0.bg-light-info {
+  border-radius: 12px;
+  min-width: 120px;
+}
+
+/* Estados vazios mais atrativos */
+.text-center.py-5 i {
+  opacity: 0.5;
+}
+
+.text-center.py-5 h6 {
+  color: #6c757d;
+  font-weight: 600;
+}

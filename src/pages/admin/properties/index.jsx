@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getProperties } from '../../../services/properties/getProperties';
 import { FaMapMarkerAlt, FaCoins, FaCubes, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function ImoveisAdminPage() {
   const [imoveis, setImoveis] = useState([]);
@@ -28,6 +29,7 @@ export default function ImoveisAdminPage() {
 
   return (
     <>
+    <ProtectedRoute>
       <Breadcrumb items={[
               { label: 'Imóveis', path: '/admin/properties' },
             ]} />
@@ -87,10 +89,17 @@ export default function ImoveisAdminPage() {
                   <div className="d-flex align-items-center"><FaCoins className="me-2 text-warning" /> Valor Total: R$ {Number(imovel.valor_total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                   <div className="d-flex align-items-center"><FaCubes className="me-2 text-secondary" /> Tokens: {imovel.qtd_tokens}</div>
                   <div className="d-flex align-items-center"><FaInfoCircle className="me-2 text-info" /> Status: <span className={`badge rounded-pill ${imovel.status === 'ativo' ? 'bg-success-subtle text-success' : 'bg-secondary text-dark'}`}>{imovel.status}</span></div>
-                  <div className="d-flex align-items-center"><FaCalendarAlt className="me-2 text-danger" /> Data Tokenização: {imovel.data_tokenizacao}</div>
+                  <div className="d-flex align-items-center"><FaCalendarAlt className="me-2 text-danger" /> Data Tokenização: {new Date(imovel.data_tokenizacao).toLocaleString('pt-BR', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                  }).replace(',', '')}</div>
                 </div>
 
-                <Link href={`./properties/${imovel.id}`} className="btn btn-outline-dark mt-3 w-100 fs-6">
+                <Link href={`./properties/${imovel.id}`} className="btn btn-outline-primary mt-3 w-100 fs-6">
                   Ver Detalhes
                 </Link>
               </div>
@@ -99,6 +108,7 @@ export default function ImoveisAdminPage() {
         ))}
       </div>
     </div>
+    </ProtectedRoute>
     </>
   );
 }

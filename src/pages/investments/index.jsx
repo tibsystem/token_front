@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { getInvestments } from '@/services/investments/getInvestments';
-import { Colors } from 'chart.js';
+import BreadCrumb from '@/components/breadcrumb/breadcrumb';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import '@/styles/investments.css';
+
 
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -11,7 +14,6 @@ export default function InvestimentosPage() {
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Totalizadores - com validação para evitar erros
   const totalInvestido = Array.isArray(transacoes) ? transacoes.reduce((acc, item) => {
     const valorUnitario = Number(item?.valor_unitario) || 0;
     const qtdTokens = Number(item?.qtd_tokens) || 0;
@@ -175,86 +177,254 @@ export default function InvestimentosPage() {
   };
 
   return (
-    <div className=" py-4">
-      <h1 className="text-3xl font-bold mb-4 text-dark">Minhas Compras de Tokens</h1>
-      <div className="row mb-4 g-3">
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 p-3 text-center bg-light">
-            <div className="fw-bold text-muted mb-1">Total Investido</div>
-            <div className="fs-4 fw-bold text-primary">R$ {totalInvestido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+    <ProtectedRoute>
+      <div className="container-fluid py-4">
+        <BreadCrumb items={[
+          { label: 'Investimentos', path: '/investments' },
+        ]} />
+        
+        {/* Header com informações principais */}
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h1 className="text-2xl mb-2 text-dark fw-bold">
+                  <i className="fa fa-chart-pie me-3 text-primary"></i>
+                  Meus Investimentos
+                </h1>
+                <p className="text-muted mb-0">Acompanhe a evolução dos seus tokens imobiliários</p>
+              </div>
+              <div className="d-flex gap-2">
+                <button className="btn btn-outline-primary btn-sm">
+                  <i className="fa fa-download me-2"></i>Exportar
+                </button>
+                <button className="btn btn-primary btn-sm">
+                  <i className="fa fa-plus me-2"></i>Novo Investimento
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 p-3 text-center bg-light">
-            <div className="fw-bold text-muted mb-1">Total de Tokens</div>
-            <div className="fs-4 fw-bold text-success">{totalTokens}</div>
+
+        {/* Estados de loading e erro */}
+        {loading && (
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary mb-3" role="status">
+              <span className="visually-hidden">Carregando...</span>
+            </div>
+            <p className="text-muted">Carregando seus investimentos...</p>
           </div>
-        </div>
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 p-3 text-center bg-light">
-            <div className="fw-bold text-muted mb-1">Ticket Médio</div>
-            <div className="fs-4 fw-bold text-info">R$ {ticketMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+        )}
+        
+        {error && (
+          <div className="alert alert-danger d-flex align-items-center mb-4" role="alert">
+            <i className="fa fa-exclamation-triangle me-2"></i>
+            <div>{error}</div>
           </div>
-        </div>
+        )}
+
+        {!loading && !error && (
+          <>
+            {/* Cards de estatísticas */}
+            <div className="row g-4 mb-5">
+              <div className="col-md-4">
+                <div className="card border-0 shadow-sm h-100 investment-card gradient-purple">
+                  <div className="card-body text-white p-4">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div>
+                        <h6 className="card-subtitle mb-2 text-white-50">Total Investido</h6>
+                        <h3 className="mb-0 fw-bold money-value">
+                          R$ {totalInvestido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </h3>
+                        <small className="text-white-50 mt-1">
+                          <i className="fa fa-arrow-up me-1"></i>
+                          Patrimônio Total
+                        </small>
+                      </div>
+                      <div className="investment-stat-icon bg-white bg-opacity-20">
+                        <i className="fa fa-wallet text-white fs-4"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="col-md-4">
+                <div className="card border-0 shadow-sm h-100 investment-card gradient-green">
+                  <div className="card-body text-white p-4">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div>
+                        <h6 className="card-subtitle mb-2 text-white-50">Total de Tokens</h6>
+                        <h3 className="mb-0 fw-bold money-value">{totalTokens}</h3>
+                        <small className="text-white-50 mt-1">
+                          <i className="fa fa-coins me-1"></i>
+                          Unidades Possuídas
+                        </small>
+                      </div>
+                      <div className="investment-stat-icon bg-white bg-opacity-20">
+                        <i className="fa fa-coins text-white fs-4"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="col-md-4">
+                <div className="card border-0 shadow-sm h-100 investment-card gradient-blue">
+                  <div className="card-body text-white p-4">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div>
+                        <h6 className="card-subtitle mb-2 text-white-50">Ticket Médio</h6>
+                        <h3 className="mb-0 fw-bold money-value">
+                          R$ {ticketMedio.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </h3>
+                        <small className="text-white-50 mt-1">
+                          <i className="fa fa-chart-line me-1"></i>
+                          Por Investimento
+                        </small>
+                      </div>
+                      <div className="investment-stat-icon bg-white bg-opacity-20">
+                        <i className="fa fa-calculator text-white fs-4"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Gráfico de evolução */}
+            <div className="row mb-5">
+              <div className="col-12">
+                <div className="card border-0 shadow-sm">
+                  <div className="card-header border-bottom-0 d-flex align-items-center justify-content-between">
+                    <div>
+                      <h5 className="mb-1 fw-bold text-dark">
+                        <i className="fa fa-chart-line me-2 text-primary"></i>
+                        Evolução dos Investimentos
+                      </h5>
+                      <small className="text-muted">Histórico de compras de tokens por período</small>
+                    </div>
+                    <div className="d-flex gap-2">
+                      <button className="btn btn-outline-secondary btn-sm">
+                        <i className="fa fa-calendar me-1"></i>Período
+                      </button>
+                    </div>
+                  </div>
+                  <div className="card-body">
+                    <div className="chart-container" style={{ minHeight: 320 }}>
+                      {typeof window !== 'undefined' && transacoes.length > 0 ? (
+                        <ApexChart 
+                          key={`chart-${isDarkMode ? 'dark' : 'light'}`}
+                          options={chartData.options} 
+                          series={chartData.series} 
+                          type="bar" 
+                          height={320} 
+                        />
+                      ) : (
+                        <div className="empty-state text-center">
+                          <i className="fa fa-chart-line fa-3x text-muted"></i>
+                          <h6 className="text-muted">Nenhum dado para exibir</h6>
+                          <p className="text-muted">Faça seu primeiro investimento para ver o gráfico</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-12">
+                <div className="card border-0 shadow-sm">
+                  <div className="card-header  border-bottom-0 d-flex align-items-center justify-content-between">
+                    <div>
+                      <h5 className="mb-1 fw-bold text-dark">
+                        <i className="fa fa-list me-2 text-primary"></i>
+                        Histórico de Compras
+                      </h5>
+                      <small className="text-muted">Detalhamento de todas as suas aquisições de tokens</small>
+                    </div>
+                    <div className="d-flex gap-2">
+                      <button className="btn btn-outline-secondary btn-sm">
+                        <i className="fa fa-filter me-1"></i>Filtrar
+                      </button>
+                      <button className="btn btn-outline-secondary btn-sm">
+                        <i className="fa fa-search me-1"></i>Buscar
+                      </button>
+                    </div>
+                  </div>
+                  <div className="card-body p-0">
+                    {(!Array.isArray(transacoes) || transacoes.length === 0) ? (
+                      <div className="empty-state text-center">
+                        <i className="fa fa-inbox fa-3x text-muted"></i>
+                        <h6 className="text-muted">Nenhum investimento encontrado</h6>
+                        <p className="text-muted">Comece a investir em tokens imobiliários agora</p>
+                        <button className="btn btn-primary">
+                          <i className="fa fa-plus me-2"></i>Fazer Primeiro Investimento
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="table-responsive">
+                        <table className="table table-hover align-middle mb-0 investment-table">
+                          <thead className="bg-light">
+                            <tr>
+                              <th className="border-0 fw-semibold text-dark">ID</th>
+                              <th className="border-0 fw-semibold text-dark">Propriedade</th>
+                              <th className="border-0 fw-semibold text-dark">Tokens</th>
+                              <th className="border-0 fw-semibold text-dark">Valor Unitário</th>
+                              <th className="border-0 fw-semibold text-dark">Total Investido</th>
+                              <th className="border-0 fw-semibold text-dark">Status</th>
+                              <th className="border-0 fw-semibold text-dark">Origem</th>
+                              <th className="border-0 fw-semibold text-dark">Data</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {transacoes.map((item) => (
+                              <tr key={item?.id || Math.random()}>
+                                <td className="fw-bold text-primary">#{item?.id || '-'}</td>
+                                <td>
+                                  <div className="d-flex align-items-center">
+                                    <div className="property-icon bg-primary bg-opacity-10 me-3">
+                                      <i className="fa fa-building text-primary"></i>
+                                    </div>
+                                    <div>
+                                      <div className="fw-semibold">Propriedade #{item?.id_imovel || '-'}</div>
+                                      <small className="text-muted">Token Imobiliário</small>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <span className="badge bg-light text-dark fs-6">{item?.qtd_tokens || 0}</span>
+                                </td>
+                                <td className="fw-semibold money-value">
+                                  R$ {Number(item?.valor_unitario || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                </td>
+                                <td className="fw-bold text-success money-value">
+                                  R$ {((Number(item?.valor_unitario || 0) * Number(item?.qtd_tokens || 0))).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                </td>
+                                <td>
+                                  <span className={`badge ${(item?.status || '').toLowerCase() === 'ativo' ? 'status-active' : 'status-inactive'}`}>
+                                    <i className={`fa ${(item?.status || '').toLowerCase() === 'ativo' ? 'fa-check-circle' : 'fa-pause-circle'} me-1`}></i>
+                                    {item?.status || 'N/A'}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className="badge bg-info">{item?.origem || 'Plataforma'}</span>
+                                </td>
+                                <td className="text-muted">{formatDateToBR(item?.data_compra)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
-      <div className="mb-4">
-        <div className="card shadow-sm border-0 p-3">
-          <div className="fw-bold mb-2"><i className="fa fa-chart-line me-2 text-primary"></i>Evolução dos Investimentos</div>
-          <div style={{ minHeight: 280 }}>
-            {typeof window !== 'undefined' && transacoes.length > 0 ? (
-              <ApexChart 
-                key={`chart-${isDarkMode ? 'dark' : 'light'}`}
-                options={chartData.options} 
-                series={chartData.series} 
-                type="bar" 
-                height={280} 
-              />
-            ) : (
-              <div className="text-muted text-center py-5">Sem dados para exibir o gráfico.</div>
-            )}
-          </div>
-        </div>
-      </div>
-      {/* DataTable */}
-      {loading && <div className="text-gray-500 mb-4 animate-pulse">Carregando compras...</div>}
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
-      <div className="table-responsive">
-        <table className="table table-bordered table-hover align-middle bg-light shadow-sm rounded">
-          <thead className="bg-secondary text-dark">
-            <tr>
-              <th>ID</th>
-              <th>ID do Imóvel</th>
-              <th>Qtd. Tokens</th>
-              <th>Valor unitário (R$)</th>
-              <th>Total (R$)</th>
-              <th>Status</th>
-              <th>Origem</th>
-              <th>Data da Compra</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(!loading && (!Array.isArray(transacoes) || transacoes.length === 0)) && (
-              <tr>
-                <td colSpan={8} className="text-center text-muted">Nenhuma compra encontrada.</td>
-              </tr>
-            )}
-            {Array.isArray(transacoes) && transacoes.map((item) => (
-              <tr key={item?.id || Math.random()}>
-                <td>{item?.id || '-'}</td>
-                <td>{item?.id_imovel || '-'}</td>
-                <td>{item?.qtd_tokens || 0}</td>
-                <td>R$ {Number(item?.valor_unitario || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                <td>R$ {((Number(item?.valor_unitario || 0) * Number(item?.qtd_tokens || 0))).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                <td>
-                  <span className={`px-2 py-1 rounded text-xs fw-semibold ${(item?.status || '').toLowerCase() === 'ativo' ? 'bg-success bg-opacity-10 text-success' : 'bg-secondary bg-opacity-10 text-secondary'}`}>{item?.status || 'N/A'}</span>
-                </td>
-                <td>{item?.origem || '-'}</td>
-                <td>{formatDateToBR(item?.data_compra)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    </ProtectedRoute>
   );
 }

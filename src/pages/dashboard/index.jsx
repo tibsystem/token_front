@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { Card, CardHeader, CardBody } from '@/components/card/card';
 import { getWallet } from '@/services/wallet/getWallet';
 import { getProperties } from '@/services/properties/getProperties';
+import BreadCrumb from '@/components/breadcrumb/breadcrumb';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+
 
 function getUserIdFromToken() {
   if (typeof window !== 'undefined') {
@@ -35,7 +38,6 @@ export default function DashboardPage() {
         console.log('ID do usuário logado:', userId);
       }
       const userId = getUserIdFromToken();
-      if (!userId) throw new Error('ID do usuário não encontrado no token. Faça login novamente.');
       try {
         const responseWallet = await getWallet(userId);
         setWallet(responseWallet);
@@ -56,7 +58,11 @@ export default function DashboardPage() {
   }, []);
 
   return (
+        <ProtectedRoute>
+
     <div className="p-4 max-w-5xl mx-auto">
+      <BreadCrumb />
+      
       <h1 className="text-3xl font-bold mb-6 text-dark">Dashboard</h1>
       {loading && <div className="text-gray-500 mb-4 animate-pulse">Carregando informações...</div>}
       {error && (
@@ -106,5 +112,7 @@ export default function DashboardPage() {
       )}
      
     </div>
+        </ProtectedRoute>
+
   );
 }

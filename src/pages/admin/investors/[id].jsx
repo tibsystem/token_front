@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getInvestorById } from '../../../services/investors/getInvestorById';
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { toast } from 'react-toastify';
 
 const InvestorDetails = () => {
   const router = useRouter();
@@ -10,6 +12,7 @@ const InvestorDetails = () => {
   const [investor, setInvestor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showWalletModal, setShowWalletModal] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -21,7 +24,6 @@ const InvestorDetails = () => {
         setInvestor(response);
       } catch (err) {
         console.error('Erro ao buscar investidor:', err);
-        setError('Erro ao carregar dados do investidor.');
       } finally {
         setLoading(false);
       }
@@ -29,6 +31,50 @@ const InvestorDetails = () => {
 
     fetchInvestor();
   }, [id]);
+
+  const handleShowWallet = () => {
+    setShowWalletModal(true);
+  };
+
+  const handleCloseWalletModal = () => {
+    setShowWalletModal(false);
+  };
+
+  const handleCopyWalletAddress = async () => {
+    if (!investor.carteira_blockchain) return;
+    
+    const toastId = toast.loading('Copiando endereço...');
+    
+    try {
+      await navigator.clipboard.writeText(investor.carteira_blockchain);
+      toast.update(toastId, {
+        render: 'Endereço copiado com sucesso!',
+        type: 'success',
+        isLoading: false,
+        autoClose: 3000
+      });
+    } catch (error) {
+      toast.update(toastId, {
+        render: 'Erro ao copiar endereço',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000
+      });
+    }
+  };
+
+  const getKycStatusBadge = (status) => {
+    switch(status?.toLowerCase()) {
+      case 'aprovado':
+        return <span className="badge bg-success">Aprovado</span>;
+      case 'pendente':
+        return <span className="badge bg-warning">Pendente</span>;
+      case 'rejeitado':
+        return <span className="badge bg-danger">Rejeitado</span>;
+      default:
+        return <span className="badge bg-secondary">Não informado</span>;
+    }
+  };
 
   if (loading) {
     return (
@@ -67,6 +113,7 @@ const InvestorDetails = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className=" mt-4">
       <Breadcrumb 
         items={[
@@ -85,7 +132,7 @@ const InvestorDetails = () => {
       <div className="row">
         <div className="col-lg-8">
           <div className="card shadow-sm">
-            <div className="card-header bg-primary text-white">
+            <div className="card-header bg-dark text-white">
               <div className="d-flex align-items-center">
                 <img
                   src={investor.foto_url || '/assets/img/user/user-default.jpg'}
@@ -238,7 +285,7 @@ const InvestorDetails = () => {
                   <i className="fa fa-chart-line me-2"></i>
                   Ver Investimentos
                 </button>
-                <button className="btn btn-outline-success">
+                <button className="btn btn-outline-success" onClick={handleShowWallet}>
                   <i className="fa fa-wallet me-2"></i>
                   Ver Carteira
                 </button>
@@ -274,7 +321,103 @@ const InvestorDetails = () => {
           </div>
         </div>
       </div>
+
+      {showWalletModal && (
+        <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} onClick={handleCloseWalletModal}>
+          <div className="modal-dialog modal-lg" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content">
+              <div className="modal-header bg-dark text-white">
+                <h5 className="modal-title">
+                  <i className="fa fa-wallet me-2"></i>
+                  Informações da Carteira
+                </h5>
+                <button type="button" className="btn-close btn-close-white" onClick={handleCloseWalletModal}></button>
+              </div>
+              <div className="modal-body">
+                <div className="row g-4">
+                  <div className="col-12">
+                    <div className="card border-0 bg-light">
+                      <div className="card-body">
+                        <h6 className="text-dark mb-3">
+                          <i className="fa fa-shield-alt me-2"></i>
+                          Status KYC (Know Your Customer)
+                        </h6>
+                        <div className="d-flex align-items-center justify-content-between">
+                          <div>
+                            <div className="fw-bold">Status atual:</div>
+                            <small className="text-muted">Verificação de identidade</small>
+                          </div>
+                          <div>
+                            {getKycStatusBadge(investor.status_kyc)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <div className="card border-0 bg-light">
+                      <div className="card-body">
+                        <h6 className="text-dark mb-3">
+                          <i className="fa fa-link me-2"></i>
+                          Endereço da Carteira Blockchain
+                        </h6>
+                        <div>
+                          <div className="fw-bold mb-2">Endereço:</div>
+                          {investor.carteira_blockchain ? (
+                            <div className="d-flex align-items-center">
+                              <code className="bg-white p-2 text-dark rounded border flex-grow-1 me-2" style={{ fontSize: '14px', wordBreak: 'break-all' }}>
+                                {investor.carteira_blockchain}
+                              </code>
+                              <button 
+                                className="btn btn-outline-primary btn-sm"
+                                onClick={handleCopyWalletAddress}
+                                title="Copiar endereço"
+                              >
+                                <i className="fa fa-copy"></i>
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="text-muted">
+                              <i className="fa fa-exclamation-triangle me-2"></i>
+                              Carteira blockchain não configurada
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <div className="card border-0 bg-light">
+                      <div className="card-body">
+                        <h6 className="text-dark mb-3">
+                          <i className="fa fa-info-circle me-2"></i>
+                          Informações Importantes
+                        </h6>
+                        <div className="small text-muted">
+                          <ul className="mb-0">
+                            <li>O status KYC deve estar "aprovado" para realizar transações</li>
+                            <li>O endereço da carteira blockchain é único e não pode ser alterado</li>
+                            <li>Mantenha o endereço da carteira seguro e não o compartilhe desnecessariamente</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={handleCloseWalletModal}>
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+    </ProtectedRoute>
   );
 };
 

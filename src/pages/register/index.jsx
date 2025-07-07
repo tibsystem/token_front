@@ -4,8 +4,7 @@ import { useEffect, FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
 import Link from 'next/link';
-import api from '@/services/api';
-import { postInvestor } from '../../services/investors/postInvestor';
+import { postInvestor } from '@/services/investors/postInvestor';
 
 export default function RegisterV3() {
   const { updateSettings } = useAppSettings();

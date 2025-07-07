@@ -5,6 +5,7 @@ import Sidebar from '@/components/sidebar/sidebar';
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 import { FaCoins, FaUsers, FaCubes, FaCheckCircle, FaUser, FaMapMarkerAlt, FaImage,FaBuilding } from 'react-icons/fa';
 import { getPropertyFinance } from '../../../services/propertyFinance/getPropertyFinance';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function ImovelAdminFinanceiro() {
   const router = useRouter();
@@ -43,6 +44,7 @@ export default function ImovelAdminFinanceiro() {
   const { imovel, resumo, investidores, investimentos, transacoes_p2p } = dados;
 
   return (
+    <ProtectedRoute>
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 p-8 max-w-6xl mx-auto">
@@ -464,5 +466,6 @@ export default function ImovelAdminFinanceiro() {
 
       </main>
     </div>
+    </ProtectedRoute>
   );
 }

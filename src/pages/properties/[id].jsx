@@ -6,6 +6,8 @@ import { getPlatformSettings } from '../../services/platformSettings/getPlatform
 import { postInvestmentsPurchase } from '../../services/investments/postInvestmentsPurchase';
 import { toast } from 'react-toastify';
 import { FaImage, FaMapMarkerAlt, FaCoins, FaBuilding } from 'react-icons/fa';
+import BreadCrumb from '@/components/breadcrumb/breadcrumb';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function ImovelPage() {
   const router = useRouter();
@@ -120,11 +122,16 @@ export default function ImovelPage() {
   if (!property) return <div className="p-5 text-center">Imóvel não encontrado.</div>;
 
   return (
+        <ProtectedRoute>
+
     <div className="container-fluid py-5">
+        <BreadCrumb items={[
+          { label: 'Imóveis', path: '/properties' },
+          { label: `Detalhes do imóvel ${property.titulo}`, path: null }
+        ]} />
       <div className="card border-0 shadow-sm p-5 mb-5">
         <div className="row g-5">
           <div className="col-lg-7">
-            {/* Galeria de Imagens */}
             <div className="mb-4">
               <h5 className="mb-3 fw-bold text-dark d-flex align-items-center gap-2">
                 <FaImage className="text-primary" /> Galeria de Imagens
@@ -328,5 +335,7 @@ export default function ImovelPage() {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
+
   );
 }

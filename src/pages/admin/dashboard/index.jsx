@@ -8,6 +8,9 @@ import { getFinancialTransactions } from '@/services/financialTransactions/getFi
 import { getProperties } from '@/services/properties/getProperties';
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+
+
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export default function AdminDashboard() {
@@ -56,6 +59,7 @@ export default function AdminDashboard() {
   }, []);
 
   return (
+    <ProtectedRoute>
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 p-8 max-w-6xl mx-auto">
@@ -288,5 +292,6 @@ export default function AdminDashboard() {
           </div>
       </main>
     </div>
+    </ProtectedRoute>
   );
 }

@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
 import { postLogin } from '@/services/login/postLogin';
 import { toast } from 'react-toastify';
+import useDarkMode from '@/hooks/useDarkMode';
 
 export default function AdminLogin() {
   const { updateSettings } = useAppSettings();
@@ -15,6 +16,8 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  	const { isDarkMode } = useDarkMode();
+
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -79,7 +82,7 @@ export default function AdminLogin() {
         <div className="login-header mb-30px">
           <div className="brand">
             <div className="d-flex align-items-center">
-              <img src="/assets/img/logo-dark.webp" alt="IB3 Capital" className="logo-img" style={{height: '40px', width: 'auto', marginRight: '12px'}} />
+              <img src={isDarkMode ? "/assets/img/logo-light.webp" : "/assets/img/logo-dark.webp"} alt="IB3 Capital" className="logo-img" style={{height: '40px', width: 'auto', marginRight: '12px'}} />
             </div>
             <small>Administração da Plataforma</small>
           </div>
@@ -114,7 +117,7 @@ export default function AdminLogin() {
               <label htmlFor="adminPassword" className="d-flex align-items-center fs-13px text-gray-600">Senha</label>
             </div>
             <div className="mb-15px">
-              <button type="submit" className="btn btn-dark d-block h-30px w-100 btn-lg fs-14px">Entrar</button>
+              <button type="submit" className="btn btn-dark d-block h-45px w-100 btn-lg fs-14px">Entrar</button>
             </div>
             <hr className="bg-gray-600 opacity-2" />
             <div className="text-gray-600 text-center text-gray-500-darker mb-0">

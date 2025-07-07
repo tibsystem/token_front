@@ -112,7 +112,7 @@ export default function LoginV1() {
             </div>
             <hr className="bg-gray-600 opacity-2" />
             <div className="text-gray-600 text-center text-gray-500-darker mb-0">
-              &copy; IB3 capital All Right Reserved 2025
+              &copy; IB3 capital Todos os direitos reservados 2025
             </div>
           </form>
         </div>
