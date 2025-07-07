@@ -47,13 +47,13 @@ export default function AdminLogin() {
     setError('');
     try {
       const response = await postLogin({email, password});
-      console.log('Resposta do backend no login:', response);
+      // console.log('Resposta do backend no login:', response);
       if (response.token) {
         localStorage.setItem('admin_token', response.token);
-        localStorage.setItem('profileData', JSON.stringify(response.user));
+         localStorage.setItem('profileData', JSON.stringify(response.user));
         console.log(response)
         toast.success('Login realizado com sucesso')
-        window.location.href = 'admin/dashboard';
+        window.location.href = './dashboard';
       } else {
         toast.error('Login inválido');
       }

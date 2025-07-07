@@ -29,10 +29,9 @@ const Investidores = () => {
 
   return (
 
-    <div className="p-4 max-w-6xl mx-auto">
+    <div className="p-4 max-w-6xl">
       <Breadcrumb 
       items={[
-        { label: 'Administração', path: '/admin/dashboard' },
         { label: 'Investidores', path: '/admin/investors' }
       ]}
       
@@ -67,7 +66,7 @@ const Investidores = () => {
                   <i className="fa fa-phone text-green-600 me-2"></i>
                   <span>{inv.telefone || 'Não informado'}</span>
                 </div>
-                <Link href={`/admin/investors/${inv.id}`} className="btn btn-primary mt-auto w-100">Ver Mais</Link>
+                <Link href={`/admin/investors/${inv.id}`} className="btn btn-outline-primary mt-auto w-100">Ver Mais</Link>
               </div>
             </div>
           </div>

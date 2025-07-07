@@ -149,12 +149,20 @@ export default function CadastrarImovel() {
     setSuccess(false);
     
     try {
+      // Validação adicional
+      if (selectedImages.length === 0) {
+        toast.warning("Nenhuma imagem selecionada. Adicione pelo menos uma imagem.");
+        setLoading(false);
+        return;
+      }
+      
       const formData = new FormData();
       
       const valorTotal = getCurrencyValue(form.valor_total);
-      console.log('Valor formatado:', form.valor_total);
-      console.log('Valor numérico:', valorTotal);
+      // console.log('Valor formatado:', form.valor_total);
+      // console.log('Valor numérico:', valorTotal);
       
+      // Dados básicos do imóvel
       formData.append('titulo', form.titulo);
       formData.append('descricao', form.descricao);
       formData.append('localizacao', form.localizacao);
@@ -164,11 +172,60 @@ export default function CadastrarImovel() {
       formData.append('status', form.status);
       formData.append('data_tokenizacao', form.data_tokenizacao);
       
+      // console.log('Número de imagens selecionadas:', selectedImages.length);
+      
       selectedImages.forEach((image, index) => {
-        formData.append(`imagens[${index}]`, image);
+        // console.log(`Adicionando imagem ${index}:`, image.name, image.size);
+        formData.append('imagens', image);
       });
+      
+      // Formato 2: Com índices (alternativo para teste)
+      // selectedImages.forEach((image, index) => {
+      //   formData.append(`imagens[${index}]`, image);
+      // });
+      
+      // Formato 3: Como array com []
+      // selectedImages.forEach((image) => {
+      //   formData.append('imagens[]', image);
+      // });
 
-      await postProperties(formData);
+      // Log para debug do FormData
+      // console.log('FormData entries:');
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          // console.log(key, `File: ${value.name} (${value.size} bytes)`);
+        } else {
+          // console.log(key, value);
+        }
+      }
+
+      try {
+        await postProperties(formData);
+      } catch (firstError) {
+        // console.log('Primeiro formato falhou, tentando alternativo...');
+        // // console.error('Erro do primeiro formato:', firstError);
+        
+        try {
+          await submitWithAlternativeFormat(formData);
+        } catch (secondError) {
+          // console.log('Segundo formato falhou, tentando com imagens[]...');
+          // // console.error('Erro do segundo formato:', secondError);
+          
+          // Tentar terceiro formato
+          const keys = Array.from(formData.keys());
+          keys.forEach(key => {
+            if (key.includes('imagens')) {
+              formData.delete(key);
+            }
+          });
+          
+          selectedImages.forEach((image) => {
+            formData.append('imagens[]', image);
+          });
+          
+          await postProperties(formData);
+        }
+      }
       
       setSuccess(true);
       toast.success("Imóvel cadastrado com sucesso!");
@@ -181,7 +238,7 @@ export default function CadastrarImovel() {
         qtd_tokens: "",
         modelo_smart_id: "",
         status: "ativo",
-        data_tokenizacao: new Date().toISOString().slice(0, 10), // Formato YYYY-MM-DD para o backend
+        data_tokenizacao: new Date().toISOString().slice(0, 10), 
       });
       setDate(new Date());
       setSelectedImages([]);
@@ -190,7 +247,7 @@ export default function CadastrarImovel() {
     } catch (err) {
       if (err && typeof err === "object" && "message" in err) {
         setError(err.message);
-        toast.error(`Erro: ${err.message}`);
+        toast.error(`Erro ao cadastrar imóvel`);
       } else {
         setError("Erro ao cadastrar imóvel");
         toast.error("Erro ao cadastrar imóvel");
@@ -198,6 +255,23 @@ export default function CadastrarImovel() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const submitWithAlternativeFormat = async (formData) => {
+    // // console.log('Tentando formato alternativo...');
+    
+    const keys = Array.from(formData.keys());
+    keys.forEach(key => {
+      if (key.includes('imagens')) {
+        formData.delete(key);
+      }
+    });
+    
+    selectedImages.forEach((image, index) => {
+      formData.append(`imagens[${index}]`, image);
+    });
+    
+    return await postProperties(formData);
   };
 
   return (

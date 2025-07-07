@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getProperties } from '../../../services/properties/getProperties';
 import { FaMapMarkerAlt, FaCoins, FaCubes, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
+import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 
 export default function ImoveisAdminPage() {
   const [imoveis, setImoveis] = useState([]);
@@ -26,6 +27,10 @@ export default function ImoveisAdminPage() {
   }, []);
 
   return (
+    <>
+      <Breadcrumb items={[
+              { label: 'Imóveis', path: '/admin/properties' },
+            ]} />
     <div className="px-4 py-5">
       <div className="row mb-4">
         <div className="col">
@@ -85,8 +90,8 @@ export default function ImoveisAdminPage() {
                   <div className="d-flex align-items-center"><FaCalendarAlt className="me-2 text-danger" /> Data Tokenização: {imovel.data_tokenizacao}</div>
                 </div>
 
-                <Link href={`/properties/${imovel.id}`} className="btn btn-outline-primary mt-3 w-100 fs-6">
-                  Simular investimento
+                <Link href={`./properties/${imovel.id}`} className="btn btn-outline-dark mt-3 w-100 fs-6">
+                  Ver Detalhes
                 </Link>
               </div>
             </div>
@@ -94,5 +99,6 @@ export default function ImoveisAdminPage() {
         ))}
       </div>
     </div>
+    </>
   );
 }

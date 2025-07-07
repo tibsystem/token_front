@@ -8,7 +8,18 @@ import UseProfile from "@/hooks/UseProfile";
 
 export default function DropdownProfile() {
 
-const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile} = UseProfile ();
+const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile, checkAuthAndRedirect} = UseProfile ();
+
+if (!isLoggedIn) {
+    return (
+      <div className="navbar-item navbar-user">
+        <Link href="/login" className="navbar-link">
+         
+          <span className="d-none d-md-inline fw-bold">Entrar</span>
+        </Link>
+      </div>
+    );
+  }
 
 
 

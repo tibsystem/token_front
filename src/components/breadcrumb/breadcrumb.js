@@ -6,7 +6,7 @@ const Breadcrumb = ({ route = '', items = [], className = '' }) => {
     // Se items foi passado, usa ele diretamente
     if (items && items.length > 0) {
       return [
-        { label: 'Início', path: '/', icon: true },
+        { label: 'Início', path: './dashboard', icon: true },
         ...items.map(item => ({
           ...item,
           icon: false
@@ -15,12 +15,12 @@ const Breadcrumb = ({ route = '', items = [], className = '' }) => {
     }
     
     // Caso contrário, usa a rota para gerar automaticamente
-    if (!route) return [{ label: 'Início', path: '/', icon: true }];
+    if (!route) return [{ label: 'Início', path: './dashboard', icon: true }];
     
     const segments = route.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
     
     const breadcrumbs = [
-      { label: 'Início', path: '/', icon: true }
+      { label: 'Início', path: './dashboard', icon: true }
     ];
     
     let currentPath = '';

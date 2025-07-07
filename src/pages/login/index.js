@@ -40,7 +40,7 @@ export default function LoginV1() {
       console.log('Resposta do backend no login:', response);
       if (response.token) {
         localStorage.setItem('token', response.token);
-        localStorage.setItem('profileData', JSON.stringify(response.profile));
+        localStorage.setItem('profileData', JSON.stringify(response.investidor));
         router.push('/dashboard');
       }
     } catch (err) {

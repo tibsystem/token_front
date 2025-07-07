@@ -1,5 +1,5 @@
 const Menu = [
-	{ is_header: true, title: 'Navigation' },
+	{ is_header: true, title: '' },
 	// Admin
 	{ path: '/admin/dashboard', icon: 'fa fa-chart-pie', title: 'Dashboard', role: 'admin' },
 	{ path: '/admin/investors', icon: 'fa fa-users', title: 'Investidores', role: 'admin' },
