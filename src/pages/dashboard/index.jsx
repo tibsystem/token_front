@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardBody } from '@/components/card/card';
-import { getWallet } from '../services/wallet/getWallet';
-import { getProperties } from '../services/properties/getProperties';
+import { getWallet } from '@/services/wallet/getWallet';
+import { getProperties } from '@/services/properties/getProperties';
 
 function getUserIdFromToken() {
   if (typeof window !== 'undefined') {
@@ -57,7 +57,7 @@ export default function DashboardPage() {
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-theme">Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6 text-dark">Dashboard</h1>
       {loading && <div className="text-gray-500 mb-4 animate-pulse">Carregando informações...</div>}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">

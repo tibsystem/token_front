@@ -8,11 +8,14 @@ import DropdownLanguage from './dropdown/language';
 import DropdownProfile from './dropdown/profile';
 import SearchForm from './search/form';
 import DropdownMegaMenu from './dropdown/mega';
+import DarkModeSwitcher from './DarkmodeSwitcher/DarkModeSwitcher';
 import { useAppSettings } from '@/config/app-settings';
 import UseProfile from '@/hooks/UseProfile';
+import useDarkMode from '@/hooks/useDarkMode';
 
 export default function Header() {
   const { settings, updateSettings } = useAppSettings();
+  const { isDarkMode } = useDarkMode();
 
 const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile} = UseProfile ();
   
@@ -54,9 +57,12 @@ const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfi
             <span className="icon-bar"></span>
           </button>
         )}
-        <Link href="/" className="navbar-brand">
-          <img src="../../assets/img/logo-dark.webp" alt="Logo" className="logo" />  
-            
+        <Link href="#" className="navbar-brand">
+          <img 
+            src={isDarkMode ? "../../assets/img/logo-light.webp" : "../../assets/img/logo-dark.webp"} 
+            alt="Logo" 
+            className="logo" 
+          />
         </Link>
 
         {settings.appHeaderMegaMenu && (
@@ -98,6 +104,7 @@ const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfi
         {/* <DropdownNotification /> */}
 
         {settings.appHeaderLanguageBar && <DropdownLanguage />}
+        <DarkModeSwitcher />
 
         <DropdownProfile />
 

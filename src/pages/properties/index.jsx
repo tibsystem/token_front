@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -7,6 +9,26 @@ export default function ImoveisPage() {
   const [imoveis, setImoveis] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const formatDateToBR = (dateString) => {
+    if (!dateString) return '-';
+    
+    try {
+      const date = new Date(dateString);
+      
+      if (isNaN(date.getTime())) return dateString;
+      
+      return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return dateString;
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +49,7 @@ export default function ImoveisPage() {
     <div className="px-4 py-5">
       <div className="row mb-4">
         <div className="col">
-          <h1 className="text-3xl font-bold mb-8 text-theme">Investidores</h1>
+          <h1 className="text-3xl font-bold mb-8 text-dark">Imoveis</h1>
           <p className="text-muted fs-5">Investimentos selecionados de acordo com o seu perfil</p>
         </div>
       </div>
@@ -80,7 +102,7 @@ export default function ImoveisPage() {
                   <div className="d-flex align-items-center"><i className="fa fa-coins me-2 text-warning" /> Valor Total: R$ {Number(imovel.valor_total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                   <div className="d-flex align-items-center"><i className="fa fa-cubes me-2 text-secondary" /> Tokens: {imovel.qtd_tokens}</div>
                   <div className="d-flex align-items-center"><i className="fa fa-info-circle me-2 text-info" /> Status: <span className={`badge rounded-pill ${imovel.status === 'ativo' ? 'bg-success-subtle text-success' : 'bg-secondary text-dark'}`}>{imovel.status}</span></div>
-                  <div className="d-flex align-items-center"><i className="fa fa-calendar-alt me-2 text-danger" /> Data Tokenização: {imovel.data_tokenizacao}</div>
+                  <div className="d-flex align-items-center"><i className="fa fa-calendar-alt me-2 text-danger" /> Data Tokenização: {formatDateToBR(imovel.data_tokenizacao)}</div>
                 </div>
 
                 <Link href={`/properties/${imovel.id}`} className="btn btn-outline-primary mt-3 w-100 fs-6">

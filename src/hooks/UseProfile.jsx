@@ -11,7 +11,6 @@ const UseProfile = () => {
 
   const loadProfileFromStorage = () => {
     try {
-      // Verificar se localStorage está disponível
       if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
         setProfileData(null);
         setLoading(false);
@@ -25,15 +24,13 @@ const UseProfile = () => {
           parsedData = JSON.parse(storedData);
         } catch (parseError) {
           console.error("Erro ao fazer parse do profileData:", parseError);
-          localStorage.removeItem("profileData"); // Remove dados corrompidos
+          localStorage.removeItem("profileData"); 
           setProfileData(null);
           setLoading(false);
           return;
         }
         
-        // Verificar se parsedData é um objeto válido
         if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-          // Sincronizar token do localStorage se não estiver no profileData
           if (!parsedData.token) {
             const adminToken = localStorage.getItem('admin_token');
             const userToken = localStorage.getItem('token');
@@ -65,7 +62,6 @@ const UseProfile = () => {
 
   const saveProfileToStorage = (data) => {
     try {
-      // Verificar se localStorage está disponível
       if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
         console.warn("localStorage não está disponível");
         return;
@@ -93,7 +89,6 @@ const UseProfile = () => {
 
   const clearProfile = () => {
     try {
-      // Verificar se localStorage está disponível
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
         localStorage.removeItem("profileData");
         localStorage.removeItem("token");
@@ -201,12 +196,10 @@ const UseProfile = () => {
     loading,
     error,
     isLoggedIn,
-    
     saveProfile: saveProfileToStorage,
     updateProfile,
     clearProfile,
     loadProfile: loadProfileFromStorage,
-    
     getUserName,
     getUserEmail,
     getUserId,
@@ -215,10 +208,8 @@ const UseProfile = () => {
     getToken,
     getTokenType,
     isAdmin,
-    
     checkAuthAndRedirect,
     requireAuth,
   };
 };
-
 export default UseProfile;

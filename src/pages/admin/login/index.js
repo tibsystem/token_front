@@ -92,7 +92,7 @@ export default function AdminLogin() {
             <div className="form-floating mb-15px">
               <input
                 type="email"
-                className="form-control h-45px fs-13px"
+                className="form-control h-30px fs-13px"
                 placeholder="Email do administrador"
                 id="adminEmail"
                 value={email}
@@ -104,7 +104,7 @@ export default function AdminLogin() {
             <div className="form-floating mb-15px">
               <input
                 type="password"
-                className="form-control h-45px fs-13px"
+                className="form-control h-30px fs-13px"
                 placeholder="Senha"
                 id="adminPassword"
                 value={password}
@@ -114,7 +114,7 @@ export default function AdminLogin() {
               <label htmlFor="adminPassword" className="d-flex align-items-center fs-13px text-gray-600">Senha</label>
             </div>
             <div className="mb-15px">
-              <button type="submit" className="btn btn-dark d-block h-45px w-100 btn-lg fs-14px">Entrar</button>
+              <button type="submit" className="btn btn-dark d-block h-30px w-100 btn-lg fs-14px">Entrar</button>
             </div>
             <hr className="bg-gray-600 opacity-2" />
             <div className="text-gray-600 text-center text-gray-500-darker mb-0">

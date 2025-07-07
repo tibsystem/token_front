@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from 'react';
-import api from '@/services/api';
-import Link from 'next/link';
-import { getFinancialTransactions } from '../services/financialTransactions/getFinancialTransactions';
+
+import { getFinancialTransactions } from '@/services/financialTransactions/getFinancialTransactions';
 
 function getUserIdFromToken() {
   if (typeof window !== 'undefined') {
@@ -71,13 +71,11 @@ export default function TransacoesFinanceirasPage() {
     return acc;
   }, {});
 
-  // Ordena datas (mais recente primeiro)
   const datasOrdenadas = Object.keys(transacoesPorData).sort((a, b) => {
     if (a === 'Hoje') return -1;
     if (b === 'Hoje') return 1;
     if (a === 'Ontem') return -1;
     if (b === 'Ontem') return 1;
-    // datas no formato dd/mm/yyyy
     const [da, ma, ya] = a.split('/').map(Number);
     const [db, mb, yb] = b.split('/').map(Number);
     return new Date(yb, mb - 1, db) - new Date(ya, ma - 1, da);
@@ -96,8 +94,8 @@ export default function TransacoesFinanceirasPage() {
   }
 
   return (
-    <div className="container py-4">
-      <h1 className="text-3xl font-bold mb-6 text-theme">Extrato Financeiro</h1>
+    <div className=" py-4">
+      <h1 className="text-3xl font-bold mb-6 text-dark">Extrato Financeiro</h1>
       {loading && <div className="text-gray-500 mb-4 animate-pulse">Carregando transações...</div>}
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
       {transacoes.length === 0 && !loading && <div className="text-gray-500">Nenhuma transação encontrada.</div>}

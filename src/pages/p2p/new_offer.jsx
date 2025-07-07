@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
-import api from '@/services/api';
-import { getInvestments } from '../../services/investments/getInvestments';
-import { getOnePropertie } from '../../services/properties/getOnePropertie';
-import { postP2pListings } from '../../services/p2p/postP2pListings';
+import { getInvestments } from '@/services/investments/getInvestments';
+import { getOnePropertie } from '@/services/properties/getOnePropertie';
+import { postP2pListings } from '@/services/p2p/postP2pListings';
+import { toast } from 'react-toastify';
 
 export default function NovaOfertaPage() {
   const [imoveis, setImoveis] = useState([]);
@@ -39,23 +41,24 @@ export default function NovaOfertaPage() {
         return;
       }
       try {
-        // Busca os investimentos do usuário
-        const response = getInvestments(userId);
-        const investimentos = Array.isArray(response) ? response : [response];
-        // Busca detalhes dos imóveis
+        const response = await getInvestments(userId);
+        const investimentos = Array.isArray(response) ? response : (response ? [response] : []);
+        
         const imoveisDetalhados = await Promise.all(
           investimentos.map(async (inv) => {
-            const response = getOnePropertie(inv.id_imovel);
+            const propertyResponse = await getOnePropertie(inv?.id_imovel);
             return {
-              ...response,
-              qtd_tokens: inv.qtd_tokens,
-              valor_unitario: inv.valor_unitario,
-              investimento_id: inv.id
+              ...propertyResponse,
+              qtd_tokens: inv?.qtd_tokens || 0,
+              valor_unitario: inv?.valor_unitario || 0,
+              investimento_id: inv?.id
             };
           })
         );
-        setImoveis(imoveisDetalhados);
-      } catch (e) {
+        
+        const imoveisValidos = imoveisDetalhados.filter(imovel => imovel && imovel.id);
+        setImoveis(imoveisValidos);
+      } catch {
         setError('Erro ao carregar imóveis.');
       } finally {
         setLoading(false);
@@ -67,7 +70,7 @@ export default function NovaOfertaPage() {
   const abrirModal = (imovel) => {
     setModalImovel(imovel);
     setQtdVenda('');
-    setPrecoVenda(imovel.valor_unitario);
+    setPrecoVenda(imovel?.valor_unitario || '0');
   };
 
   const fecharModal = () => {
@@ -91,24 +94,24 @@ export default function NovaOfertaPage() {
       }
       const payload = {
         vendedor_id,
-        id_imovel: modalImovel.id,
-        qtd_tokens: Number(qtdVenda),
-        valor_unitario: Number(precoVenda)
+        id_imovel: modalImovel?.id,
+        qtd_tokens: Number(qtdVenda) || 0,
+        valor_unitario: Number(precoVenda) || 0
       };
       await postP2pListings(payload);
       fecharModal();
-      alert('Oferta criada com sucesso!');
-    } catch (error) {
+      toast.success('Oferta criada com sucesso!');
+    } catch {
       setError('Erro ao criar oferta');
-      alert('Erro ao criar oferta');
+      toast.error('Erro ao criar oferta!');
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="container py-4">
-      <h1 className="text-2xl mb-4 text-theme">Vender Tokens</h1>
+    <div className=" py-4">
+      <h1 className="text-2xl mb-4 text-dark">Vender Tokens</h1>
       {loading && <div className="text-gray-500 mb-4 animate-pulse">Carregando imóveis...</div>}
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
       <div className="row g-4">
@@ -126,11 +129,11 @@ export default function NovaOfertaPage() {
                 onError={e => { e.target.src = '/assets/img/default-property.jpg'; }}
               />
               <div className="card-body">
-                <h2 className="card-title h5 mb-2 text-theme"><i className="fa fa-home me-2 text-primary"></i>{imovel.titulo}</h2>
-                <div className="mb-2 text-muted"><i className="fa fa-align-left me-2"></i>{imovel.descricao}</div>
+                <h2 className="card-title h5 mb-2 text-theme"><i className="fa fa-home me-2 text-primary"></i>{imovel?.titulo || 'Imóvel'}</h2>
+                <div className="mb-2 text-muted"><i className="fa fa-align-left me-2"></i>{imovel?.descricao || 'Sem descrição'}</div>
                 <ul className="list-unstyled mb-2">
-                  <li className="mb-1"><i className="fa fa-cubes me-2 text-success"></i><b>Tokens disponíveis:</b> {imovel.qtd_tokens}</li>
-                  <li className="mb-1"><i className="fa fa-coins me-2 text-warning"></i><b>Valor unitário:</b> R$ {Number(imovel.valor_unitario).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</li>
+                  <li className="mb-1"><i className="fa fa-cubes me-2 text-success"></i><b>Tokens disponíveis:</b> {imovel?.qtd_tokens || 0}</li>
+                  <li className="mb-1"><i className="fa fa-coins me-2 text-warning"></i><b>Valor unitário:</b> R$ {Number(imovel?.valor_unitario || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</li>
                 </ul>
                 <button className="btn btn-outline-primary w-100" onClick={() => abrirModal(imovel)}>
                   <i className="fa fa-arrow-up me-2"></i>Vender
@@ -146,7 +149,7 @@ export default function NovaOfertaPage() {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Vender tokens de {modalImovel.titulo}</h5>
+                <h5 className="modal-title">Vender tokens de {modalImovel?.titulo || 'Imóvel'}</h5>
                 <button type="button" className="btn-close" onClick={fecharModal}></button>
               </div>
               <form onSubmit={handleSubmit}>
@@ -156,7 +159,7 @@ export default function NovaOfertaPage() {
                     <input
                       type="number"
                       min="1"
-                      max={modalImovel.qtd_tokens}
+                      max={modalImovel?.qtd_tokens || 0}
                       value={qtdVenda}
                       onChange={e => setQtdVenda(e.target.value)}
                       className="form-control"

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import api from '@/services/api';
-import { getOnePropertie } from '../../services/properties/getOnePropertie';
-import { getP2pListings } from '../../services/p2p/getP2pListings';
-import { postP2pTransactions } from '../../services/p2p/postP2pTransactions';
+import { getOnePropertie } from '@/services/properties/getOnePropertie';
+import { getP2pListings } from '@/services/p2p/getP2pListings';
+import { postP2pTransactions } from '@/services/p2p/postP2pTransactions';
+import { toast } from 'react-toastify';
 
 export default function OfertasP2PPage() {
   const [ofertas, setOfertas] = useState([]);
@@ -31,21 +31,27 @@ export default function OfertasP2PPage() {
       const uid = getUserIdFromToken();
       setUserId(uid);
       try {
-        const res = getP2pListings();
+        const res = await getP2pListings();
         const ofertasList = res.data?.data || [];
-        // Busca detalhes dos imóveis para cada oferta
+        console.log('Ofertas recebidas:', ofertasList); // Debug
+        
         const imovelIds = [...new Set(ofertasList.map(o => o.id_imovel))];
         const imoveisDetalhes = {};
+        
         await Promise.all(imovelIds.map(async (id) => {
           try {
-            const res = getOnePropertie(id);
+            const res = await getOnePropertie(id);
             imoveisDetalhes[id] = res;
-          } catch { }
+          } catch (error) {
+            console.error(`Erro ao buscar imóvel ${id}:`, error);
+          }
         }));
+        
         setImoveis(imoveisDetalhes);
         setOfertas(ofertasList);
       } catch (err) {
-        setError('Erro ao obter ID do usuário.');
+        console.error('Erro ao carregar ofertas:', err);
+        setError('Erro ao carregar ofertas.');
       } finally {
         setLoading(false);
       }
@@ -56,21 +62,19 @@ export default function OfertasP2PPage() {
   const handleBuyTokens = async (listing_id) => {
     try {
       if (!userId) {
-        alert('Você precisa estar logado para comprar tokens.');
+        toast.warning('Você precisa estar logado para comprar tokens.');
         return;
       }
       await postP2pTransactions({ listing_id, comprador_id: userId });
-      alert('Compra realizada com sucesso!');
+      toast.success('Compra realizada com sucesso!');
     } catch (err) {
       console.error(err);
-      alert('Erro ao comprar tokens.');
+      toast.error('Erro ao comprar tokens.');
     }
   };
 
-  // Separar ofertas: comparar oferta.id (ou oferta.vendedor_id se existir) com userId
-  const getVendedorId = (oferta) => String(oferta.vendedor_id ?? oferta.id);
-  const minhasOfertas = userId ? ofertas.filter(o => getVendedorId(o) === String(userId)) : [];
-  const outrasOfertas = userId ? ofertas.filter(o => getVendedorId(o) !== String(userId)) : ofertas;
+  const minhasOfertas = []; 
+  const outrasOfertas = ofertas;
 
   function renderOfertaCard(oferta, isMyOffer = false) {
     const imovel = imoveis[oferta.id_imovel] || {};
@@ -95,8 +99,6 @@ export default function OfertasP2PPage() {
               <div className="mb-1"><b>Valor unitário da oferta:</b> R$ {Number(oferta.valor_unitario).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
               <div className="mb-1"><b>Total:</b> R$ {(Number(oferta.valor_unitario) * Number(oferta.qtd_tokens)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
               <div className="mb-1"><b>Status:</b> <span className={`px-2 py-1 rounded text-xs fw-semibold ${oferta.status === 'ativa' ? 'bg-success bg-opacity-10 text-success' : 'bg-secondary bg-opacity-10 text-secondary'}`}>{oferta.status}</span></div>
-              {/* Debug visual temporário */}
-              <div className="small text-muted">vendedor_id: {String(oferta.vendedor_id ?? oferta.id)} | userId: {String(userId)}</div>
               {isMyOffer ? (
                 <span className="badge bg-info mt-2">Minha oferta</span>
               ) : (
@@ -116,11 +118,18 @@ export default function OfertasP2PPage() {
   }
 
   return (
-    <div className="container py-4">
-      <h1 className="text-3xl font-bold mb-6 text-theme">Ofertas P2P Disponíveis</h1>
+    <div className=" py-4">
+      <h1 className="text-3xl font-bold mb-6 text-dark">Ofertas P2P Disponíveis</h1>
       {loading && <div className="text-gray-500 mb-4 animate-pulse">Carregando ofertas...</div>}
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
-      {/* Minhas ofertas */}
+      
+      {/* Debug info */}
+      {!loading && (
+        <div className="alert alert-info mb-4">
+          <small>Total de ofertas carregadas: {ofertas.length}</small>
+        </div>
+      )}
+      
       <h2 className="h5 mb-3 text-primary">Minhas ofertas</h2>
       {minhasOfertas.length === 0 && <div className="text-muted mb-4">Você não possui ofertas ativas.</div>}
       <div className="row">
@@ -130,7 +139,6 @@ export default function OfertasP2PPage() {
           </div>
         ))}
       </div>
-      {/* Ofertas de outros investidores */}
       <h2 className="h5 mt-5 mb-3 text-success">Ofertas de outros investidores</h2>
       {outrasOfertas.length === 0 && <div className="text-muted mb-4">Nenhuma oferta de outros investidores disponível.</div>}
       <div className="row">
