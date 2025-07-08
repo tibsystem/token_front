@@ -43,7 +43,20 @@ if (!isLoggedIn) {
         </span>
       </a>
       <div className="dropdown-menu dropdown-menu-end me-1">
-        <Link href="/extra/profile" className="dropdown-item">
+        <Link
+          href="#"
+          className="dropdown-item"
+          onClick={(e) => {
+            e.preventDefault();
+            if (typeof window !== "undefined") {
+              if (localStorage.getItem("admin_token")) {
+                window.location.href = "/admin/myprofile";
+              } else {
+                window.location.href = "/myprofile";
+              }
+            }
+          }}
+        >
           Meu perfil
         </Link>
         {/* <Link href="/email/inbox" className="dropdown-item d-flex align-items-center">

@@ -348,13 +348,12 @@ export default function NovaOfertaPage() {
             </div>
           </div>
 
-          {/* Results Counter and Active Filters */}
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="d-flex align-items-center gap-3">
               <small className="text-muted d-flex align-items-center">
                 {searchTerm !== debouncedSearchTerm ? (
                   <>
-                    <div className="spinner-border spinner-border-sm me-2" role="status"></div>
+                    <div className=" me-2" role="status"></div>
                     Buscando...
                   </>
                 ) : (
@@ -367,7 +366,6 @@ export default function NovaOfertaPage() {
                 )}
               </small>
               
-              {/* Active Filters */}
               <div className="d-flex gap-2 flex-wrap">
                 {debouncedSearchTerm && (
                   <span className="badge bg-primary-subtle text-primary">
