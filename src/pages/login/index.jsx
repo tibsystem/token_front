@@ -15,7 +15,7 @@ export default function LoginV1() {
         const { updateSettings } = useAppSettings();
   const router = useRouter();
   const [email, setEmail] = useState('');
-  const [senha, setsenha] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 	const { isDarkMode } = useDarkMode();
 
@@ -40,11 +40,11 @@ export default function LoginV1() {
   async function handleSubmit(event) {
     event.preventDefault();
     try {
-      const response = await postInvestorLogin({ email, senha });
+      const response = await postInvestorLogin({ email, password });
       console.log('Resposta do backend no login:', response);
       if (response.token) {
         localStorage.setItem('token', response.token);
-        localStorage.setItem('profileData', JSON.stringify(response.investidor));
+        localStorage.setItem('profileData', JSON.stringify(response.investor));
         toast.success('Login realizado com sucesso!');
         router.push('/dashboard');
       }
@@ -98,8 +98,8 @@ export default function LoginV1() {
                 className="form-control h-45px fs-13px"
                 placeholder="senha"
                 id="senha"
-                value={senha}
-                onChange={(e) => setsenha(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <label htmlFor="senha" className="d-flex align-items-center fs-13px text-gray-600">Senha</label>
             </div>
