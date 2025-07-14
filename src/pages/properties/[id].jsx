@@ -66,7 +66,7 @@ export default function ImovelPage() {
 
   const valorDisponivel = Number(property?.qtd_tokens || 0) * Number(valorUnitario || 0);
   const valorVendido = (Number(property?.qtd_tokens_original || 0) - Number(property?.qtd_tokens || 0)) * Number(valorUnitario || 0);
-  const valorMinimo = 1000;
+  const valorMinimo = 0;
 
   const coresGarantia = ['#e53935', '#f6c244', '#f6e244', '#4fc3f7', '#43a047'];
 

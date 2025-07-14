@@ -72,11 +72,11 @@ export default function AdminLogin() {
   return (
     <div className="login login-with-news-feed">
       <div className="news-feed">
-        <div className="news-image" style={{backgroundImage: 'url(/assets/img/login-bg/login-bg-11.jpg)'}}></div>
-        <div className="news-caption">
+        <div className="news-image" style={{backgroundImage: 'url(/assets/img/login-bg.png)'}}></div>
+        {/* <div className="news-caption">
           <h4 className="caption-title"><b>IB3</b> Capital</h4>
           <p>Área exclusiva para administradores da plataforma.</p>
-        </div>
+        </div> */}
       </div>
       <div className="login-container">
         <div className="login-header mb-30px">

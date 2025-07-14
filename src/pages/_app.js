@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
-
+import Head from 'next/head';
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
@@ -37,10 +37,13 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-  
     <AppSettingsProvider>
+      <Head>
+        <link rel="icon" href="/assets/img/icon.png" />
+        <title>IB3 - Investing</title>
+      </Head>
       <Layout>
-          <ToastContainer
+        <ToastContainer
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
@@ -52,7 +55,6 @@ function MyApp({ Component, pageProps }) {
           pauseOnHover
           theme="colored"
         />
-
         <Component {...pageProps} />
       </Layout>
     </AppSettingsProvider>

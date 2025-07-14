@@ -57,13 +57,13 @@ export default function LoginV1() {
 	return (
 		<div className="login login-with-news-feed">
       <div className="news-feed">
-        <div className="news-image" style={{backgroundImage: 'url(/assets/img/login-bg/login-bg-11.jpg)'}}></div>
-        <div className="news-caption">
+        <div className="news-image" style={{backgroundImage: 'url(/assets/img/login-bg.png)'}}></div>
+        {/* <div className="news-caption">
           <h4 className="caption-title"><b>IB3</b> Capital</h4>
           <p>
            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
           </p>
-        </div>
+        </div> */}
       </div>
       <div className="login-container">
         <div className="login-header mb-30px">
@@ -83,7 +83,7 @@ export default function LoginV1() {
             {error && <div className="text-danger mb-2">{error}</div>}
             <div className="form-floating mb-15px">
               <input
-                type="email"
+                type="username"
                 className="form-control h-45px fs-13px"
                 placeholder="Email Address"
                 id="emailAddress"
@@ -94,7 +94,7 @@ export default function LoginV1() {
             </div>
             <div className="form-floating mb-15px">
               <input
-                type="senha"
+                type="password"
                 className="form-control h-45px fs-13px"
                 placeholder="senha"
                 id="senha"

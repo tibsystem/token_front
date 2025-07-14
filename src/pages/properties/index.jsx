@@ -170,10 +170,10 @@ export default function ImoveisPage() {
             <i className="fa fa-home me-2"></i>
             {stats.total} propriedades
           </div>
-          <div className="badge bg-success-subtle text-success fs-6 p-2">
+          {/* <div className="badge bg-success-subtle text-success fs-6 p-2">
             <i className="fa fa-chart-line me-2"></i>
             IPCA + 14% a.a.
-          </div>
+          </div> */}
         </div>
       </div>
 
