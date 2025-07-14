@@ -25,6 +25,7 @@ import { ptBR } from "date-fns/locale";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { title } from "process";
 registerLocale("pt-BR", ptBR);
 setDefaultLocale("pt-BR");
 
@@ -380,7 +381,6 @@ export default function CadastrarImovel() {
         selectedImages.map(async (image) => await toBase64(image))
       );
 
-      // Converter arquivos anexados para base64
       const attachedFilesBase64 = await Promise.all(
         attachedFiles.map(async (attached) => ({
           file: await toBase64(attached.file),
@@ -393,21 +393,22 @@ export default function CadastrarImovel() {
 
       // Montar payload JSON
       const payload = {
-        titulo: form.titulo,
-        descricao: form.descricao,
-        localizacao: form.localizacao,
-        valor_total: valorTotal,
-        qtd_tokens: parseInt(form.qtd_tokens),
-        modelo_smart_id: form.modelo_smart_id,
-        status: 1,
-        data_tokenizacao: Date(),
+        title: form.titulo,
+        description: form.descricao,
+        location: form.localizacao,
+        total_value: valorTotal,
+        total_tokens: parseInt(form.qtd_tokens),
+        smart_contract_model_id: form.modelo_smart_id,
+        status: 'pending',
+        tokenization_date: new Date(form.data_tokenizacao).toISOString(),
         files: filesBase64, // imagens base64
-        anexos: attachedFilesBase64, // arquivos anexados com descrições
+        attachments: attachedFilesBase64, // arquivos anexados com descrições
       };
 
       console.log("Payload:", payload);
+      console.log("response")
 
-      // await postProperties(payload);
+      await postProperties(payload);
 
       toast.success("Imóvel cadastrado com sucesso!");
       setSuccess(true);

@@ -6,17 +6,18 @@ import { useEffect, FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSettings } from '@/config/app-settings';
 import Link from 'next/link';
-import api from '@/services/api';
-import { postInvestorLogin } from '../../services/login/postInvestorLogin';
-import useDarkMode from '@/hooks/useDarkMode';
+import { postInvestorLogin } from '@/services/login/postInvestorLogin';
 import { toast } from 'react-toastify';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import useDarkMode from '@/hooks/useDarkMode';
 
 export default function LoginV1() {
-        const { updateSettings } = useAppSettings();
+  const { updateSettings } = useAppSettings();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 	const { isDarkMode } = useDarkMode();
 
 	useEffect(() => {
@@ -37,22 +38,49 @@ export default function LoginV1() {
 		// eslint-disable-next-line
 	}, []);
 	
-  async function handleSubmit(event) {
-    event.preventDefault();
-    try {
-      const response = await postInvestorLogin({ email, password });
-      console.log('Resposta do backend no login:', response);
-      if (response.token) {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('profileData', JSON.stringify(response.investor));
-        toast.success('Login realizado com sucesso!');
-        router.push('/dashboard');
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Email ou senha inválido!');
-    }
+async function handleSubmit(event) {
+  event.preventDefault();
+  setError('');
+  setIsSubmitting(true);
+
+  if (!email || !password) {
+    toast.warning('Por favor, preencha todos os campos.');
+    setIsSubmitting(false);
+    return;
   }
+
+  try {
+    const response = await postInvestorLogin({ email, password });
+
+    if (response?.token) {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('profileData', JSON.stringify(response.investor));
+      toast.success('Login realizado com sucesso!');
+      router.push('/dashboard');
+    } else {
+      throw new Error('Token não fornecido.');
+    }
+  } catch (err) {
+    console.error('Erro no login:', err);
+
+    const backendMessage = err?.response?.data?.message;
+
+    if (backendMessage) {
+      // toast.error(backendMessage);
+      toast.error('Ocorreu um erro ao tentar fazer login. Por favor,tente novamente.');
+      console.error('Mensagem do backend:', backendMessage);
+    } else if (err.message === 'Token não fornecido.') {
+      toast.error('Erro inesperado: resposta incompleta do servidor.');
+    } else {
+      toast.error('Falha ao conectar. Verifique sua conexão ou tente novamente mais tarde.');
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('profileData');
+  } finally {
+    setIsSubmitting(false);
+  }
+}
+
   
 	return (
 		<div className="login login-with-news-feed">
@@ -105,8 +133,20 @@ export default function LoginV1() {
             </div>
          
             <div className="mb-15px">
-              <button type="submit" className="btn btn-dark d-block h-45px w-100 btn-lg fs-14px">Entrar</button>
-            </div>
+              <button 
+                type="submit" 
+                className="btn btn-dark d-block h-45px w-100 btn-lg fs-14px" 
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <AiOutlineLoading3Quarters className="spinner-border-sm me-2" style={{animation: 'spin 1s linear infinite'}} />
+                    Entrando...
+                  </>
+                ) : (
+                  "Entrar"
+                )}
+              </button>            </div>
             <div className="mb-40px pb-40px text-body">
                Clique <Link href="/register" className="text-primary">aqui</Link> para se cadastrar.
             </div>
@@ -117,6 +157,13 @@ export default function LoginV1() {
           </form>
         </div>
       </div>
+            <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
+    
 	)
 }

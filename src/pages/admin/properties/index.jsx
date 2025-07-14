@@ -6,6 +6,8 @@ import { getProperties } from '../../../services/properties/getProperties';
 import { FaMapMarkerAlt, FaCoins, FaCubes, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { set } from 'date-fns';
+import { toast } from 'react-toastify';
 
 export default function ImoveisAdminPage() {
   const [imoveis, setImoveis] = useState([]);
@@ -20,6 +22,7 @@ export default function ImoveisAdminPage() {
         setImoveis(Array.isArray(response) ? response : []);
         setLoading(false);
       } catch (err) {
+        toast.error('Erro ao carregar imóveis.');
         setError('Erro ao carregar imóveis.');
         setLoading(false);
       }
@@ -53,15 +56,40 @@ export default function ImoveisAdminPage() {
           <div key={imovel.id} className="col-xl-3 col-lg-6">
             <div className="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
               <img
-                src="/assets/img/theme/default.jpg"
+                src={
+                  imovel.photos && imovel.photos.length > 0
+                    ? imovel.photos[0].url
+                    : (imovel.files && imovel.files.length > 0
+                        ? `data:image/jpeg;base64,${imovel.files[0].url}`
+                        : '/assets/img/theme/default.jpg')
+                }
                 alt="Imagem do imóvel"
                 className="card-img-top object-fit-cover"
                 style={{ height: '180px' }}
                 onError={(e) => { e.target.src = '/assets/img/theme/default.jpg'; }}
               />
+              {/* Galeria de miniaturas */}
+              {imovel.photos && imovel.photos.length > 1 && (
+                <div className="d-flex gap-2 mt-2 px-2 pb-2">
+                  {imovel.photos.slice(1, 5).map((photo, idx) => (
+                    <img
+                      key={photo.id}
+                      src={photo.url}
+                      alt={`Foto ${idx + 2}`}
+                      style={{ width: 60, height: 40, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }}
+                      onError={(e) => { e.target.src = '/assets/img/theme/default.jpg'; }}
+                    />
+                  ))}
+                  {imovel.photos.length > 5 && (
+                    <span className="d-flex align-items-center justify-content-center bg-light rounded-2 border text-muted" style={{ width: 60, height: 40, fontSize: 12 }}>
+                      +{imovel.photos.length - 5}
+                    </span>
+                  )}
+                </div>
+              )}
               <div className="card-body d-flex flex-column">
-                <h5 className="fw-bold text-dark mb-1 fs-4">{imovel.titulo}</h5>
-                <p className="text-muted fs-6 mb-2">Direito de recebimento de antecipações do segmento imobiliário</p>
+                <h5 className="fw-bold text-dark mb-1 fs-4">{imovel.title}</h5>
+                <p className="text-muted fs-6 mb-2">{imovel.description}</p>
 
                 <div className="mb-2">
                   <small className="text-muted fs-6">Nível de Garantia</small>
@@ -85,18 +113,29 @@ export default function ImoveisAdminPage() {
                 </div>
 
                 <div className="d-flex flex-column gap-1 mt-3 text-muted fs-6">
-                  <div className="d-flex align-items-center"><FaMapMarkerAlt className="me-2 text-primary" /> {imovel.localizacao}</div>
-                  <div className="d-flex align-items-center"><FaCoins className="me-2 text-warning" /> Valor Total: R$ {Number(imovel.valor_total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                  <div className="d-flex align-items-center"><FaCubes className="me-2 text-secondary" /> Tokens: {imovel.qtd_tokens}</div>
-                  <div className="d-flex align-items-center"><FaInfoCircle className="me-2 text-info" /> Status: <span className={`badge rounded-pill ${imovel.status === 'ativo' ? 'bg-success-subtle text-success' : 'bg-secondary text-dark'}`}>{imovel.status}</span></div>
-                  <div className="d-flex align-items-center"><FaCalendarAlt className="me-2 text-danger" /> Data Tokenização: {new Date(imovel.data_tokenizacao).toLocaleString('pt-BR', { 
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit', 
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit' 
-                  }).replace(',', '')}</div>
+                  <div className="d-flex align-items-center"><FaMapMarkerAlt className="me-2 text-primary" /> {imovel.location}</div>
+                  <div className="d-flex align-items-center"><FaCoins className="me-2 text-warning" /> Valor Total: R$ {Number(imovel.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                  <div className="d-flex align-items-center"><FaCubes className="me-2 text-secondary" /> Tokens: {imovel.total_tokens}</div>
+                  <div className="d-flex align-items-center">
+                    <FaInfoCircle className="me-2 text-info" /> Status: <span className={`badge rounded-pill ${imovel.status === 'ativo' ? 'bg-success-subtle text-success' : 'bg-warning text-dark'}`}>
+                      {imovel.status === 'pending' ? 'pendente' : imovel.status}
+                    </span>
+                  </div>
+                 
+                  <div className="d-flex align-items-center">
+                    <FaCalendarAlt className="me-2 text-danger" /> Data Tokenização: {
+                      imovel.data_tokenizacao && !isNaN(new Date(imovel.data_tokenizacao).getTime())
+                        ? new Date(imovel.data_tokenizacao).toLocaleString('pt-BR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                          }).replace(',', '')
+                        : 'Não tokenizado'
+                    }
+                  </div>
                 </div>
 
                 <Link href={`./properties/${imovel.id}`} className="btn btn-outline-primary mt-3 w-100 fs-6">

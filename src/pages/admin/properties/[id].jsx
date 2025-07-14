@@ -4,8 +4,13 @@ import Image from 'next/image';
 import Sidebar from '@/components/sidebar/sidebar';
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 import { FaCoins, FaUsers, FaCubes, FaCheckCircle, FaUser, FaMapMarkerAlt, FaImage,FaBuilding } from 'react-icons/fa';
-import { getPropertyFinance } from '../../../services/propertyFinance/getPropertyFinance';
+import { getPropertyFinance } from '@/services/propertyFinance/getPropertyFinance';
+import { getOnePropertie } from '@/services/properties/getOnePropertie';
+import { putPropertie } from '@/services/properties/putPropertie';
+import { deletePropertie } from '@/services/properties/deletePropertie';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import CustomModal from '@/components/modal/Modal';
+import { toast } from 'react-toastify';
 
 export default function ImovelAdminFinanceiro() {
   const router = useRouter();
@@ -14,28 +19,100 @@ export default function ImovelAdminFinanceiro() {
   const [aba, setAba] = useState('financeiro');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    description: '',
+    location: '',
+    total_value: '',
+    total_tokens: '',
+    status: ''
+  });
 
   useEffect(() => {
     if (!id) return;
-    
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await getPropertyFinance(id);
-        setDados(response);
+        const [responseFinance, responseProperty] = await Promise.all([
+          getPropertyFinance(id),
+          getOnePropertie(id)
+        ]);
+        setDados({ ...responseFinance, property: responseProperty });
       } catch (err) {
         if (err?.response?.status === 401) {
           setError('Sua sessão expirou ou você não tem permissão para acessar os dados financeiros deste imóvel. Faça login novamente se necessário.');
         } else {
           setError('Erro ao carregar dados financeiros do imóvel.');
+          console.error('Erro ao carregar dados financeiros do imóvel:', err);
         }
       } finally {
         setLoading(false);
       }
     };
-    
     fetchData();
   }, [id]);
+
+  const handleEditClick = () => {
+    if (dados?.property) {
+      setEditFormData({
+        title: dados.property.title || '',
+        description: dados.property.description || '',
+        location: dados.property.location || '',
+        total_value: dados.property.total_value || '',
+        total_tokens: dados.property.total_tokens || '',
+        status: dados.property.status || ''
+      });
+      setShowEditModal(true);
+    }
+  };
+  const handleDelete = async () => {
+    setShowDeleteModal(false);
+    
+    try {
+      setLoading(true);
+      await deletePropertie(id);
+      toast.success('Propriedade excluída com sucesso!');
+      router.push('/admin/properties'); 
+    } catch (err) {
+      console.error('Erro ao excluir propriedade:', err);
+      toast.error('Erro ao excluir propriedade. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };  
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSaveChanges = async () => {
+    
+    try {
+      setLoading(true);
+      await putPropertie(id, editFormData);
+      
+      const [responseFinance, responseProperty] = await Promise.all([
+        getPropertyFinance(id),
+        getOnePropertie(id)
+      ]);
+      setDados({ ...responseFinance, property: responseProperty });
+      
+      setShowEditModal(false);
+      toast.success('Propriedade atualizada com sucesso!');
+    } catch (err) {
+      console.error('Erro ao atualizar propriedade:', err);
+      toast.error('Erro ao atualizar propriedade. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) return <div className="p-4">Carregando...</div>;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
@@ -46,24 +123,48 @@ export default function ImovelAdminFinanceiro() {
   return (
     <ProtectedRoute>
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <main className="flex-1 p-8 max-w-6xl mx-auto">
+     <main className="flex-1 p-8 max-w-6xl mx-auto">
         <Breadcrumb items={[
           { label: 'Imóveis', path: '/admin/properties' },
-          { label: `Detalhes do imóvel ${imovel.titulo}`, path: null }
+          { label: `Detalhes do imóvel ${dados.property.title}`, path: null }
         ]} />
-        
+
         <div className="mb-4">
-          <h1 className="page-header font-bold text-dark text-3xl mb-4 flex items-center gap-2">
-            <FaBuilding className="text-cyan-500" /> {imovel.titulo || 'Título não disponível'}
-          </h1>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h1 className="page-header font-bold text-dark text-3xl mb-0 flex items-center gap-2">
+                <FaBuilding className="text-cyan-500" /> {dados.property.title || 'Título não disponível'}
+              </h1>
+            </div>
+            <div className="d-flex gap-2">
+              {dados.property.status === 'pending' && (
+                <>
+                  <button 
+                    className="btn btn-warning"
+                    onClick={handleEditClick}
+                  >
+                    <i className="fa fa-edit me-2"></i>
+                    Editar Propriedade
+                  </button>
+                  <button 
+                    className="btn btn-danger"
+                    onClick={() => setShowDeleteModal(true)}
+                  >
+                    <i className="fa fa-trash me-2"></i>
+                    Excluir Propriedade
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+         
           <div className="d-flex flex-wrap gap-2 mb-4">
             <span className="badge bg-secondary-subtle text-secondary px-3 py-2">Novo</span>
             <span className="badge bg-primary-subtle text-primary px-3 py-2">Isento de IR</span>
-            
-            {imovel?.contract_address && (
+
+            {dados.property?.contract_address && (
               <a
-                href={`https://polygonscan.com/token/${imovel.contract_address}`}
+                href={`https://polygonscan.com/token/${dados.property.contract_address}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="badge bg-warning-subtle text-secondary px-3 py-2 text-decoration-none d-inline-flex align-items-center"
@@ -75,27 +176,26 @@ export default function ImovelAdminFinanceiro() {
           </div>
           <p className="mb-4 fs-5 text-primary fw-bold">Rentabilidade Prevista: IPCA + 14,00% a.a.</p>
 
-            {/* Estatísticas da Propriedade - Fora do card */}
-        <div className="row mb-4">
-          <div className="col-12 mb-3">
-            <h4 className="text-dark">Estatísticas da Propriedade</h4>
-          </div>
-          <div className="col-xl-3 col-md-6 mb-4">
-            <div className="widget widget-stats bg-blue">
-              <div className="stats-icon stats-icon-lg"><FaCubes /></div>
-              <div className="stats-content">
-                <div className="stats-title">TOKENS ORIGINAIS</div>
-                <div className="stats-number">{imovel.qtd_tokens_original}</div>
-                <div className="stats-desc">Total de tokens criados</div>
+           <div className="row mb-4">
+            <div className="col-12 mb-3">
+              <h4 className="text-dark">Estatísticas da Propriedade</h4>
+            </div>
+            <div className="col-xl-3 col-md-6 mb-4">
+              <div className="widget widget-stats bg-blue">
+                <div className="stats-icon stats-icon-lg"><FaCubes /></div>
+                <div className="stats-content">
+                  <div className="stats-title">TOKENS ORIGINAIS</div>
+                  <div className="stats-number">{dados.property.total_tokens_original}</div>
+                  <div className="stats-desc">Total de tokens criados</div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-xl-3 col-md-6 mb-4">
-            <div className="widget widget-stats bg-info">
-              <div className="stats-icon stats-icon-lg"><FaCoins /></div>
-              <div className="stats-content">
-                <div className="stats-title">TOKENS VENDIDOS</div>
-                <div className="stats-number">{resumo.tokens_vendidos}</div>
+            <div className="col-xl-3 col-md-6 mb-4">
+              <div className="widget widget-stats bg-info">
+                <div className="stats-icon stats-icon-lg"><FaCoins /></div>
+                <div className="stats-content">
+                  <div className="stats-title">TOKENS VENDIDOS</div>
+                  {/* <div className="stats-number">{resumo.tokens_vendidos}</div> */}
                 <div className="stats-desc">Total vendido</div>
               </div>
             </div>
@@ -105,7 +205,7 @@ export default function ImovelAdminFinanceiro() {
               <div className="stats-icon stats-icon-lg"><FaCubes /></div>
               <div className="stats-content">
                 <div className="stats-title">TOKENS DISPONÍVEIS</div>
-                <div className="stats-number">{imovel.qtd_tokens}</div>
+                <div className="stats-number">{dados.property.total_tokens}</div>
                 <div className="stats-desc">Disponível para venda</div>
               </div>
             </div>
@@ -115,8 +215,8 @@ export default function ImovelAdminFinanceiro() {
               <div className="stats-icon stats-icon-lg"><FaUsers /></div>
               <div className="stats-content">
                 <div className="stats-title">INVESTIDORES ÚNICOS</div>
-                <div className="stats-number">{resumo.investidores_unicos}</div>
-                <div className="stats-desc">Total de investidores</div>
+                {/* <div className="stats-number">{resumo.investidores_unicos}</div> */}
+                {/* <div className="stats-desc">Total de investidores</div> */}
               </div>
             </div>
           </div>
@@ -150,8 +250,7 @@ export default function ImovelAdminFinanceiro() {
           </li>
         </ul>
         
-        {/* Conteúdo das abas */}
-        <div className="panel panel-inverse">
+        {/* <div className="panel panel-inverse">
           <div className="panel-body">{aba === 'financeiro' && (
             <div>
               <h4 className="mb-3">Investimentos</h4>
@@ -244,7 +343,7 @@ export default function ImovelAdminFinanceiro() {
             </div>
           )}
           </div>
-        </div>
+        </div> */}
         </div>
         
         <div className="card border-0 shadow-sm p-4 mb-5">
@@ -256,10 +355,10 @@ export default function ImovelAdminFinanceiro() {
               <div className="panel panel-inverse h-100">
                 <div className="panel-body p-3">
                   <div className="position-relative overflow-hidden rounded-3 shadow-sm" style={{ height: '450px' }}>
-                    {imovel.imagens && imovel.imagens.length > 0 ? (
+                    {dados.property.files && dados.property.files.length > 0 ? (
                       <Image
-                        src={imovel.imagens[0]?.url || '/assets/img/theme/default.jpg'}
-                        alt={`Imagem da propriedade ${imovel.titulo}`}
+                        src={dados.property.files[0]?.url || '/assets/img/theme/default.jpg'}
+                        alt={`Imagem da propriedade ${dados.property.title}`}
                         className="w-100 h-100 object-fit-cover"
                         width={800}
                         height={450}
@@ -287,10 +386,10 @@ export default function ImovelAdminFinanceiro() {
                     )}
                   </div>
                   
-                  {imovel.imagens && imovel.imagens.length > 1 && (
+                  {dados.property.files && dados.property.files.length > 1 && (
                     <div className="mt-3">
                       <div className="d-flex gap-2 overflow-auto pb-2">
-                        {imovel.imagens.slice(1, 5).map((img, index) => (
+                        {dados.property.files.slice(1, 5).map((img, index) => (
                           <div key={index} className="flex-shrink-0">
                             <Image
                               src={img.url || '/assets/img/theme/default.jpg'}
@@ -305,10 +404,10 @@ export default function ImovelAdminFinanceiro() {
                             />
                           </div>
                         ))}
-                        {imovel.imagens.length > 5 && (
+                        {dados.property.files.length > 5 && (
                           <div className="flex-shrink-0 d-flex align-items-center justify-content-center bg-light rounded-2 border text-muted" 
                                style={{ width: '80px', height: '60px', fontSize: '12px' }}>
-                            +{imovel.imagens.length - 5}
+                            +{dados.property.files.length - 5}
                           </div>
                         )}
                       </div>
@@ -325,23 +424,23 @@ export default function ImovelAdminFinanceiro() {
                 <div className="panel-body">
                   <div className="d-flex flex-column gap-3">
                     <div className="d-flex align-items-center gap-2">
-                      <FaCheckCircle className={imovel.status === 'ativo' ? 'text-success' : 'text-muted'} />
+                      <FaCheckCircle className={dados.property.status === 'ativo' ? 'text-success' : 'text-muted'} />
                       <span className="text-muted">Status:</span>
-                      <span className={imovel.status === 'ativo' ? 'text-success fw-semibold' : 'text-muted fw-semibold'}>
-                        {imovel.status.toUpperCase()}
+                      <span className={dados.property.status === 'ativo' ? 'text-success fw-semibold' : 'text-muted fw-semibold'}>
+                        {dados.property.status === 'pending' ? 'PENDENTE' : dados.property.status.toUpperCase()}
                       </span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <FaCoins className="text-warning" />
                       <span className="text-muted">Valor Total:</span>
                       <span className="fw-semibold">
-                        R$ {Number(imovel.valor_total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R$ {Number(dados.property.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <FaMapMarkerAlt className="text-info" />
                       <span className="text-muted">Localização:</span>
-                      <span className="fw-semibold">{imovel.localizacao}</span>
+                      <span className="fw-semibold">{dados.property.location || 'Não informado'}</span>
                     </div>
 
                     {/* Nível de Garantia */}
@@ -367,12 +466,12 @@ export default function ImovelAdminFinanceiro() {
                       </div>
                     </div>
 
-                    {imovel.descricao && (
+                    {dados.property.description && (
                       <div className="p-3 bg-light rounded-3">
                         <h6 className="text-muted mb-2 fw-medium d-flex align-items-center gap-2">
                           <i className="fa fa-align-left"></i> Descrição
                         </h6>
-                        <p className="small text-muted mb-0 lh-base">{imovel.descricao}</p>
+                        <p className="small text-muted mb-0 lh-base">{dados.property.description}</p>
                       </div>
                     )}
 
@@ -387,10 +486,10 @@ export default function ImovelAdminFinanceiro() {
                       <div><strong>Valor Mínimo:</strong><br />R$ 1.000</div>
                     </div>
 
-                    {imovel?.contract_address && (
+                    {dados.property?.contract_address && (
                       <div className="text-center">
                         <a
-                          href={`https://polygonscan.com/token/${imovel.contract_address}`}
+                          href={`https://polygonscan.com/token/${dados.property.contract_address}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn btn-outline-warning btn-sm d-inline-flex align-items-center gap-2"
@@ -402,14 +501,14 @@ export default function ImovelAdminFinanceiro() {
                       </div>
                     )}
 
-                    {imovel.data_tokenizacao && (
+                    {dados.property.tokenization_date && (
                       <div className="d-flex align-items-center justify-content-between p-3 bg-light rounded-3">
                         <div className="d-flex align-items-center gap-2">
                           <i className="fa fa-calendar text-primary"></i>
                           <span className="text-muted fw-medium">Data de Tokenização</span>
                         </div>
                         <span className="fw-semibold text-dark">
-                          {new Date(imovel.data_tokenizacao).toLocaleDateString('pt-BR')}
+                          {new Date(dados.property.tokenization_date).toLocaleDateString('pt-BR')}
                         </span>
                       </div>
                     )}
@@ -422,8 +521,67 @@ export default function ImovelAdminFinanceiro() {
           
           <hr className="my-4" />
           
+          {/* Seção de Documentos/Anexos */}
+          <div className="row mb-4">
+            <div className="col-12">
+              <h5 className="mb-3 fw-bold text-dark d-flex align-items-center gap-2">
+                <i className="fa fa-file-text text-primary"></i> Documentos e Anexos
+              </h5>
+              <div className="panel panel-inverse">
+                <div className="panel-body">
+                  {dados.property.attachments && dados.property.attachments.length > 0 ? (
+                    <div className="row g-3">
+                      {dados.property.attachments.map((attachment) => (
+                        <div key={attachment.id} className="col-md-6 col-lg-4">
+                          <div className="card border h-100">
+                            <div className="card-body d-flex align-items-center">
+                              <div className="me-3">
+                                <i className="fa fa-file-pdf text-danger" style={{ fontSize: '2rem' }}></i>
+                              </div>
+                              <div className="flex-grow-1">
+                                <h6 className="card-title mb-1 text-truncate" title={attachment.name}>
+                                  {attachment.name}
+                                </h6>
+                                <small className="text-muted">
+                                  {(attachment.size / 1024).toFixed(1)} KB
+                                </small>
+                                <br />
+                                <small className="text-muted">
+                                  {new Date(attachment.created_at).toLocaleDateString('pt-BR')}
+                                </small>
+                              </div>
+                              <div>
+                                <a
+                                  href={attachment.path}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="btn btn-sm btn-outline-primary"
+                                  title="Baixar documento"
+                                >
+                                  <i className="fa fa-download"></i>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <i className="fa fa-file-text text-muted mb-3" style={{ fontSize: '3rem' }}></i>
+                      <p className="text-muted mb-0">Nenhum documento anexado a esta propriedade.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr className="my-4" />
+          
           {/* Progresso do Investimento */}
-          <div className="row">
+          {
+      /* <div className="row">
             <div className="col-12">
               <div className="panel panel-inverse">
                 <div className="panel-body">
@@ -459,12 +617,122 @@ export default function ImovelAdminFinanceiro() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         
       
 
       </main>
+
+      <CustomModal
+        id="editPropertyModal"
+        title="Editar Propriedade"
+        show={showEditModal}
+        onConfirm={handleSaveChanges}
+        onCancel={() => setShowEditModal(false)}
+        confirmText="Salvar Alterações"
+        cancelText="Cancelar"
+        confirmVariant="success"
+        size="lg"
+      >
+        <form>
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <label htmlFor="title" className="form-label">Título</label>
+              <input
+                type="text"
+                className="form-control"
+                id="title"
+                name="title"
+                value={editFormData.title}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <label htmlFor="status" className="form-label">Status</label>
+              <select
+                className="form-select"
+                id="status"
+                name="status"
+                value={editFormData.status}
+                onChange={handleInputChange}
+              >
+                <option value="pending">Pendente</option>
+                <option value="active">Ativo</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+          </div>
+          
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">Descrição</label>
+            <textarea
+              className="form-control"
+              id="description"
+              name="description"
+              rows="3"
+              value={editFormData.description}
+              onChange={handleInputChange}
+              required
+            ></textarea>
+          </div>
+
+          <div className="row">
+            <div className="col-md-4 mb-3">
+              <label htmlFor="location" className="form-label">Localização</label>
+              <input
+                type="text"
+                className="form-control"
+                id="location"
+                name="location"
+                value={editFormData.location}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="col-md-4 mb-3">
+              <label htmlFor="total_value" className="form-label">Valor Total</label>
+              <input
+                type="number"
+                step="0.01"
+                className="form-control"
+                id="total_value"
+                name="total_value"
+                value={editFormData.total_value}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div className="col-md-4 mb-3">
+              <label htmlFor="total_tokens" className="form-label">Total de Tokens</label>
+              <input
+                type="number"
+                className="form-control"
+                id="total_tokens"
+                name="total_tokens"
+                value={editFormData.total_tokens}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          </div>
+        </form>
+      </CustomModal>
+
+      {/* Modal para excluir propriedade naquele modelo*/}
+      <CustomModal
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteModal(false)}
+        show={showDeleteModal}
+        title={`Excluir Propriedade: ${dados?.property?.title || 'Propriedade'}`}
+        confirmText="Excluir"
+        cancelText="Cancelar"
+        confirmVariant="danger"
+        size="md"
+      >
+        <p>Tem certeza que deseja excluir a propriedade <strong>"{dados?.property?.title}"</strong>?</p>
+        <p className="text-muted">Esta ação não pode ser desfeita.</p>
+      </CustomModal>
     </div>
     </ProtectedRoute>
   );

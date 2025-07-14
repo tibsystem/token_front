@@ -20,6 +20,7 @@ api.interceptors.request.use((config) => {
         config.baseURL = 'http://localhost:8000/api/investor';
       }
     }
+ 
   }
   return config;
 });
