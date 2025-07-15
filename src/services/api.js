@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://backend.ib3capital.app.br/api',
+  baseURL: 'http://localhost:8000/api',
 });
 
 api.interceptors.request.use((config) => {
@@ -15,9 +15,9 @@ api.interceptors.request.use((config) => {
       config.headers.Authorization = `Bearer ${token}`;
       
       if (adminToken) {
-        config.baseURL = 'https://backend.ib3capital.app.br/api/admin';
+        config.baseURL = 'http://localhost:8000/api/admin';
       } else {
-        config.baseURL = 'https://backend.ib3capital.app.br/api/investor';
+        config.baseURL = 'http://localhost:8000/api/investor';
       }
     }
  
