@@ -65,11 +65,11 @@ const InvestorDetails = () => {
 
   const getKycStatusBadge = (status) => {
     switch(status?.toLowerCase()) {
-      case 'aprovado':
+      case 'approved':
         return <span className="badge bg-success">Aprovado</span>;
-      case 'pendente':
+      case 'pending':
         return <span className="badge bg-warning">Pendente</span>;
-      case 'rejeitado':
+      case 'rejected':
         return <span className="badge bg-danger">Rejeitado</span>;
       default:
         return <span className="badge bg-secondary">Não informado</span>;
@@ -136,13 +136,13 @@ const InvestorDetails = () => {
               <div className="d-flex align-items-center">
                 <img
                   src={investor.foto_url || '/assets/img/user/user-default.jpg'}
-                  alt={investor.nome}
+                  alt={investor.name}
                   className="rounded-circle me-3"
                   style={{ width: 60, height: 60, objectFit: 'cover', border: '3px solid rgba(255,255,255,0.3)' }}
                   onError={e => { e.target.src = '/assets/img/user/user-default.jpg'; }}
                 />
                 <div>
-                  <h4 className="mb-1">{investor.nome}</h4>
+                  <h4 className="mb-1">{investor.name}</h4>
                   <small className="opacity-75">ID: {investor.id}</small>
                 </div>
               </div>
@@ -166,14 +166,14 @@ const InvestorDetails = () => {
                     <label className="form-label text-muted small">Telefone</label>
                     <div className="d-flex align-items-center">
                       <i className="fa fa-phone text-muted me-2"></i>
-                      <span>{investor.telefone || 'Não informado'}</span>
+                      <span>{investor.phone || 'Não informado'}</span>
                     </div>
                   </div>
                   <div className="mb-3">
                     <label className="form-label text-muted small">CPF</label>
                     <div className="d-flex align-items-center">
                       <i className="fa fa-id-card text-muted me-2"></i>
-                      <span>{investor.cpf || 'Não informado'}</span>
+                      <span>{investor.document || 'Não informado'}</span>
                     </div>
                   </div>
                 </div>
@@ -364,10 +364,10 @@ const InvestorDetails = () => {
                         </h6>
                         <div>
                           <div className="fw-bold mb-2">Endereço:</div>
-                          {investor.carteira_blockchain ? (
+                          {investor.wallet_blockchain ? (
                             <div className="d-flex align-items-center">
                               <code className="bg-white p-2 text-dark rounded border flex-grow-1 me-2" style={{ fontSize: '14px', wordBreak: 'break-all' }}>
-                                {investor.carteira_blockchain}
+                                {investor.wallet_blockchain}
                               </code>
                               <button 
                                 className="btn btn-outline-primary btn-sm"

@@ -14,6 +14,20 @@ export default function ImoveisAdminPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Função para traduzir status
+  const translateStatus = (status) => {
+    const statusMap = {
+      'pending': 'Pendente',
+      'approved': 'Aprovado',
+      'active': 'Ativo',
+      'inactive': 'Inativo',
+      'cancelled': 'Cancelado',
+      'completed': 'Concluído',
+      'rejected': 'Rejeitado'
+    };
+    return statusMap[status?.toLowerCase()] || status?.toLowerCase() || 'N/A';
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,27 +68,24 @@ export default function ImoveisAdminPage() {
 
         {imoveis.map((imovel) => (
           <div key={imovel.id} className="col-xl-3 col-lg-6">
-            <div className="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+            <div className="card h-100 shadow-sm border-0 rounded-4  overflow-hidden">
               <img
                 src={
                   imovel.photos && imovel.photos.length > 0
-                    ? imovel.photos[0].url
-                    : (imovel.files && imovel.files.length > 0
-                        ? `data:image/jpeg;base64,${imovel.files[0].url}`
-                        : '/assets/img/theme/default.jpg')
+                    ? imovel.photos[0].path
+                    : '/assets/img/theme/default.jpg'
                 }
                 alt="Imagem do imóvel"
                 className="card-img-top object-fit-cover"
                 style={{ height: '180px' }}
                 onError={(e) => { e.target.src = '/assets/img/theme/default.jpg'; }}
               />
-              {/* Galeria de miniaturas */}
               {imovel.photos && imovel.photos.length > 1 && (
                 <div className="d-flex gap-2 mt-2 px-2 pb-2">
                   {imovel.photos.slice(1, 5).map((photo, idx) => (
                     <img
                       key={photo.id}
-                      src={photo.url}
+                      src={photo.path}
                       alt={`Foto ${idx + 2}`}
                       style={{ width: 60, height: 40, objectFit: 'cover', borderRadius: 6, border: '1px solid #eee' }}
                       onError={(e) => { e.target.src = '/assets/img/theme/default.jpg'; }}
@@ -117,15 +128,21 @@ export default function ImoveisAdminPage() {
                   <div className="d-flex align-items-center"><FaCoins className="me-2 text-warning" /> Valor Total: R$ {Number(imovel.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                   <div className="d-flex align-items-center"><FaCubes className="me-2 text-secondary" /> Tokens: {imovel.total_tokens}</div>
                   <div className="d-flex align-items-center">
-                    <FaInfoCircle className="me-2 text-info" /> Status: <span className={`badge rounded-pill ${imovel.status === 'ativo' ? 'bg-success-subtle text-success' : 'bg-warning text-dark'}`}>
-                      {imovel.status === 'pending' ? 'pendente' : imovel.status}
+                    <FaInfoCircle className="me-2 text-info" /> Status: <span className={`badge rounded-pill ${
+                      imovel.status?.toLowerCase() === 'active' || imovel.status?.toLowerCase() === 'approved' 
+                        ? 'bg-success-subtle text-success' 
+                        : imovel.status?.toLowerCase() === 'pending' 
+                        ? 'bg-warning-subtle text-warning' 
+                        : 'bg-secondary-subtle text-secondary'
+                    }`}>
+                      {translateStatus(imovel.status)}
                     </span>
                   </div>
                  
                   <div className="d-flex align-items-center">
                     <FaCalendarAlt className="me-2 text-danger" /> Data Tokenização: {
-                      imovel.data_tokenizacao && !isNaN(new Date(imovel.data_tokenizacao).getTime())
-                        ? new Date(imovel.data_tokenizacao).toLocaleString('pt-BR', {
+                      imovel.tokenization_date && !isNaN(new Date(imovel.tokenization_date).getTime())
+                        ? new Date(imovel.tokenization_date).toLocaleString('pt-BR', {
                             year: 'numeric',
                             month: '2-digit',
                             day: '2-digit',

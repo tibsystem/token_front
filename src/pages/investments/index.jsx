@@ -4,6 +4,7 @@ import { getInvestments } from '@/services/investments/getInvestments';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import '@/styles/investments.css';
+import { toast } from 'react-toastify';
 
 
 const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -86,6 +87,7 @@ export default function InvestimentosPage() {
         console.error('Erro ao buscar investimentos:', err);
         setError(err?.response?.data?.message || err.message || 'Erro ao buscar investimentos');
         setTransacoes([]);
+        toast.error('Erro ao carregar investimentos. Tente novamente mais tarde.');
       } finally {
         setLoading(false);
       }
@@ -183,30 +185,20 @@ export default function InvestimentosPage() {
           { label: 'Investimentos', path: '/investments' },
         ]} />
         
-        {/* Header com informações principais */}
         <div className="row mb-4">
           <div className="col-12">
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
-                <h1 className="text-2xl mb-2 text-dark fw-bold">
-                  <i className="fa fa-chart-pie me-3 text-primary"></i>
+                <h1 className="text-2xl mb-2 text-dark mt-3 fw-bold">
+                  <i className="fa fa-chart-pie me-3 text-dark"></i>
                   Meus Investimentos
                 </h1>
                 <p className="text-muted mb-0">Acompanhe a evolução dos seus tokens imobiliários</p>
-              </div>
-              <div className="d-flex gap-2">
-                <button className="btn btn-outline-primary btn-sm">
-                  <i className="fa fa-download me-2"></i>Exportar
-                </button>
-                <button className="btn btn-primary btn-sm">
-                  <i className="fa fa-plus me-2"></i>Novo Investimento
-                </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Estados de loading e erro */}
         {loading && (
           <div className="text-center py-5">
             <div className="spinner-border text-primary mb-3" role="status">
@@ -216,16 +208,10 @@ export default function InvestimentosPage() {
           </div>
         )}
         
-        {error && (
-          <div className="alert alert-danger d-flex align-items-center mb-4" role="alert">
-            <i className="fa fa-exclamation-triangle me-2"></i>
-            <div>{error}</div>
-          </div>
-        )}
+     
 
         {!loading && !error && (
           <>
-            {/* Cards de estatísticas */}
             <div className="row g-4 mb-5">
               <div className="col-md-4">
                 <div className="card border-0 shadow-sm h-100 investment-card gradient-purple">
@@ -292,7 +278,6 @@ export default function InvestimentosPage() {
               </div>
             </div>
 
-            {/* Gráfico de evolução */}
             <div className="row mb-5">
               <div className="col-12">
                 <div className="card border-0 shadow-sm">

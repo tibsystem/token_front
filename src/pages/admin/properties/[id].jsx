@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Sidebar from '@/components/sidebar/sidebar';
+
+import { toast } from 'react-toastify';
+// icons
+import { FaCoins, FaUsers, FaCubes, FaCheckCircle, FaUser, FaMapMarkerAlt, FaImage,FaBuilding, FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
+//components
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
-import { FaCoins, FaUsers, FaCubes, FaCheckCircle, FaUser, FaMapMarkerAlt, FaImage,FaBuilding } from 'react-icons/fa';
+import PropertyDetailSkeleton from '@/components/Skeleton/PropertyDetailSkeleton';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import CustomModal from '@/components/modal/Modal';
+//services
 import { getPropertyFinance } from '@/services/propertyFinance/getPropertyFinance';
 import { getOnePropertie } from '@/services/properties/getOnePropertie';
 import { putPropertie } from '@/services/properties/putPropertie';
 import { deletePropertie } from '@/services/properties/deletePropertie';
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import CustomModal from '@/components/modal/Modal';
-import { toast } from 'react-toastify';
 
 export default function ImovelAdminFinanceiro() {
   const router = useRouter();
@@ -21,6 +25,9 @@ export default function ImovelAdminFinanceiro() {
   const [error, setError] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const [editFormData, setEditFormData] = useState({
     title: '',
@@ -44,9 +51,12 @@ export default function ImovelAdminFinanceiro() {
       } catch (err) {
         if (err?.response?.status === 401) {
           setError('Sua sessão expirou ou você não tem permissão para acessar os dados financeiros deste imóvel. Faça login novamente se necessário.');
+          window.localStorage.removeItem('token');
+          window.localStorage.removeItem('admin_token');
+          router.push('/admin/login');
         } else {
-          setError('Erro ao carregar dados financeiros do imóvel.');
-          console.error('Erro ao carregar dados financeiros do imóvel:', err);
+          setError('Erro ao carregar dados do imóvel.');
+          console.error('Erro ao carregar dados do imóvel:', err);
         }
       } finally {
         setLoading(false);
@@ -54,6 +64,35 @@ export default function ImovelAdminFinanceiro() {
     };
     fetchData();
   }, [id]);
+
+  // Sincroniza com eventos nativos do Bootstrap carousel
+  useEffect(() => {
+    const carousel = document.querySelector('#propertyCarousel');
+    if (!carousel) return;
+
+    const handleSlide = (event) => {
+      const newIndex = parseInt(event.to);
+      if (!isNaN(newIndex)) {
+        setActiveImageIndex(newIndex);
+      }
+    };
+
+    const handleSliding = (event) => {
+      const newIndex = parseInt(event.to);
+      if (!isNaN(newIndex)) {
+        setActiveImageIndex(newIndex);
+      }
+    };
+
+    // Escuta tanto o evento 'slid' quanto o 'slide' para melhor sincronização
+    carousel.addEventListener('slid.bs.carousel', handleSlide);
+    carousel.addEventListener('slide.bs.carousel', handleSliding);
+    
+    return () => {
+      carousel.removeEventListener('slid.bs.carousel', handleSlide);
+      carousel.removeEventListener('slide.bs.carousel', handleSliding);
+    };
+  }, []);
 
   const handleEditClick = () => {
     if (dados?.property) {
@@ -70,9 +109,9 @@ export default function ImovelAdminFinanceiro() {
   };
   const handleDelete = async () => {
     setShowDeleteModal(false);
+    setIsSubmitting(true);
     
     try {
-      setLoading(true);
       await deletePropertie(id);
       toast.success('Propriedade excluída com sucesso!');
       router.push('/admin/properties'); 
@@ -80,7 +119,7 @@ export default function ImovelAdminFinanceiro() {
       console.error('Erro ao excluir propriedade:', err);
       toast.error('Erro ao excluir propriedade. Tente novamente.');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };  
 
@@ -93,9 +132,8 @@ export default function ImovelAdminFinanceiro() {
   };
 
   const handleSaveChanges = async () => {
-    
+    setIsSubmitting(true);
     try {
-      setLoading(true);
       await putPropertie(id, editFormData);
       
       const [responseFinance, responseProperty] = await Promise.all([
@@ -110,13 +148,98 @@ export default function ImovelAdminFinanceiro() {
       console.error('Erro ao atualizar propriedade:', err);
       toast.error('Erro ao atualizar propriedade. Tente novamente.');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  if (loading) return <div className="p-4">Carregando...</div>;
-  if (error) return <div className="p-4 text-red-600">{error}</div>;
-  if (!dados) return <div className="p-4">Dados não encontrados.</div>;
+  const handleImageClick = (index) => {
+    if (isTransitioning || index === activeImageIndex) return;
+    
+    setIsTransitioning(true);
+    
+    // Atualiza o índice imediatamente para feedback visual rápido
+    setActiveImageIndex(index);
+    
+    const carouselElement = document.querySelector('#propertyCarousel');
+    let carousel = window.bootstrap?.Carousel?.getInstance(carouselElement);
+    
+    // Se não existir instância, cria uma nova
+    if (!carousel && carouselElement) {
+      carousel = new window.bootstrap.Carousel(carouselElement);
+    }
+    
+    if (carousel) {
+      carousel.to(index);
+    }
+    
+    // Reset transition state after animation
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 600);
+  };
+
+  const handleCarouselNavigation = (direction) => {
+    if (isTransitioning) return;
+    
+    setIsTransitioning(true);
+    const carousel = window.bootstrap?.Carousel?.getInstance(document.querySelector('#propertyCarousel'));
+    if (carousel) {
+      if (direction === 'prev') {
+        carousel.prev();
+      } else {
+        carousel.next();
+      }
+    }
+    
+    // Reset transition state after animation
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 600);
+  };
+
+  if (loading) {
+    return (
+      <ProtectedRoute>
+        <div className="flex min-h-screen bg-gray-50">
+          <main className="flex-1">
+            <PropertyDetailSkeleton />
+          </main>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <div className="flex min-h-screen bg-gray-50">
+          <main className="flex-1 p-8 max-w-6xl mx-auto text-center">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <FaExclamationTriangle className="inline-block mr-2 text-2xl" />
+              <strong className="font-bold">Erro!</strong>
+              <span className="block sm:inline"> {error}</span>
+            </div>
+          </main>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  if (!dados) {
+    return (
+       <ProtectedRoute>
+        <div className="flex min-h-screen bg-gray-50">
+          <main className="flex-1 p-8 max-w-6xl mx-auto text-center">
+             <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+              <FaInfoCircle className="inline-block mr-2 text-2xl" />
+              <strong className="font-bold">Informação:</strong>
+              <span className="block sm:inline"> Dados não encontrados.</span>
+            </div>
+          </main>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   const { imovel, resumo, investidores, investimentos, transacoes_p2p } = dados;
 
@@ -195,7 +318,7 @@ export default function ImovelAdminFinanceiro() {
                 <div className="stats-icon stats-icon-lg"><FaCoins /></div>
                 <div className="stats-content">
                   <div className="stats-title">TOKENS VENDIDOS</div>
-                  {/* <div className="stats-number">{resumo.tokens_vendidos}</div> */}
+                   <div className="stats-number">0</div>
                 <div className="stats-desc">Total vendido</div>
               </div>
             </div>
@@ -215,15 +338,15 @@ export default function ImovelAdminFinanceiro() {
               <div className="stats-icon stats-icon-lg"><FaUsers /></div>
               <div className="stats-content">
                 <div className="stats-title">INVESTIDORES ÚNICOS</div>
-                {/* <div className="stats-number">{resumo.investidores_unicos}</div> */}
-                {/* <div className="stats-desc">Total de investidores</div> */}
+                <div className="stats-number">0</div> 
+                <div className="stats-desc">Total de investidores</div>
               </div>
             </div>
           </div>
         </div>
         
         {/* Abas de navegação */}
-        <ul className="nav nav-tabs mb-4">
+         {/* <ul className="nav nav-tabs mb-4">
           <li className="nav-item">
             <button 
               className={`nav-link ${aba === 'financeiro' ? 'active' : ''}`} 
@@ -248,9 +371,9 @@ export default function ImovelAdminFinanceiro() {
               Transações P2P
             </button>
           </li>
-        </ul>
+        </ul> 
         
-        {/* <div className="panel panel-inverse">
+        <div className="panel panel-inverse">
           <div className="panel-body">{aba === 'financeiro' && (
             <div>
               <h4 className="mb-3">Investimentos</h4>
@@ -343,7 +466,7 @@ export default function ImovelAdminFinanceiro() {
             </div>
           )}
           </div>
-        </div> */}
+        </div>  */}
         </div>
         
         <div className="card border-0 shadow-sm p-4 mb-5">
@@ -354,62 +477,96 @@ export default function ImovelAdminFinanceiro() {
               </h5>
               <div className="panel panel-inverse h-100">
                 <div className="panel-body p-3">
-                  <div className="position-relative overflow-hidden rounded-3 shadow-sm" style={{ height: '450px' }}>
-                    {dados.property.files && dados.property.files.length > 0 ? (
-                      <Image
-                        src={dados.property.files[0]?.url || '/assets/img/theme/default.jpg'}
-                        alt={`Imagem da propriedade ${dados.property.title}`}
-                        className="w-100 h-100 object-fit-cover"
-                        width={800}
-                        height={450}
-                        onError={(e) => { 
-                          e.target.src = '/assets/img/theme/default.jpg'; 
-                        }}
-                      />
-                    ) : (
-                      <>
-                        <Image
-                          src="/assets/img/theme/default.jpg"
-                          alt="Imagem padrão da propriedade"
-                          className="w-100 h-100 object-fit-cover opacity-75"
-                          width={800}
-                          height={450}
-                        />
-                        <div className="position-absolute top-50 start-50 translate-middle text-center">
-                          <div className="bg-white bg-opacity-90 rounded-3 p-4 shadow">
-                            <FaImage size={48} className="text-muted mb-2" />
-                            <p className="text-muted mb-0 fw-medium">Imagem não disponível</p>
-                            <small className="text-muted">Usando imagem padrão</small>
-                          </div>
+                  <div id="propertyCarousel" className="carousel slide mb-3" data-bs-ride="carousel" style={{ maxHeight: '450px', overflow: 'hidden' }}>
+                    <div className="carousel-inner rounded-3 shadow-sm">
+                      {(dados.property.photos && dados.property.photos.length > 0 ? dados.property.photos : [{ path: '/assets/img/theme/default.jpg' }]).map((photo, idx) => (
+                        <div className={`carousel-item${idx === 0 ? ' active' : ''}`} key={photo.id || idx} style={{ height: '450px' }}>
+                          <Image
+                            src={photo.path || '/assets/img/theme/default.jpg'}
+                            alt={`Imagem da propriedade ${dados.property.title}`}
+                            className="d-block w-100 h-100 object-fit-cover"
+                            width={800}
+                            height={450}
+                            onError={(e) => { e.target.src = '/assets/img/theme/default.jpg'; }}
+                          />
                         </div>
+                      ))}
+                    </div>
+                    {dados.property.photos && dados.property.photos.length > 1 && (
+                      <>
+                        <button 
+                          className="carousel-control-prev" 
+                          type="button" 
+                          data-bs-target="#propertyCarousel" 
+                          data-bs-slide="prev"
+                          onClick={() => handleCarouselNavigation('prev')}
+                          disabled={isTransitioning}
+                        >
+                          <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span className="visually-hidden">Anterior</span>
+                        </button>
+                        <button 
+                          className="carousel-control-next" 
+                          type="button" 
+                          data-bs-target="#propertyCarousel" 
+                          data-bs-slide="next"
+                          onClick={() => handleCarouselNavigation('next')}
+                          disabled={isTransitioning}
+                        >
+                          <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span className="visually-hidden">Próxima</span>
+                        </button>
                       </>
                     )}
                   </div>
                   
-                  {dados.property.files && dados.property.files.length > 1 && (
+                  {dados.property.photos && dados.property.photos.length > 1 && (
                     <div className="mt-3">
                       <div className="d-flex gap-2 overflow-auto pb-2">
-                        {dados.property.files.slice(1, 5).map((img, index) => (
-                          <div key={index} className="flex-shrink-0">
+                        {(dados.property.photos || []).map((img, index) => (
+                          <div key={img.id || index} className="flex-shrink-0 position-relative">
                             <Image
-                              src={img.url || '/assets/img/theme/default.jpg'}
-                              alt={`Imagem adicional ${index + 2}`}
-                              className="rounded-2 object-fit-cover border"
-                              style={{ width: '80px', height: '60px' }}
+                              src={img.path || '/assets/img/theme/default.jpg'}
+                              alt={`Imagem ${index + 1}`}
+                              className={`rounded-2 object-fit-cover transition-all ${
+                                activeImageIndex === index 
+                                  ? 'border-3 border-primary shadow-lg brightness-110' 
+                                  : isTransitioning 
+                                    ? 'border border-secondary brightness-50 cursor-not-allowed' 
+                                    : 'border border-light hover:border-primary cursor-pointer hover:shadow-md brightness-75 hover:brightness-90'
+                              }`}
+                              style={{ 
+                                width: '80px', 
+                                height: '60px',
+                                cursor: isTransitioning ? 'not-allowed' : 'pointer',
+                                filter: activeImageIndex === index 
+                                  ? 'brightness(1.1) contrast(1.1)' 
+                                  : isTransitioning 
+                                    ? 'brightness(0.5) grayscale(50%)' 
+                                    : 'brightness(0.75)',
+                                transform: activeImageIndex === index ? 'scale(1.05)' : 'scale(1)',
+                                transition: 'all 0.3s ease'
+                              }}
                               width={80}
                               height={60}
+                              onClick={() => !isTransitioning && handleImageClick(index)}
                               onError={(e) => { 
                                 e.target.src = '/assets/img/theme/default.jpg'; 
                               }}
                             />
+                            {activeImageIndex === index && (
+                              <div 
+                                className="position-absolute top-0 start-0 w-100 h-100 rounded-2 d-flex align-items-center justify-content-center"
+                                style={{ 
+                                  background: 'rgba(0, 123, 255, 0.2)',
+                                  pointerEvents: 'none'
+                                }}
+                              >
+                                <i className="fa fa-check-circle text-primary fs-5 bg-white rounded-circle"></i>
+                              </div>
+                            )}
                           </div>
                         ))}
-                        {dados.property.files.length > 5 && (
-                          <div className="flex-shrink-0 d-flex align-items-center justify-content-center bg-light rounded-2 border text-muted" 
-                               style={{ width: '80px', height: '60px', fontSize: '12px' }}>
-                            +{dados.property.files.length - 5}
-                          </div>
-                        )}
                       </div>
                     </div>
                   )}
@@ -426,9 +583,13 @@ export default function ImovelAdminFinanceiro() {
                     <div className="d-flex align-items-center gap-2">
                       <FaCheckCircle className={dados.property.status === 'ativo' ? 'text-success' : 'text-muted'} />
                       <span className="text-muted">Status:</span>
-                      <span className={dados.property.status === 'ativo' ? 'text-success fw-semibold' : 'text-muted fw-semibold'}>
-                        {dados.property.status === 'pending' ? 'PENDENTE' : dados.property.status.toUpperCase()}
-                      </span>
+                     <span className={dados.property.status === 'active' ? 'text-success fw-semibold' : 'text-muted fw-semibold'}>
+  {dados.property.status === 'pending'
+    ? 'PENDENTE'
+    : dados.property.status === 'active'
+      ? 'Ativo'
+      : dados.property.status}
+</span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
                       <FaCoins className="text-warning" />
@@ -634,6 +795,7 @@ export default function ImovelAdminFinanceiro() {
         cancelText="Cancelar"
         confirmVariant="success"
         size="lg"
+        isSubmitting={isSubmitting}
       >
         <form>
           <div className="row">
@@ -678,18 +840,7 @@ export default function ImovelAdminFinanceiro() {
           </div>
 
           <div className="row">
-            <div className="col-md-4 mb-3">
-              <label htmlFor="location" className="form-label">Localização</label>
-              <input
-                type="text"
-                className="form-control"
-                id="location"
-                name="location"
-                value={editFormData.location}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
+            
             <div className="col-md-4 mb-3">
               <label htmlFor="total_value" className="form-label">Valor Total</label>
               <input
@@ -718,7 +869,6 @@ export default function ImovelAdminFinanceiro() {
           </div>
         </form>
       </CustomModal>
-
       {/* Modal para excluir propriedade naquele modelo*/}
       <CustomModal
         onConfirm={handleDelete}
@@ -729,11 +879,12 @@ export default function ImovelAdminFinanceiro() {
         cancelText="Cancelar"
         confirmVariant="danger"
         size="md"
+        isSubmitting={isSubmitting}
       >
         <p>Tem certeza que deseja excluir a propriedade <strong>"{dados?.property?.title}"</strong>?</p>
         <p className="text-muted">Esta ação não pode ser desfeita.</p>
       </CustomModal>
     </div>
-    </ProtectedRoute>
-  );
+  </ProtectedRoute>
+);
 }

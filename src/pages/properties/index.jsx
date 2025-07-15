@@ -66,13 +66,22 @@ export default function ImoveisPage() {
   const imoveisFiltrados = useMemo(() => {
     let filtered = imoveis.filter(imovel => {
       const matchesSearch = !debouncedSearchTerm || 
-        imovel?.titulo?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        imovel?.localizacao?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-      
-      const matchesStatus = filterStatus === 'todos' || imovel?.status === filterStatus;
-      
+        imovel?.title?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+
+      // Corrigir filtro de status para aceitar pt/en e ignorar case
+      const statusMap = {
+        'ativo': ['ativo', 'active'],
+        'inativo': ['inativo', 'inactive'],
+        'pendente': ['pendente', 'pending']
+      };
+      let matchesStatus = true;
+      if (filterStatus !== 'todos') {
+        const imovelStatus = (imovel?.status || '').toLowerCase();
+        matchesStatus = statusMap[filterStatus]?.includes(imovelStatus);
+      }
+
       let matchesValue = true;
-      const valor = imovel?.valor_total || 0;
+      const valor = imovel?.total_value || 0;
       switch (filterValue) {
         case 'ate_100k':
           matchesValue = valor <= 100000;
@@ -90,15 +99,14 @@ export default function ImoveisPage() {
       return matchesSearch && matchesStatus && matchesValue;
     });
 
-    // Ordenação
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case 'valor_desc':
-          return (b.valor_total || 0) - (a.valor_total || 0);
+          return (b.total_value || 0) - (a.total_value || 0);
         case 'valor_asc':
-          return (a.valor_total || 0) - (b.valor_total || 0);
+          return (a.total_value || 0) - (b.total_value || 0);
         case 'tokens_desc':
-          return (b.qtd_tokens || 0) - (a.qtd_tokens || 0);
+          return (b.total_tokens || 0) - (a.total_tokens || 0);
         case 'titulo_asc':
           return (a.titulo || '').localeCompare(b.titulo || '');
         default:
@@ -107,7 +115,6 @@ export default function ImoveisPage() {
     });
   }, [imoveis, debouncedSearchTerm, filterStatus, filterValue, sortBy]);
 
-  // Função para limpar todos os filtros
   const clearAllFilters = useCallback(() => {
     setSearchTerm('');
     setFilterStatus('todos');
@@ -117,10 +124,13 @@ export default function ImoveisPage() {
 
   const getStatusBadgeClass = (status) => {
     switch (status?.toLowerCase()) {
+      case 'active':
       case 'ativo':
         return 'bg-success-subtle text-success';
+      case 'inactive':
       case 'inativo':
         return 'bg-danger-subtle text-danger';
+      case 'pending':
       case 'pendente':
         return 'bg-warning-subtle text-warning';
       default:
@@ -128,24 +138,35 @@ export default function ImoveisPage() {
     }
   };
 
-  const getRentabilidadeColor = (status) => {
-    return status === 'ativo' ? 'text-success' : 'text-muted';
+  const translateStatus = (status) => {
+    const statusMap = {
+      'pending': 'Pendente',
+      'active': 'Ativo',
+      'inactive': 'Inativo',
+      'approved': 'Aprovado',
+      'cancelled': 'Cancelado',
+      'completed': 'Concluído',
+      'rejected': 'Rejeitado',
+    
+    };
+    return statusMap[status?.toLowerCase()] || status?.toUpperCase() || 'N/A';
   };
 
-  // Estatísticas otimizadas
+  const getRentabilidadeColor = (status) => {
+    return (status?.toLowerCase() === 'ativo' || status?.toLowerCase() === 'active') ? 'text-success' : 'text-muted';
+  };
+
   const stats = useMemo(() => ({
     total: imoveis.length,
-    ativo: imoveis.filter(i => i.status === 'ativo').length,
-    tokens: imoveis.reduce((sum, i) => sum + (i.qtd_tokens || 0), 0),
-    totalValue: imoveis.reduce((sum, i) => sum + (i.valor_total || 0), 0)
+    ativo: imoveis.filter(i => i.status?.toLowerCase() === 'active' || i.status?.toLowerCase() === 'ativo').length,
+    tokens: imoveis.reduce((sum, i) => sum + (i.total_tokens || 0), 0),
+    totalValue: imoveis.reduce((sum, i) => sum + (i.total_value || 0), 0)
   }), [imoveis]);
 
-  // Verifica se há filtros ativos
   const hasActiveFilters = useMemo(() => {
     return searchTerm !== '' || filterStatus !== 'todos' || filterValue !== 'todos' || sortBy !== 'valor_desc';
   }, [searchTerm, filterStatus, filterValue, sortBy]);
 
-  // Estado de busca em andamento
   const isSearching = searchTerm !== debouncedSearchTerm;
 
   return (
@@ -156,7 +177,6 @@ export default function ImoveisPage() {
           { label: 'Imóveis', href: '/properties' }
         ]} />
       
-      {/* Header Section */}
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
           <h1 className="text-3xl font-bold mb-2 text-dark d-flex align-items-center">
@@ -177,7 +197,6 @@ export default function ImoveisPage() {
         </div>
       </div>
 
-      {/* Loading State */}
       {loading && (
         <div className="text-center py-5">
           <div className="spinner-border text-primary mb-3" role="status">
@@ -186,7 +205,6 @@ export default function ImoveisPage() {
         </div>
       )}
 
-      {/* Error State */}
       {error && (
         <div className="alert alert-danger d-flex align-items-center" role="alert">
           <i className="fa fa-exclamation-triangle me-2"></i>
@@ -194,7 +212,6 @@ export default function ImoveisPage() {
         </div>
       )}
 
-      {/* Empty State */}
       {!loading && imoveis.length === 0 && !error && (
         <div className="text-center py-5">
           <div className="mb-4">
@@ -212,10 +229,8 @@ export default function ImoveisPage() {
         </div>
       )}
 
-      {/* Search and Filter Section */}
       {!loading && imoveis.length > 0 && (
         <>
-          {/* Quick Stats */}
           <div className="row mb-4 g-3">
             <div className="col-md-3">
               <div className="card border-0 bg-primary-subtle">
@@ -368,7 +383,6 @@ export default function ImoveisPage() {
                 )}
               </small>
               
-              {/* Active Filters */}
               <div className="d-flex gap-2 flex-wrap">
                 {debouncedSearchTerm && (
                   <span className="badge bg-primary-subtle text-primary">
@@ -484,7 +498,6 @@ export default function ImoveisPage() {
                 </button>
               )}
               
-              {/* Sugestões quando não há resultados */}
               {hasActiveFilters && debouncedSearchTerm && (
                 <div className="mt-4">
                   <small className="text-muted">
@@ -498,13 +511,12 @@ export default function ImoveisPage() {
 
         {!loading && imoveisFiltrados.map((imovel) => (
           viewMode === 'grid' ? (
-            // Grid View
             <div key={imovel.id} className="col-xl-4 col-lg-6">
               <div className="card h-100 shadow-sm border-0 rounded-4 overflow-hidden hover-card">
                 <div className="position-relative">
                   <img
-                    src="/assets/img/theme/default.jpg"
-                    alt="Imagem do imóvel"
+                    src={imovel.photos && imovel.photos.length > 0 ? imovel.photos[0].path : "/assets/img/theme/default.jpg"}
+                    alt={`Imagem do imóvel ${imovel.title}`}
                     className="card-img-top"
                     style={{ height: '200px', objectFit: 'cover' }}
                     onError={(e) => { e.target.src = '/assets/img/theme/default.jpg'; }}
@@ -512,18 +524,17 @@ export default function ImoveisPage() {
                   <div className="position-absolute top-0 end-0 m-3">
                     <span className={`badge ${getStatusBadgeClass(imovel.status)} px-2 py-1`}>
                       <i className="fa fa-circle me-1" style={{ fontSize: '0.5rem' }}></i>
-                      {imovel.status}
+                      {translateStatus(imovel.status)}
                     </span>
                   </div>
                   <div className="position-absolute bottom-0 start-0 end-0 bg-gradient-to-top p-3">
-                    <h5 className="fw-bold text-white text-shadow mb-0">{imovel.titulo}</h5>
+                    <h5 className="fw-bold text-white text-shadow mb-0">{imovel.title}</h5>
                   </div>
                 </div>
                 
                 <div className="card-body d-flex flex-column">
                   <p className="text-muted fs-6 mb-3">Direito de recebimento de antecipações do segmento imobiliário</p>
 
-                  {/* Nível de Garantia */}
                   <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <small className="text-muted fw-semibold">Nível de Garantia</small>
@@ -534,7 +545,6 @@ export default function ImoveisPage() {
                     </div>
                   </div>
 
-                  {/* Informações Financeiras */}
                   <div className="row g-2 mb-3">
                     <div className="col-6">
                       <div className="bg-light rounded p-2 text-center">
@@ -554,20 +564,16 @@ export default function ImoveisPage() {
                     </div>
                   </div>
 
-                  {/* Detalhes da Propriedade */}
                   <div className="d-flex flex-column gap-2 mb-3 text-muted fs-6">
-                    <div className="d-flex align-items-center">
-                      <i className="fa fa-map-marker-alt me-2 text-primary" style={{ width: '16px' }}></i>
-                      <span className="text-truncate">{imovel.localizacao}</span>
-                    </div>
+                    
                     <div className="d-flex justify-content-between">
                       <div className="d-flex align-items-center">
                         <i className="fa fa-coins me-2 text-warning" style={{ width: '16px' }}></i>
-                        <span>R$ {Number(imovel.valor_total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                        <span>R$ {Number(imovel.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
                       <div className="d-flex align-items-center">
                         <i className="fa fa-cubes me-2 text-secondary" style={{ width: '16px' }}></i>
-                        <span>{imovel.qtd_tokens} tokens</span>
+                        <span>{imovel.total_tokens} tokens</span>
                       </div>
                     </div>
                     <div className="d-flex align-items-center">
@@ -578,37 +584,33 @@ export default function ImoveisPage() {
 
                   <Link 
                     href={`/properties/${imovel.id}`} 
-                    className={`btn ${imovel.status === 'ativo' ? 'btn-primary' : 'btn-outline-secondary'} mt-auto w-100 d-flex align-items-center justify-content-center`}
+                    className={`btn ${(imovel.status?.toLowerCase() === 'active' || imovel.status?.toLowerCase() === 'ativo') ? 'btn-primary' : 'btn-secondary'} mt-auto w-100 d-flex align-items-center justify-content-center`}
                   >
                     <i className="fa fa-calculator me-2"></i>
-                    {imovel.status === 'ativo' ? 'Simular Investimento' : 'Ver Detalhes'}
+                    {(imovel.status?.toLowerCase() === 'active' || imovel.status?.toLowerCase() === 'ativo') ? 'Simular Investimento' : 'Ver Detalhes'}
                   </Link>
                 </div>
               </div>
             </div>
           ) : (
-            // List View
             <div key={imovel.id} className="col-12">
               <div className="card border-0 shadow-sm rounded-3 hover-card">
                 <div className="card-body">
                   <div className="row align-items-center">
                     <div className="col-md-2">
                       <img
-                        src="/assets/img/theme/default.jpg"
-                        alt="Imagem do imóvel"
+                        src={imovel.photos && imovel.photos.length > 0 ? imovel.photos[0].path : "/assets/img/theme/default.jpg"}
+                        alt={`Imagem do imóvel ${imovel.titulo}`}
                         className="img-fluid rounded"
                         style={{ height: '80px', width: '100%', objectFit: 'cover' }}
                         onError={(e) => { e.target.src = '/assets/img/theme/default.jpg'; }}
                       />
                     </div>
                     <div className="col-md-4">
-                      <h5 className="fw-bold text-dark mb-1">{imovel.titulo}</h5>
-                      <div className="d-flex align-items-center text-muted mb-1">
-                        <i className="fa fa-map-marker-alt me-2 text-primary"></i>
-                        <span>{imovel.localizacao}</span>
-                      </div>
+                      <h5 className="fw-bold text-dark mb-1">{imovel.title}</h5>
+                     
                       <span className={`badge ${getStatusBadgeClass(imovel.status)}`}>
-                        {imovel.status}
+                        {translateStatus(imovel.status)}
                       </span>
                     </div>
                     <div className="col-md-2 text-center">
@@ -616,15 +618,15 @@ export default function ImoveisPage() {
                       <small className="text-muted">a.a.</small>
                     </div>
                     <div className="col-md-2 text-center">
-                      <div className="fw-bold">R$ {Number(imovel.valor_total).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                      <small className="text-muted">{imovel.qtd_tokens} tokens</small>
+                      <div className="fw-bold">R$ {Number(imovel.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                      <small className="text-muted">{imovel.total_tokens} tokens</small>
                     </div>
                     <div className="col-md-2">
                       <Link 
                         href={`/properties/${imovel.id}`} 
-                        className={`btn ${imovel.status === 'ativo' ? 'btn-primary' : 'btn-outline-secondary'} w-100`}
+                        className={`btn ${(imovel.status?.toLowerCase() === 'ativo' || imovel.status?.toLowerCase() === 'active') ? 'btn-primary' : 'btn-outline-secondary'} w-100`}
                       >
-                        {imovel.status === 'ativo' ? 'Investir' : 'Ver'}
+                        {(imovel.status?.toLowerCase() === 'ativo' || imovel.status?.toLowerCase() === 'active') ? 'Investir' : 'Ver'}
                       </Link>
                     </div>
                   </div>
