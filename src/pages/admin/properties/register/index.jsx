@@ -6,26 +6,21 @@ import api from "@/services/api";
 import { postProperties } from "@/services/properties/postProperties";
 import {
   FaHome,
-  FaMapMarkerAlt,
   FaCoins,
   FaCubes,
   FaMicrochip,
-  FaCalendarAlt,
+  
   FaCheckCircle,
   FaImage,
   FaTimes,
-  FaSearch,
-  FaSpinner,
   FaFileAlt,
+  FaPercent,
 } from "react-icons/fa";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale, setDefaultLocale } from "react-datepicker";
 import { ptBR } from "date-fns/locale";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { title } from "process";
 registerLocale("pt-BR", ptBR);
 setDefaultLocale("pt-BR");
 
@@ -42,7 +37,6 @@ export default function CadastrarImovel() {
     data_tokenizacao: new Date().toISOString().slice(0, 10),
   });
 
-  // Estados para CEP e endereço
   const [cep, setCep] = useState("");
   const [endereco, setEndereco] = useState({
     logradouro: "",
@@ -70,7 +64,6 @@ export default function CadastrarImovel() {
     setForm(prev => {
       const newForm = { ...prev, [name]: value };
 
-      // Se for mudança na quantidade de tokens, recalcular valor por token
       if (name === 'qtd_tokens') {
         const valorTotal = getCurrencyValue(prev.valor_total);
         const qtdTokens = parseInt(value) || 0;
@@ -90,7 +83,6 @@ export default function CadastrarImovel() {
     });
   };
 
-  // Função para buscar CEP
   const buscarCep = async (cepValue) => {
     const cepLimpo = cepValue.replace(/\D/g, '');
 
@@ -141,7 +133,6 @@ export default function CadastrarImovel() {
     }
   };
 
-  // Função para formatar CEP
   const formatCep = (value) => {
     const numericValue = value.replace(/\D/g, '');
     if (numericValue.length <= 5) {
@@ -150,7 +141,6 @@ export default function CadastrarImovel() {
     return `${numericValue.slice(0, 5)}-${numericValue.slice(5, 8)}`;
   };
 
-  // Handler para mudança de CEP
   const handleCepChange = (e) => {
     const value = e.target.value;
     const formattedCep = formatCep(value);
@@ -163,7 +153,6 @@ export default function CadastrarImovel() {
     }
   };
 
-  // Handler para mudança nos campos de endereço
   const handleEnderecoChange = (field, value) => {
     const novoEndereco = { ...endereco, [field]: value };
     setEndereco(novoEndereco);
@@ -229,7 +218,6 @@ export default function CadastrarImovel() {
     return parseFloat(numericString) || 0;
   };
 
-  // Função para calcular o valor por token
   const calculateValuePerToken = () => {
     const valorTotal = getCurrencyValue(form.valor_total);
     const qtdTokens = parseInt(form.qtd_tokens) || 0;
@@ -244,7 +232,6 @@ export default function CadastrarImovel() {
     return '';
   };
 
-  // Atualizar o valor por token sempre que valor_total ou qtd_tokens mudarem
   const updateValuePerToken = () => {
     const valorPorToken = calculateValuePerToken();
     setForm(prev => ({
@@ -342,15 +329,7 @@ export default function CadastrarImovel() {
     setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const toBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result); // resultado vem no formato: data:image/jpeg;base64,...
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -358,7 +337,6 @@ export default function CadastrarImovel() {
     setSuccess(false);
 
     try {
-      // Validação: ao menos uma imagem deve estar selecionada
       if (selectedImages.length === 0) {
         toast.warning("Nenhuma imagem selecionada. Adicione pelo menos uma imagem.");
         setLoading(false);
@@ -367,7 +345,6 @@ export default function CadastrarImovel() {
 
       const valorTotal = getCurrencyValue(form.valor_total);
 
-      // Converter imagens para base64
       const toBase64 = (file) => {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -390,8 +367,6 @@ export default function CadastrarImovel() {
           size: attached.file.size
         }))
       );
-
-      // Montar payload JSON
       const payload = {
         title: form.titulo,
         description: form.descricao,
@@ -401,19 +376,15 @@ export default function CadastrarImovel() {
         smart_contract_model_id: form.modelo_smart_id,
         status: 'pending',
         tokenization_date: new Date(form.data_tokenizacao).toISOString(),
-        files: filesBase64, // imagens base64
-        attachments: attachedFilesBase64, // arquivos anexados com descrições
+        files: filesBase64, 
+        attachments: attachedFilesBase64, 
+        profitability: parseFloat(form.profitability) || 0,
       };
-
-      console.log("Payload:", payload);
-      console.log("response")
-
+      // console.log("Payload:", payload);
+      // console.log("response")
       await postProperties(payload);
-
       toast.success("Imóvel cadastrado com sucesso!");
       setSuccess(true);
-
-      // Resetar formulário
       setForm({
         titulo: "",
         descricao: "",
@@ -611,13 +582,13 @@ export default function CadastrarImovel() {
                   className="form-control h-auto"
                   name="descricao"
                   id="descricao"
-                  placeholder="Descrição"
+                  placeholder="Descrição *"
                   value={form.descricao}
                   onChange={handleChange}
                   style={{ height: "130px" }}
                   required
                 ></textarea>
-                <label htmlFor="descricao"><FaCubes className="me-2" /> Descrição</label>
+                <label htmlFor="descricao"><FaCubes className="me-2" /> Descrição *</label>
               </div>
 
 
@@ -627,12 +598,12 @@ export default function CadastrarImovel() {
                   className="form-control"
                   name="modelo_smart_id"
                   id="modelo_smart_id"
-                  placeholder="Modelo Smart ID"
+                  placeholder="Modelo Smart ID *"
                   value={form.modelo_smart_id}
                   onChange={handleChange}
                   required
                 />
-                <label htmlFor="modelo_smart_id"><FaMicrochip className="me-2" /> Modelo Smart ID</label>
+                <label htmlFor="modelo_smart_id"><FaMicrochip className="me-2" /> Modelo Smart ID *</label>
               </div>
 
               <div className="form-floating mb-4">
@@ -648,7 +619,7 @@ export default function CadastrarImovel() {
                   step={0.01}
                   required
                 />
-                <label htmlFor="valor_total"><FaCoins className="me-2" /> Valor Total (R$)</label>
+                <label htmlFor="valor_total"><FaCoins className="me-2" /> Valor Total (R$) *</label>
               </div>
 
               <div className="form-floating mb-4">
@@ -663,7 +634,7 @@ export default function CadastrarImovel() {
                   min={1}
                   required
                 />
-                <label htmlFor="qtd_tokens"><FaCubes className="me-2" /> Quantidade de Tokens</label>
+                <label htmlFor="qtd_tokens"><FaCubes className="me-2" /> Quantidade de Tokens *</label>
               </div>
 
               {/* Campo calculado automaticamente - Valor por Token */}
@@ -686,7 +657,7 @@ export default function CadastrarImovel() {
                             {form.valor_total_ptoken}
                           </span>
                         </div>
-                        <small className="text-muted">Valor individual por token</small>
+                        <small className="text-muted">Valor individual por token *</small>
                       </div>
                     ) : (
                       <div>
@@ -702,13 +673,30 @@ export default function CadastrarImovel() {
                   </div>
                 </div>
               </div>
+
+              <div className="form-floating mb-4">
+                <input
+                type="number"
+                className="form-control"
+                name="profitability"
+                id="profitability"
+                placeholder="Rentabilidade (%)"
+                value={form.profitability || ''}
+                onChange={handleChange}
+                min={0}
+                step={0.01}
+                required
+                />
+                <label htmlFor="profitability"><FaPercent className="me-2" /> Rentabilidade Prevista *</label>
+
+                </div>
             </div>
 
             <div className="col-md-6">
               {/* Upload de Imagens - Movido para o topo */}
               <div className="mb-4">
                 <label className="form-label d-flex align-items-center gap-2">
-                  <FaImage /> Imagens do Imóvel
+                  <FaImage /> Imagens do Imóvel *
                 </label>
                 <div className="border border-dashed border-2 border-primary rounded-3 p-4">
                   <div className="text-center mb-3">
@@ -783,7 +771,7 @@ export default function CadastrarImovel() {
               {/* Upload de Arquivos Anexados */}
               <div className="mb-4">
                 <label className="form-label d-flex align-items-center gap-2">
-                  <FaFileAlt /> Arquivos Anexados do Imóvel
+                  <FaFileAlt /> Arquivos Anexados do Imóvel *
                 </label>
                 <div className="border border-dashed border-2 border-success rounded-3 p-4">
                   <div className="text-center mb-3">

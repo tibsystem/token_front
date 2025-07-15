@@ -65,11 +65,11 @@ const InvestorDetails = () => {
 
   const getKycStatusBadge = (status) => {
     switch(status?.toLowerCase()) {
-      case 'aprovado':
+      case 'approved':
         return <span className="badge bg-success">Aprovado</span>;
-      case 'pendente':
+      case 'pending':
         return <span className="badge bg-warning">Pendente</span>;
-      case 'rejeitado':
+      case 'rejected':
         return <span className="badge bg-danger">Rejeitado</span>;
       default:
         return <span className="badge bg-secondary">Não informado</span>;
@@ -364,10 +364,10 @@ const InvestorDetails = () => {
                         </h6>
                         <div>
                           <div className="fw-bold mb-2">Endereço:</div>
-                          {investor.carteira_blockchain ? (
+                          {investor.wallet_blockchain ? (
                             <div className="d-flex align-items-center">
                               <code className="bg-white p-2 text-dark rounded border flex-grow-1 me-2" style={{ fontSize: '14px', wordBreak: 'break-all' }}>
-                                {investor.carteira_blockchain}
+                                {investor.wallet_blockchain}
                               </code>
                               <button 
                                 className="btn btn-outline-primary btn-sm"

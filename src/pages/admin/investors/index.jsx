@@ -54,7 +54,7 @@ const Investidores = () => {
                   onError={e => { e.target.src = '/assets/img/user/user-default.jpg'; }}
                 />
                 <div>
-                  <div className="fw-bold text-lg text-theme">{inv.nome}</div>
+                  <div className="fw-bold text-lg text-theme">{inv.name}</div>
                   <div className="text-gray-500 text-sm">ID: {inv.id}</div>
                 </div>
               </div>
@@ -65,7 +65,7 @@ const Investidores = () => {
                 </div>
                 <div className="d-flex align-items-center mb-1">
                   <i className="fa fa-phone text-green-600 me-2"></i>
-                  <span>{inv.telefone || 'Não informado'}</span>
+                  <span>{inv.phone || 'Não informado'}</span>
                 </div>
                 <Link href={`/admin/investors/${inv.id}`} className="btn btn-outline-primary mt-auto w-100">Ver Mais</Link>
               </div>
