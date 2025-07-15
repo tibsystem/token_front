@@ -2,19 +2,19 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getProperties } from '../../../services/properties/getProperties';
+import { getProperties } from '@/services/properties/getProperties';
 import { FaMapMarkerAlt, FaCoins, FaCubes, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+//components
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { set } from 'date-fns';
-import { toast } from 'react-toastify';
+//services
 
 export default function ImoveisAdminPage() {
   const [imoveis, setImoveis] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Função para traduzir status
   const translateStatus = (status) => {
     const statusMap = {
       'pending': 'Pendente',
@@ -37,7 +37,6 @@ export default function ImoveisAdminPage() {
         setLoading(false);
       } catch (err) {
         toast.error('Erro ao carregar imóveis.');
-        setError('Erro ao carregar imóveis.');
         setLoading(false);
       }
     };
@@ -50,6 +49,7 @@ export default function ImoveisAdminPage() {
       <Breadcrumb items={[
               { label: 'Imóveis', path: '/admin/properties' },
             ]} />
+
     <div className="px-4 py-5">
       <div className="row mb-4">
         <div className="col">
@@ -59,7 +59,6 @@ export default function ImoveisAdminPage() {
       </div>
 
       {loading && <div className="text-muted mb-4 animate-pulse fs-5">Carregando imóveis...</div>}
-      {error && <div className="alert alert-danger mb-4 fs-5">{error}</div>}
 
       <div className="row g-4">
         {imoveis.length === 0 && !loading && (

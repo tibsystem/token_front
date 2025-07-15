@@ -118,7 +118,7 @@ const InvestorDetails = () => {
       <Breadcrumb 
         items={[
           { label: 'Investidores', path: '/admin/investors' },
-          { label: `Detalhes de ${investor.nome}`, path: null }
+          { label: `Detalhes de ${investor.name}`, path: null }
         ]}
         className="mb-4"
       />
