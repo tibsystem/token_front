@@ -136,13 +136,13 @@ const InvestorDetails = () => {
               <div className="d-flex align-items-center">
                 <img
                   src={investor.foto_url || '/assets/img/user/user-default.jpg'}
-                  alt={investor.nome}
+                  alt={investor.name}
                   className="rounded-circle me-3"
                   style={{ width: 60, height: 60, objectFit: 'cover', border: '3px solid rgba(255,255,255,0.3)' }}
                   onError={e => { e.target.src = '/assets/img/user/user-default.jpg'; }}
                 />
                 <div>
-                  <h4 className="mb-1">{investor.nome}</h4>
+                  <h4 className="mb-1">{investor.name}</h4>
                   <small className="opacity-75">ID: {investor.id}</small>
                 </div>
               </div>
@@ -166,14 +166,14 @@ const InvestorDetails = () => {
                     <label className="form-label text-muted small">Telefone</label>
                     <div className="d-flex align-items-center">
                       <i className="fa fa-phone text-muted me-2"></i>
-                      <span>{investor.telefone || 'Não informado'}</span>
+                      <span>{investor.phone || 'Não informado'}</span>
                     </div>
                   </div>
                   <div className="mb-3">
                     <label className="form-label text-muted small">CPF</label>
                     <div className="d-flex align-items-center">
                       <i className="fa fa-id-card text-muted me-2"></i>
-                      <span>{investor.cpf || 'Não informado'}</span>
+                      <span>{investor.document || 'Não informado'}</span>
                     </div>
                   </div>
                 </div>
