@@ -13,7 +13,7 @@ export default function OfertasP2PPage() {
   const [ofertas, setOfertas] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [imoveis, setImoveis] = useState({});
+  const [Propiedades, setPropiedades] = useState({});
   const [buyingOffers, setBuyingOffers] = useState(new Set());
   const { user, isAuthenticated } = useAuth();
 
@@ -34,18 +34,18 @@ export default function OfertasP2PPage() {
         } 
         
         const imovelIds = [...new Set(ofertasList.map(o => o.id_imovel))];
-        const imoveisDetalhes = {};
+        const PropiedadesDetalhes = {};
         
         await Promise.all(imovelIds.map(async (id) => {
           try {
             const res = await getOnePropertie(id);
-            imoveisDetalhes[id] = res;
+            PropiedadesDetalhes[id] = res;
           } catch (error) {
             console.error(`Erro ao buscar imóvel ${id}:`, error);
           }
         }));
         
-        setImoveis(imoveisDetalhes);
+        setPropiedades(PropiedadesDetalhes);
         setOfertas(ofertasList);
         // console.log('UserId atual:', user.id);
         // console.log('Total de ofertas:', ofertasList.length);
@@ -93,7 +93,7 @@ export default function OfertasP2PPage() {
   // console.log('Outras ofertas:', outrasOfertas);
 
   function renderOfertaCard(oferta, isMyOffer = false) {
-    const imovel = imoveis[oferta.id_imovel] || {};
+    const imovel = Propiedades[oferta.id_imovel] || {};
     const totalValue = Number(oferta.valor_unitario) * Number(oferta.qtd_tokens);
     const isActive = oferta.status === 'ativa';
     const isBuying = buyingOffers.has(oferta.id);
@@ -217,7 +217,7 @@ export default function OfertasP2PPage() {
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
                 <h1 className="text-2xl mb-2 text-dark fw-bold">
-                  <i className="fa fa-handshake me-3 text-primary"></i>
+                  <i className="fa fa-handshake me-3 text-dark"></i>
                   Marketplace P2P
                 </h1>
                 <p className="text-muted mb-0">Compre e venda tokens de imóveis diretamente com outros investidores</p>
@@ -250,19 +250,13 @@ export default function OfertasP2PPage() {
           </div>
         )}
         
-        {error && (
-          <div className="alert alert-danger d-flex align-items-center mb-4" role="alert">
-            <i className="fa fa-exclamation-triangle me-2"></i>
-            <div>{error}</div>
-          </div>
-        )}
-
+     
         {!loading && !error && (
           <>
             <div className="row">
               <div className="col-12">
                 <div className="card border-0 shadow-sm">
-                  <div className="card-header bg-primary text-white d-flex align-items-center">
+                  <div className="card-header bg-dark text-white d-flex align-items-center">
                     <i className="fa fa-handshake me-2"></i>
                     <h5 className="mb-0">Ofertas do Marketplace</h5>
                     <span className="badge bg-light text-primary ms-auto">{ofertas.length}</span>
@@ -270,16 +264,16 @@ export default function OfertasP2PPage() {
                   <div className="card-body">
                     <div className="row">
                       <div className="col-md-6 col-xl-4 mb-4">
-                        <div className="card h-100 border-2 border-dashed border-primary hover-shadow-lg transition-all">
+                        <div className="card h-100 border-2 border-dashed border-dark hover-shadow-lg transition-all">
                           <div className="card-body d-flex flex-column justify-content-center align-items-center text-center p-5">
                             <div className="mb-4">
-                              <i className="fa fa-plus-circle fa-4x text-primary opacity-75"></i>
+                              <i className="fa fa-plus-circle fa-4x text-dark opacity-75"></i>
                             </div>
-                            <h6 className="text-primary fw-bold mb-2">Criar Nova Oferta</h6>
+                            <h6 className="text-dark fw-bold mb-2">Criar Nova Oferta</h6>
                             <p className="text-muted mb-4 small">
                               Coloque seus tokens à venda no marketplace P2P
                             </p>
-                            <button className="btn btn-primary btn-sm px-4" onClick={() => window.location.href = '/p2p/new_offer'}>
+                            <button className="btn btn-dark btn-sm px-4" onClick={() => window.location.href = '/p2p/new_offer'}>
                               <i className="fa fa-plus me-2"></i>
                               Criar Oferta
                             </button>

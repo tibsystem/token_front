@@ -15,12 +15,12 @@ const ApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export default function AdminDashboard() {
   const [investidores, setInvestidores] = useState(0);
-  const [imoveis, setImoveis] = useState(0);
+  const [Propiedades, setPropiedades] = useState(0);
   const [valorNegociado, setValorNegociado] = useState(0);
   const [graficoData, setGraficoData] = useState({ categories: [], series: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [imoveisArray, setImoveisArray] = useState([]);
+  const [PropiedadesArray, setPropiedadesArray] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -29,8 +29,8 @@ export default function AdminDashboard() {
         const transRes = await getFinancialTransactions();
         const imvRes = await getProperties();
         setInvestidores(Array.isArray(invRes) ? invRes.length : 0);
-        setImoveisArray(Array.isArray(imvRes) ? imvRes : []);
-        setImoveis(Array.isArray(imvRes) ? imvRes.length : 0);
+        setPropiedadesArray(Array.isArray(imvRes) ? imvRes : []);
+        setPropiedades(Array.isArray(imvRes) ? imvRes.length : 0);
         const total = Array.isArray(transRes)
           ? transRes.reduce((sum, t) => sum + (Number(t.valor) || 0), 0)
           : 0;
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
               <div className="stats-icon stats-icon-lg"><i className="fa fa-building fa-fw"></i></div>
               <div className="stats-content">
                 <div className="stats-title">IMÓVEIS CADASTRADOS</div>
-                <div className="stats-number">{imoveis.toLocaleString('pt-BR')}</div>
+                <div className="stats-number">{Propiedades.toLocaleString('pt-BR')}</div>
                 <div className="stats-progress progress">
                   <div className="progress-bar" style={{width: '100%'}}></div>
                 </div>
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
                       <div className="stats-content p-3">
                         <div className="stats-title">Média/Imóvel</div>
                         <div className="stats-number fs-16px">
-                          R$ {imoveis > 0 ? Number(valorNegociado / imoveis).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) : '0'}
+                          R$ {Propiedades > 0 ? Number(valorNegociado / Propiedades).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) : '0'}
                         </div>
                       </div>
                     </div>
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
                 <div className="list-group list-group-flush">
                   <div className="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 px-0">
                     <span><i className="fa fa-building text-blue me-2"></i>Imóveis Ativos</span>
-                    <span className="badge bg-blue">{imoveis}</span>
+                    <span className="badge bg-blue">{Propiedades}</span>
                   </div>
                   <div className="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0 px-0">
                     <span><i className="fa fa-users text-info me-2"></i>Investidores Ativos</span>
@@ -232,10 +232,10 @@ export default function AdminDashboard() {
         <Link href="./properties" className="text-blue-600 hover:underline font-medium">Ver todos</Link>
       </div>
       <ul className="row list-unstyled g-4">
-        {imoveisArray?.filter(imovel => imovel.status !== 'vendido').length === 0 && !loading && (
+        {PropiedadesArray?.filter(imovel => imovel.status !== 'vendido').length === 0 && !loading && (
           <li className="col-12 text-gray-500">Nenhum imóvel disponível.</li>
         )}
-        {imoveisArray?.filter(imovel => imovel.status !== 'vendido').slice(0, 6).map((imovel) => {
+        {PropiedadesArray?.filter(imovel => imovel.status !== 'vendido').slice(0, 6).map((imovel) => {
           let statusLabel = imovel.status;
           if (imovel.status === 'active') statusLabel = 'Ativo';
           else if (imovel.status === 'pending') statusLabel = 'Pendente';

@@ -23,7 +23,7 @@ const CustomModal = ({
 
   return (
     <div 
-      className="modal fade show d-block" 
+      className="modal fade show d-block custom-modal" 
       id={id} 
       tabIndex="-1" 
       aria-labelledby={`${id}Label`} 
@@ -32,7 +32,7 @@ const CustomModal = ({
     >
       <div className={`modal-dialog modal-${size}`}>
         <div className="modal-content">
-          <div className="modal-header">
+          <div className="modal-header" style={{ borderBottom: "none" }}>
             <h5 className="modal-title" id={`${id}Label`}>
               {title}
             </h5>

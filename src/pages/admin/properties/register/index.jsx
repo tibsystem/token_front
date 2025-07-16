@@ -9,7 +9,6 @@ import {
   FaCoins,
   FaCubes,
   FaMicrochip,
-  
   FaCheckCircle,
   FaImage,
   FaTimes,
@@ -21,6 +20,9 @@ import { ptBR } from "date-fns/locale";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import ToggleInput from "@/components/input/ToggleInput";
+import UseOptionsSelect from "@/hooks/UseOptionsSelect";
+import Steps from "@/components/Tab/Step";
 registerLocale("pt-BR", ptBR);
 setDefaultLocale("pt-BR");
 
@@ -36,20 +38,6 @@ export default function CadastrarImovel() {
     status: "ativo",
     data_tokenizacao: new Date().toISOString().slice(0, 10),
   });
-
-  const [cep, setCep] = useState("");
-  const [endereco, setEndereco] = useState({
-    logradouro: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    cidade: "",
-    uf: "",
-    cep: ""
-  });
-  const [loadingCep, setLoadingCep] = useState(false);
-  const [cepError, setCepError] = useState("");
-
   const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -57,6 +45,9 @@ export default function CadastrarImovel() {
   const [selectedImages, setSelectedImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [rentabilidade, setRentabilidade] = useState(""); 
+  const { options,  } = UseOptionsSelect();
+  const [tipoContrato, setTipoContrato] = useState('aluguel');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,89 +72,6 @@ export default function CadastrarImovel() {
 
       return newForm;
     });
-  };
-
-  const buscarCep = async (cepValue) => {
-    const cepLimpo = cepValue.replace(/\D/g, '');
-
-    if (cepLimpo.length !== 8) {
-      setCepError("CEP deve ter 8 dígitos");
-      return;
-    }
-
-    setLoadingCep(true);
-    setCepError("");
-
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-      const data = await response.json();
-
-      if (data.erro) {
-        setCepError("CEP não encontrado");
-        return;
-      }
-
-      const novoEndereco = {
-        logradouro: data.logradouro || "",
-        numero: "",
-        complemento: "",
-        bairro: data.bairro || "",
-        cidade: data.localidade || "",
-        uf: data.uf || "",
-        cep: cepValue
-      };
-
-      setEndereco(novoEndereco);
-
-      // Monta a string de localização completa
-      const localizacaoCompleta = `${novoEndereco.logradouro}, ${novoEndereco.bairro}, ${novoEndereco.cidade} - ${novoEndereco.uf}, CEP: ${cepValue}`;
-
-      setForm(prev => ({
-        ...prev,
-        localizacao: localizacaoCompleta
-      }));
-
-      toast.success("CEP encontrado com sucesso!");
-
-    } catch (error) {
-      setCepError("Erro ao buscar CEP");
-      toast.error("Erro ao buscar CEP");
-    } finally {
-      setLoadingCep(false);
-    }
-  };
-
-  const formatCep = (value) => {
-    const numericValue = value.replace(/\D/g, '');
-    if (numericValue.length <= 5) {
-      return numericValue;
-    }
-    return `${numericValue.slice(0, 5)}-${numericValue.slice(5, 8)}`;
-  };
-
-  const handleCepChange = (e) => {
-    const value = e.target.value;
-    const formattedCep = formatCep(value);
-    setCep(formattedCep);
-
-    // Se o CEP está completo, busca automaticamente
-    const cepLimpo = value.replace(/\D/g, '');
-    if (cepLimpo.length === 8) {
-      buscarCep(formattedCep);
-    }
-  };
-
-  const handleEnderecoChange = (field, value) => {
-    const novoEndereco = { ...endereco, [field]: value };
-    setEndereco(novoEndereco);
-
-    // Atualiza a localização completa
-    const localizacaoCompleta = `${novoEndereco.logradouro}${novoEndereco.numero ? ', ' + novoEndereco.numero : ''}${novoEndereco.complemento ? ', ' + novoEndereco.complemento : ''}, ${novoEndereco.bairro}, ${novoEndereco.cidade} - ${novoEndereco.uf}, CEP: ${novoEndereco.cep}`;
-
-    setForm(prev => ({
-      ...prev,
-      localizacao: localizacaoCompleta
-    }));
   };
 
   const formatCurrency = (value) => {
@@ -238,14 +146,6 @@ export default function CadastrarImovel() {
       ...prev,
       valor_total_ptoken: valorPorToken
     }));
-  };
-
-  const handleDateChange = (date) => {
-    setDate(date);
-    setForm({
-      ...form,
-      data_tokenizacao: date ? date.toISOString().slice(0, 10) : "", // Formato YYYY-MM-DD para o backend
-    });
   };
 
   const handleImageChange = (e) => {
@@ -329,7 +229,16 @@ export default function CadastrarImovel() {
     setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
- 
+  const handleRentabilidadeChange = (tipo) => {
+    setRentabilidade(tipo);
+    setForm(prev => ({
+      ...prev,
+      indicador: tipo === "indicador_juros" ? prev.indicador : "",
+      juros: tipo === "indicador_juros" || tipo === "juros" ? prev.juros : "",
+      valor_previsto: tipo === "valor_previsto" ? prev.valor_previsto : "",
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -337,6 +246,7 @@ export default function CadastrarImovel() {
     setSuccess(false);
 
     try {
+
       if (selectedImages.length === 0) {
         toast.warning("Nenhuma imagem selecionada. Adicione pelo menos uma imagem.");
         setLoading(false);
@@ -367,20 +277,31 @@ export default function CadastrarImovel() {
           size: attached.file.size
         }))
       );
+
+      let profitability = '';
+      if (rentabilidade === "indicador_juros") {
+        const indicador = form.indicador || '';
+        const juros = form.juros ? form.juros : '';
+        profitability = `${indicador} ${juros}`.trim();
+      } else if (rentabilidade === "juros") {
+        profitability = form.juros ? String(form.juros) : '';
+      } else if (rentabilidade === "valor_previsto") {
+        profitability = form.valor_previsto ? String(form.valor_previsto) : '';
+      }
+
       const payload = {
         title: form.titulo,
         description: form.descricao,
-        location: form.localizacao,
         total_value: valorTotal,
         total_tokens: parseInt(form.qtd_tokens),
         smart_contract_model_id: form.modelo_smart_id,
         status: 'pending',
-        tokenization_date: new Date(form.data_tokenizacao).toISOString(),
         files: filesBase64, 
         attachments: attachedFilesBase64, 
-        profitability: parseFloat(form.profitability) || 0,
+        profitability,
+        agent_id: form.agent_id || '',
       };
-      // console.log("Payload:", payload);
+      // console.log("Payload:", JSON.stringify(payload, null, 2));
       // console.log("response")
       await postProperties(payload);
       toast.success("Imóvel cadastrado com sucesso!");
@@ -388,24 +309,16 @@ export default function CadastrarImovel() {
       setForm({
         titulo: "",
         descricao: "",
-        localizacao: "",
         valor_total: "",
         qtd_tokens: "",
         valor_total_ptoken: "",
         modelo_smart_id: "",
         status: "ativo",
         data_tokenizacao: new Date().toISOString().slice(0, 10),
+        agent_id: "",
       });
-      setCep("");
-      setEndereco({
-        logradouro: "",
-        numero: "",
-        complemento: "",
-        bairro: "",
-        cidade: "",
-        uf: "",
-        cep: "",
-      });
+      
+      
       setDate(new Date());
       setSelectedImages([]);
       setImagePreviews([]);
@@ -419,27 +332,15 @@ export default function CadastrarImovel() {
     }
   };
 
-
-  const submitWithAlternativeFormat = async (formData) => {
-
-    const keys = Array.from(formData.keys());
-    keys.forEach(key => {
-      if (key.includes('imagens')) {
-        formData.delete(key);
-      }
-    });
-
-    selectedImages.forEach((image, index) => {
-      formData.append(`imagens[${index}]`, image);
-    });
-
-    return await postProperties(formData);
-  };
-
   return (
     <ProtectedRoute>
       <div className="container max-w-5xl mx-auto mt-8 p-4">
         <div className="card shadow-lg border-0 rounded-4 p-5 animate__animated animate__fadeIn">
+          <Steps model={[
+  { label: "Tipo de Contrato", active: true },
+  { label: "Dados do Imóvel", active: false },
+  { label: "Finalizar", active: false }
+]} />
           <h2 className="text-3xl fw-bold mb-5 text-primary d-flex align-items-center gap-2">
             <FaHome className="text-primary" /> Cadastro de Imóvel
           </h2>
@@ -459,124 +360,6 @@ export default function CadastrarImovel() {
                 <label htmlFor="titulo"><FaHome className="me-2" /> Título</label>
               </div>
 
-              {/* Campo de CEP */}
-              {/* <div className="mb-4">
-                <label className="form-label d-flex align-items-center gap-2">
-                  <FaMapMarkerAlt /> CEP
-                </label>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className={`form-control ${cepError ? 'is-invalid' : ''}`}
-                    placeholder="00000-000"
-                    value={cep}
-                    onChange={handleCepChange}
-                    maxLength={9}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary"
-                    onClick={() => buscarCep(cep)}
-                    disabled={loadingCep || cep.replace(/\D/g, '').length !== 8}
-                  >
-                    {loadingCep ? <FaSpinner className="fa-spin" /> : <FaSearch />}
-                  </button>
-                  {cepError && <div className="invalid-feedback">{cepError}</div>}
-                </div>
-                <small className="text-muted">Digite o CEP para preenchimento automático do endereço</small>
-              </div> */}
-
-              {/* Campos de endereço - aparecem após buscar o CEP */}
-              {/* {endereco.logradouro && (
-                <div className="row g-3 mb-4">
-                  <div className="col-md-8">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.logradouro}
-                        onChange={(e) => handleEnderecoChange('logradouro', e.target.value)}
-                        placeholder="Logradouro"
-                      />
-                      <label>Logradouro</label>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.numero}
-                        onChange={(e) => handleEnderecoChange('numero', e.target.value)}
-                        placeholder="Número"
-                        required
-                      />
-                      <label>Número</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.complemento}
-                        onChange={(e) => handleEnderecoChange('complemento', e.target.value)}
-                        placeholder="Complemento"
-                      />
-                      <label>Complemento (opcional)</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.bairro}
-                        onChange={(e) => handleEnderecoChange('bairro', e.target.value)}
-                        placeholder="Bairro"
-                      />
-                      <label>Bairro</label>
-                    </div>
-                  </div>
-                  <div className="col-md-8">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.cidade}
-                        onChange={(e) => handleEnderecoChange('cidade', e.target.value)}
-                        placeholder="Cidade"
-                      />
-                      <label>Cidade</label>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.uf}
-                        onChange={(e) => handleEnderecoChange('uf', e.target.value.toUpperCase())}
-                        placeholder="UF"
-                        maxLength={2}
-                      />
-                      <label>UF</label>
-                    </div>
-                  </div>
-                </div>
-              )} */}
-
-              {/* Preview da localização completa */}
-              {/* {form.localizacao && (
-                <div className="mb-4">
-                  <label className="form-label">Endereço Completo:</label>
-                  <div className="p-3 bg-light rounded border">
-                    <small className="text-muted">{form.localizacao}</small>
-                  </div>
-                </div>
-              )} */}
-
               <div className="form-floating mb-4">
                 <textarea
                   className="form-control h-auto"
@@ -591,7 +374,24 @@ export default function CadastrarImovel() {
                 <label htmlFor="descricao"><FaCubes className="me-2" /> Descrição *</label>
               </div>
 
+             <div className="form-floating mb-4">
+              <select
+                className="form-control"
+                name="agent_id"
+                id="agent_id"
+                value={form.agent_id || ''}
+                onChange={handleChange}
+              >
+                <option value="">Selecione o Captador * </option>
+                {options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="agent_id"><FaCubes className="me-2" /> Captador *</label>
 
+              </div>
               <div className="form-floating mb-4">
                 <input
                   type="text"
@@ -674,26 +474,92 @@ export default function CadastrarImovel() {
                 </div>
               </div>
 
-              <div className="form-floating mb-4">
-                <input
-                type="number"
-                className="form-control"
-                name="profitability"
-                id="profitability"
-                placeholder="Rentabilidade (%)"
-                value={form.profitability || ''}
-                onChange={handleChange}
-                min={0}
-                step={0.01}
-                required
-                />
-                <label htmlFor="profitability"><FaPercent className="me-2" /> Rentabilidade Prevista *</label>
-
-                </div>
+          
             </div>
 
             <div className="col-md-6">
-              {/* Upload de Imagens - Movido para o topo */}
+              <h5 className="mb-4">Rentabilidade Prevista</h5>
+              <div className="d-flex gap-3 mb-4">
+                <ToggleInput
+                  onLabel="Indicador + Juros"
+                  offLabel="Indicador + Juros"
+                  onIcon="bi bi-check2-all"
+                  offIcon="bi bi-x-lg"
+                  checked={rentabilidade === "indicador_juros"}
+                  onChange={() => handleRentabilidadeChange("indicador_juros")}
+                />
+                <ToggleInput
+                  onLabel="Juros"
+                  offLabel="Juros"
+                  onIcon="bi bi-check2-all"
+                  offIcon="bi bi-x-lg"
+                  checked={rentabilidade === "juros"}
+                  onChange={() => handleRentabilidadeChange("juros")}
+                />
+                <ToggleInput
+                  onLabel="Valor Previsto"
+                  offLabel="Valor Previsto"
+                  onIcon="bi bi-check2-all"
+                  offIcon="bi bi-x-lg"
+                  checked={rentabilidade === "valor_previsto"}
+                  onChange={() => handleRentabilidadeChange("valor_previsto")}
+                />
+              </div>
+
+              {rentabilidade === "indicador_juros" && (
+                <div className="form-floating mb-4">
+                  <div className="row g-2 align-items-center mb-3">
+                    <div className="col-6">
+                      <select
+                        className="form-select"
+                        name="indicador"
+                        value={form.indicador || ''}
+                        onChange={e => setForm(prev => ({ ...prev, indicador: e.target.value }))}
+                        required
+                      >
+                        <option value="">Selecione o indicador</option>
+                        <option value="CDI">CDI</option>
+                        <option value="IPCA">IPCA</option>
+                        <option value="IGPM">IGPM</option>
+                        <option value="TR">TR</option>
+                      </select>
+                    </div>
+                    <div className="col-6">
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="juros"
+                        placeholder="Juros (%)"
+                        value={form.juros || ''}
+                        onChange={e => setForm(prev => ({ ...prev, juros: e.target.value }))}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+              {rentabilidade === "juros" && (
+                <input
+                  type="number"
+                  className="form-control mb-3"
+                  name="juros"
+                  placeholder="Juros (%)"
+                  value={form.juros || ''}
+                  onChange={e => setForm(prev => ({ ...prev, juros: e.target.value }))}
+                  required
+                />
+              )}
+              {rentabilidade === "valor_previsto" && (
+                <input
+                  type="text"
+                  className="form-control mb-3"
+                  name="valor_previsto"
+                  placeholder="Valor Previsto (R$)"
+                  value={form.valor_previsto || ''}
+                  onChange={e => setForm(prev => ({ ...prev, valor_previsto: e.target.value }))}
+                  required
+                />
+              )}
               <div className="mb-4">
                 <label className="form-label d-flex align-items-center gap-2">
                   <FaImage /> Imagens do Imóvel *
@@ -721,7 +587,6 @@ export default function CadastrarImovel() {
                     </small>
                   </div>
 
-                  {/* Preview das Imagens dentro do border */}
                   {imagePreviews.length > 0 && (
                     <div className="border-top pt-3">
                       <h6 className="mb-3 text-center">Imagens Selecionadas ({imagePreviews.length}/5)</h6>
@@ -770,6 +635,7 @@ export default function CadastrarImovel() {
 
               {/* Upload de Arquivos Anexados */}
               <div className="mb-4">
+                
                 <label className="form-label d-flex align-items-center gap-2">
                   <FaFileAlt /> Arquivos Anexados do Imóvel *
                 </label>

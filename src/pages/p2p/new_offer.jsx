@@ -10,7 +10,7 @@ import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import '@/styles/marketplace.css';
 
 export default function NovaOfertaPage() {
-  const [imoveis, setImoveis] = useState([]);
+  const [Propiedades, setPropiedades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modalImovel, setModalImovel] = useState(null);
@@ -51,7 +51,7 @@ export default function NovaOfertaPage() {
   };
 
   useEffect(() => {
-    async function fetchImoveis() {
+    async function fetchPropiedades() {
       setLoading(true);
       setError(null);
       const userId = getUserIdFromToken();
@@ -64,7 +64,7 @@ export default function NovaOfertaPage() {
         const response = await getInvestments(userId);
         const investimentos = Array.isArray(response) ? response : (response ? [response] : []);
         
-        const imoveisDetalhados = await Promise.all(
+        const PropiedadesDetalhados = await Promise.all(
           investimentos.map(async (inv) => {
             const propertyResponse = await getOnePropertie(inv?.id_imovel);
             return {
@@ -76,15 +76,15 @@ export default function NovaOfertaPage() {
           })
         );
         
-        const imoveisValidos = imoveisDetalhados.filter(imovel => imovel && imovel.id);
-        setImoveis(imoveisValidos);
+        const PropiedadesValidos = PropiedadesDetalhados.filter(imovel => imovel && imovel.id);
+        setPropiedades(PropiedadesValidos);
       } catch {
         setError('Erro ao carregar imóveis.');
       } finally {
         setLoading(false);
       }
     }
-    fetchImoveis();
+    fetchPropiedades();
   }, []);
 
   const abrirModal = (imovel) => {
@@ -111,8 +111,8 @@ export default function NovaOfertaPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const imoveisFiltrados = useMemo(() => {
-    return imoveis
+  const PropiedadesFiltrados = useMemo(() => {
+    return Propiedades
       .filter(imovel => 
         imovel?.titulo?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         imovel?.descricao?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -129,7 +129,7 @@ export default function NovaOfertaPage() {
             return 0;
         }
       });
-  }, [imoveis, debouncedSearchTerm, sortBy]);
+  }, [Propiedades, debouncedSearchTerm, sortBy]);
 
   const calcularValorTotal = useCallback(() => {
     if (!qtdVenda || !precoVenda) return 'R$ 0,00';
@@ -179,7 +179,7 @@ export default function NovaOfertaPage() {
         const response = await getInvestments(userId);
         const investimentos = Array.isArray(response) ? response : (response ? [response] : []);
         
-        const imoveisDetalhados = await Promise.all(
+        const PropiedadesDetalhados = await Promise.all(
           investimentos.map(async (inv) => {
             const propertyResponse = await getOnePropertie(inv?.id_imovel);
             return {
@@ -191,8 +191,8 @@ export default function NovaOfertaPage() {
           })
         );
         
-        const imoveisValidos = imoveisDetalhados.filter(imovel => imovel && imovel.id);
-        setImoveis(imoveisValidos);
+        const PropiedadesValidos = PropiedadesDetalhados.filter(imovel => imovel && imovel.id);
+        setPropiedades(PropiedadesValidos);
       } catch (error) {
         console.error('Erro ao recarregar dados:', error);
       }
@@ -243,8 +243,8 @@ export default function NovaOfertaPage() {
   };
 
   const totalTokensDisponiveis = useMemo(() => {
-    return imoveis.reduce((total, imovel) => total + (imovel.qtd_tokens || 0), 0);
-  }, [imoveis]);
+    return Propiedades.reduce((total, imovel) => total + (imovel.qtd_tokens || 0), 0);
+  }, [Propiedades]);
 
   return (
     <ProtectedRoute>
@@ -258,7 +258,7 @@ export default function NovaOfertaPage() {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h1 className="text-2xl mb-2 text-dark d-flex align-items-center">
-            <i className="fa fa-store me-3 text-primary"></i>
+            <i className="fa fa-store me-3 text-dark"></i>
             Marketplace de Tokens
           </h1>
           <p className="text-muted mb-0">Venda seus tokens de propriedades no marketplace P2P</p>
@@ -278,16 +278,9 @@ export default function NovaOfertaPage() {
         </div>
       )}
 
-      {/* Error State */}
-      {error && (
-        <div className="alert alert-danger d-flex align-items-center" role="alert">
-          <i className="fa fa-exclamation-triangle me-2"></i>
-          <div>{error}</div>
-        </div>
-      )}
+     
 
-      {/* Empty State */}
-      {!loading && imoveis.length === 0 && !error && (
+      {!loading && Propiedades.length === 0 && !error && (
         <div className="text-center py-5">
           <div className="mb-4">
             <i className="fa fa-home" style={{ fontSize: '4rem', color: '#e9ecef' }}></i>
@@ -300,7 +293,7 @@ export default function NovaOfertaPage() {
         </div>
       )}
 
-      {!loading && imoveis.length > 0 && (
+      {!loading && Propiedades.length > 0 && (
         <>
           <div className="row mb-4 g-3">
             <div className="col-md-8">
@@ -358,7 +351,7 @@ export default function NovaOfertaPage() {
                   </>
                 ) : (
                   <>
-                    Mostrando {imoveisFiltrados.length} de {imoveis.length} propriedades
+                    Mostrando {PropiedadesFiltrados.length} de {Propiedades.length} propriedades
                     {(searchTerm || sortBy !== 'tokens') && (
                       <i className="fa fa-filter ms-2 text-primary" title="Filtros ativos"></i>
                     )}
@@ -419,7 +412,7 @@ export default function NovaOfertaPage() {
       {/* Properties Grid */}
       <div className="row g-4">
         {/* Empty search results */}
-        {!loading && imoveis.length > 0 && imoveisFiltrados.length === 0 && (
+        {!loading && Propiedades.length > 0 && PropiedadesFiltrados.length === 0 && (
           <div className="col-12">
             <div className="text-center py-5">
               <div className="mb-4">
@@ -455,7 +448,7 @@ export default function NovaOfertaPage() {
           </div>
         )}
 
-        {imoveisFiltrados.map((imovel) => (
+        {PropiedadesFiltrados.map((imovel) => (
           <div className="col-md-6 col-lg-4" key={imovel.id}>
             <div className="card border-0 shadow-sm h-100 position-relative hover-card p2p-card">
               {/* Badge de tokens disponíveis */}

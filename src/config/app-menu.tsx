@@ -1,14 +1,22 @@
+
 const Menu = [
 	{ is_header: true, title: '' },
 	// Admin
 	{ path: '/admin/dashboard', icon: 'fa fa-chart-pie', title: 'Dashboard', role: 'admin' },
 	{ path: '/admin/investors', icon: 'fa fa-users', title: 'Investidores', role: 'admin' },
-	{ path: '/admin/properties', icon: 'fa fa-building', title: 'Imóveis', role: 'admin',
+	{ path: '/admin/properties', icon: 'fa fa-building', title: 'Propriedades', role: 'admin',
 		children: [
-			{ path: '/admin/properties', title: 'Todos os Imóveis', role: 'admin' },
-			{ path: '/admin/properties/register', title: 'Cadastrar Imóvel', role: 'admin' }
+			{ path: '/admin/properties', title: 'Todos as Propriedades', role: 'admin' },
+			{ path: '/admin/properties/register', title: 'Cadastrar Propriedade', role: 'admin' }
 		]
 	},
+	{ path: '/admin/raisers', icon: 'fa fa-user', title: 'Captadores', role: 'admin',
+		children: [
+			{ path: '/admin/raisers', title: 'Todos os Captadores', role: 'admin' },
+			{ path: '/admin/raisers/register', title: 'Cadastrar Captador', role: 'admin' }
+		]
+	},
+
 	// Investidor
 	{ path: '/dashboard', icon: 'fa fa-home', title: 'Dashboard', role: 'investidor' },
 	{ path: '/properties', icon: 'fa fa-building', title: 'Imóveis', role: 'investidor' },
