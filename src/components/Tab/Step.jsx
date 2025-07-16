@@ -12,7 +12,7 @@ const Steps = ({ model }) => {
                 width: 32,
                 height: 32,
                 borderRadius: "50%",
-                background: item.active ? "#17c1e8" : "#f5f5f5",
+                background: item.active ? "#010101" : "#f5f5f5",
                 color: item.active ? "#fff" : "#aaa",
                 lineHeight: "32px",
                 fontWeight: "bold",
@@ -24,7 +24,6 @@ const Steps = ({ model }) => {
             </div>
             <div
               style={{
-                color: item.active ? "#3a3a3a" : "#aaa",
                 fontWeight: item.active ? "bold" : "normal",
               }}
             >

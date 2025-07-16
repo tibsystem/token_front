@@ -1,3 +1,8 @@
+ .btn-outline-light:hover {
+  color: #010101 !important;
+  text-shadow: none !important;
+}
+
 .custom-tabview {
   width: 100%;
 }
@@ -44,9 +49,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: #1797b8;
+  background: #010101;
   color: #fff;
-  border: 2px solid #aef1ff;
+  border: 2px solid #010101;
   border-radius: 8px;
   padding: 0.35rem 1.1rem;
   font-size: 0.98rem;
@@ -63,7 +68,11 @@
 .toggle-input.toggle-button .toggle-icon {
   display: flex;
   align-items: center;
-  font-size: 1em;
+  justify-content: center;
+  font-size: 1.15em;
+  vertical-align: middle;
+  height: 1.2em;
+  margin-right: 0.2em;
 }
 .toggle-input.toggle-button .toggle-label {
   font-weight: 700;
@@ -71,8 +80,8 @@
 }
 .toggle-input.toggle-button:not(.checked) {
   background: #e9f7fa;
-  color: #1797b8;
-  border: 1px solid #1797b8;
+  color: #010101;
+  border: 1px solid #010101;
   
 }
 .toggle-input.toggle-button:not(.checked) .toggle-label {
@@ -83,9 +92,9 @@
   border: 2px solid #aef1ff;
 }
 .toggle-input.toggle-button.checked {
-  background: #1797b8;
+  background: #010101;
   color: #fff;
-  border: 2px solid #aef1ff;
+  border: 2px solid #010101;
 }
 .toggle-input.toggle-button:active {
   filter: brightness(0.97);
@@ -122,38 +131,21 @@
 
 /* Dark mode */
 [data-bs-theme="dark"] .toggle-input.toggle-button {
-  background: #0e3a4a;
-  color: #fff;
-  border: 2px solid #2ec6e6;
-}
-[data-bs-theme="dark"] .toggle-input.toggle-button:not(.checked) {
-  background: #1a4d5e;
-  color: #2ec6e6;
-  border: 2px solid #1a4d5e;
-}
-[data-bs-theme="dark"] .toggle-input.toggle-button:not(.checked):hover {
-  background: #235e74;
-  border: 2px solid #2ec6e6;
-}
-[data-bs-theme="dark"] .toggle-input.toggle-button.checked {
-  background: #0e3a4a;
-  color: #fff;
-  border: 2px solid #2ec6e6;
+  background: #010101;
+  color: #ffffff;
 }
 
-[data-bs-theme="dark"] .custom-tabview-header {
-  background: #1a4d5e;
-  border-bottom: 1.5px solid #2ec6e6;
+[data-bs-theme="dark"] .toggle-input.toggle-button:not(.checked) {
+  background: #0c0d0e71;
+  color: #e0faff; 
 }
-[data-bs-theme="dark"] .custom-tabview-btn {
-  color: #2ec6e6;
+
+[data-bs-theme="dark"] .toggle-input.toggle-button:not(.checked):hover {
+  background: #1a4d5e; 
 }
-[data-bs-theme="dark"] .custom-tabview-btn.active {
-  color: #fff;
-  border-bottom: 2px solid #2ec6e6;
-  background: #0e3a4a;
-}
-[data-bs-theme="dark"] .custom-tabview-content {
-  background: #212529;
-  box-shadow: 0 1px 4px 0 rgba(46,198,230,0.08);
+
+[data-bs-theme="dark"] .toggle-input.toggle-button.checked {
+  background: #010101;
+  color: #ffffff;
+  border: 2px solid #010101;
 }
