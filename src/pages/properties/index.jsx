@@ -9,8 +9,8 @@ import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import '@/styles/marketplace.css';
 
-export default function ImoveisPage() {
-  const [imoveis, setImoveis] = useState([]);
+export default function PropiedadesPage() {
+  const [Propiedades, setPropiedades] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,7 +45,7 @@ export default function ImoveisPage() {
       try {
         setLoading(true);
         const response = await getProperties();
-        setImoveis(Array.isArray(response) ? response : []);
+        setPropiedades(Array.isArray(response) ? response : []);
         setLoading(false);
       } catch (err) {
         setError('Erro ao carregar imóveis.');
@@ -63,8 +63,8 @@ export default function ImoveisPage() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const imoveisFiltrados = useMemo(() => {
-    let filtered = imoveis.filter(imovel => {
+  const PropiedadesFiltrados = useMemo(() => {
+    let filtered = Propiedades.filter(imovel => {
       const matchesSearch = !debouncedSearchTerm || 
         imovel?.title?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
 
@@ -113,7 +113,7 @@ export default function ImoveisPage() {
           return 0;
       }
     });
-  }, [imoveis, debouncedSearchTerm, filterStatus, filterValue, sortBy]);
+  }, [Propiedades, debouncedSearchTerm, filterStatus, filterValue, sortBy]);
 
   const clearAllFilters = useCallback(() => {
     setSearchTerm('');
@@ -157,11 +157,11 @@ export default function ImoveisPage() {
   };
 
   const stats = useMemo(() => ({
-    total: imoveis.length,
-    ativo: imoveis.filter(i => i.status?.toLowerCase() === 'active' || i.status?.toLowerCase() === 'ativo').length,
-    tokens: imoveis.reduce((sum, i) => sum + (i.total_tokens || 0), 0),
-    totalValue: imoveis.reduce((sum, i) => sum + (i.total_value || 0), 0)
-  }), [imoveis]);
+    total: Propiedades.length,
+    ativo: Propiedades.filter(i => i.status?.toLowerCase() === 'active' || i.status?.toLowerCase() === 'ativo').length,
+    tokens: Propiedades.reduce((sum, i) => sum + (i.total_tokens || 0), 0),
+    totalValue: Propiedades.reduce((sum, i) => sum + (i.total_value || 0), 0)
+  }), [Propiedades]);
 
   const hasActiveFilters = useMemo(() => {
     return searchTerm !== '' || filterStatus !== 'todos' || filterValue !== 'todos' || sortBy !== 'valor_desc';
@@ -212,7 +212,7 @@ export default function ImoveisPage() {
         </div>
       )}
 
-      {!loading && imoveis.length === 0 && !error && (
+      {!loading && Propiedades.length === 0 && !error && (
         <div className="text-center py-5">
           <div className="mb-4">
             <i className="fa fa-building empty-state-icon"></i>
@@ -229,7 +229,7 @@ export default function ImoveisPage() {
         </div>
       )}
 
-      {!loading && imoveis.length > 0 && (
+      {!loading && Propiedades.length > 0 && (
         <>
           <div className="row mb-4 g-3">
             <div className="col-md-3">
@@ -375,7 +375,7 @@ export default function ImoveisPage() {
                   </>
                 ) : (
                   <>
-                    Mostrando {imoveisFiltrados.length} de {stats.total} propriedades
+                    Mostrando {PropiedadesFiltrados.length} de {stats.total} propriedades
                     {hasActiveFilters && (
                       <i className="fa fa-filter ms-2 text-primary" title="Filtros ativos"></i>
                     )}
@@ -471,7 +471,7 @@ export default function ImoveisPage() {
           </>
         )}
 
-        {!loading && stats.total > 0 && imoveisFiltrados.length === 0 && (
+        {!loading && stats.total > 0 && PropiedadesFiltrados.length === 0 && (
           <div className="col-12">
             <div className="text-center py-5">
               <div className="mb-4">
@@ -509,7 +509,7 @@ export default function ImoveisPage() {
           </div>
         )}
 
-        {!loading && imoveisFiltrados.map((imovel) => (
+        {!loading && PropiedadesFiltrados.map((imovel) => (
           viewMode === 'grid' ? (
             <div key={imovel.id} className="col-xl-4 col-lg-6">
               <div className="card h-100 shadow-sm border-0 rounded-4 overflow-hidden hover-card">

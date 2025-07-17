@@ -10,8 +10,8 @@ import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 //services
 
-export default function ImoveisAdminPage() {
-  const [imoveis, setImoveis] = useState([]);
+export default function PropiedadesAdminPage() {
+  const [Propiedades, setPropiedades] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +33,7 @@ export default function ImoveisAdminPage() {
       try {
         setLoading(true);
         const response = await getProperties();
-        setImoveis(Array.isArray(response) ? response : []);
+        setPropiedades(Array.isArray(response) ? response : []);
         setLoading(false);
       } catch (err) {
         toast.error('Erro ao carregar imóveis.');
@@ -53,7 +53,7 @@ export default function ImoveisAdminPage() {
     <div className="px-4 py-5">
       <div className="row mb-4">
         <div className="col">
-          <h1 className="text-3xl font-bold mb-8 text-dark">Imoveis</h1>
+          <h1 className="text-3xl font-bold mb-8 text-dark">Propiedades</h1>
           <p className="text-muted fs-5">Investimentos selecionados de acordo com o seu perfil</p>
         </div>
       </div>
@@ -61,11 +61,11 @@ export default function ImoveisAdminPage() {
       {loading && <div className="text-muted mb-4 animate-pulse fs-5">Carregando imóveis...</div>}
 
       <div className="row g-4">
-        {imoveis.length === 0 && !loading && (
+        {Propiedades.length === 0 && !loading && (
           <div className="col-12 text-muted fs-5">Nenhum imóvel cadastrado.</div>
         )}
 
-        {imoveis.map((imovel) => (
+        {Propiedades.map((imovel) => (
           <div key={imovel.id} className="col-xl-3 col-lg-6">
             <div className="card h-100 shadow-sm border-0 rounded-4  overflow-hidden">
               <img

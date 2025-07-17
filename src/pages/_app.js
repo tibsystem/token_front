@@ -6,6 +6,7 @@ import '@/styles/nextjs.scss';
 // Forçar prioridade do CSS do template sobre o Tailwind
 import '@/styles/nextjs.scss';
 import '@/styles/nextjs.scss';
+import '@/styles/index.css';
 
 import { AppSettingsProvider } from '@/config/app-settings';
 import { Layout } from '@/app/layout';

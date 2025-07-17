@@ -1,30 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-
 import { useState } from "react";
-import api from "@/services/api";
-import { postProperties } from "@/services/properties/postProperties";
-import {
-  FaHome,
-  FaCoins,
-  FaCubes,
-  FaMicrochip,
-  
-  FaCheckCircle,
-  FaImage,
-  FaTimes,
-  FaFileAlt,
-  FaPercent,
-} from "react-icons/fa";
-import { registerLocale, setDefaultLocale } from "react-datepicker";
-import { ptBR } from "date-fns/locale";
+import { FaBuilding } from "react-icons/fa";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-registerLocale("pt-BR", ptBR);
-setDefaultLocale("pt-BR");
+
+//component
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import Steps from "@/components/Tab/Step";
+import TypeContract from "@/components/Properties/TypeContract";
+import PropertyData from "@/components/Properties/PropertyData";
+import PropertySummary from "@/components/Properties/PropertySummary";
+//hooks
+import useDarkMode from "@/hooks/useDarkMode";
+import UseOptionsSelect from "@/hooks/UseOptionsSelect";
+//services
+import { postProperties } from "@/services/properties/postProperties";
 
 export default function CadastrarImovel() {
+  const { isDarkMode } = useDarkMode();
   const [form, setForm] = useState({
     titulo: "",
     descricao: "",
@@ -36,20 +30,6 @@ export default function CadastrarImovel() {
     status: "ativo",
     data_tokenizacao: new Date().toISOString().slice(0, 10),
   });
-
-  const [cep, setCep] = useState("");
-  const [endereco, setEndereco] = useState({
-    logradouro: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    cidade: "",
-    uf: "",
-    cep: ""
-  });
-  const [loadingCep, setLoadingCep] = useState(false);
-  const [cepError, setCepError] = useState("");
-
   const [date, setDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -57,25 +37,83 @@ export default function CadastrarImovel() {
   const [selectedImages, setSelectedImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [rentabilidade, setRentabilidade] = useState("");
+  const { options } = UseOptionsSelect();
+  const [tipoContrato, setTipoContrato] = useState("aluguel");
+  const [smartContractFiles, setSmartContractFiles] = useState([]);
+
+  const steps = [
+    { label: "Tipo de Contrato" },
+    { label: "Dados do Imóvel" },
+    { label: "Finalizar" },
+  ];
+
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const stepsModel = steps.map((step, idx) => ({
+    ...step,
+    active: idx === currentStep,
+  }));
+ const camposValidos = () => {
+  if (currentStep === 0) {
+    const smartContractValido =
+      smartContractFiles.length > 0 &&
+      smartContractFiles.every(
+        (attached) =>
+          attached.description && attached.description.trim() !== ""
+      );
+    if (tipoContrato === "aluguel") {
+      return (
+        form.periodo_contrato &&
+        form.percentual_lucro &&
+        smartContractValido &&
+        rentabilidade &&
+        (rentabilidade === "indicador_juros"
+          ? form.indicador && form.juros
+          : form.juros)
+      );
+    }
+    if (tipoContrato === "equity") {
+      return (
+        form.participacao &&
+        form.meta_captacao &&
+        form.expectativa_retorno &&
+        form.prazo_retorno &&
+        smartContractValido
+      );
+    }
+    return false;
+  }
+  if (currentStep === 1) {
+    return (
+      form.titulo &&
+      form.descricao &&
+      form.agent_id &&
+      form.valor_total &&
+      form.qtd_tokens
+    );
+  }
+  return true;
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setForm(prev => {
+    setForm((prev) => {
       const newForm = { ...prev, [name]: value };
 
-      if (name === 'qtd_tokens') {
+      if (name === "qtd_tokens") {
         const valorTotal = getCurrencyValue(prev.valor_total);
         const qtdTokens = parseInt(value) || 0;
 
         if (valorTotal > 0 && qtdTokens > 0) {
           const valorPorToken = valorTotal / qtdTokens;
-          newForm.valor_total_ptoken = valorPorToken.toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
+          newForm.valor_total_ptoken = valorPorToken.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
           });
         } else {
-          newForm.valor_total_ptoken = '';
+          newForm.valor_total_ptoken = "";
         }
       }
 
@@ -83,99 +121,16 @@ export default function CadastrarImovel() {
     });
   };
 
-  const buscarCep = async (cepValue) => {
-    const cepLimpo = cepValue.replace(/\D/g, '');
-
-    if (cepLimpo.length !== 8) {
-      setCepError("CEP deve ter 8 dígitos");
-      return;
-    }
-
-    setLoadingCep(true);
-    setCepError("");
-
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-      const data = await response.json();
-
-      if (data.erro) {
-        setCepError("CEP não encontrado");
-        return;
-      }
-
-      const novoEndereco = {
-        logradouro: data.logradouro || "",
-        numero: "",
-        complemento: "",
-        bairro: data.bairro || "",
-        cidade: data.localidade || "",
-        uf: data.uf || "",
-        cep: cepValue
-      };
-
-      setEndereco(novoEndereco);
-
-      // Monta a string de localização completa
-      const localizacaoCompleta = `${novoEndereco.logradouro}, ${novoEndereco.bairro}, ${novoEndereco.cidade} - ${novoEndereco.uf}, CEP: ${cepValue}`;
-
-      setForm(prev => ({
-        ...prev,
-        localizacao: localizacaoCompleta
-      }));
-
-      toast.success("CEP encontrado com sucesso!");
-
-    } catch (error) {
-      setCepError("Erro ao buscar CEP");
-      toast.error("Erro ao buscar CEP");
-    } finally {
-      setLoadingCep(false);
-    }
-  };
-
-  const formatCep = (value) => {
-    const numericValue = value.replace(/\D/g, '');
-    if (numericValue.length <= 5) {
-      return numericValue;
-    }
-    return `${numericValue.slice(0, 5)}-${numericValue.slice(5, 8)}`;
-  };
-
-  const handleCepChange = (e) => {
-    const value = e.target.value;
-    const formattedCep = formatCep(value);
-    setCep(formattedCep);
-
-    // Se o CEP está completo, busca automaticamente
-    const cepLimpo = value.replace(/\D/g, '');
-    if (cepLimpo.length === 8) {
-      buscarCep(formattedCep);
-    }
-  };
-
-  const handleEnderecoChange = (field, value) => {
-    const novoEndereco = { ...endereco, [field]: value };
-    setEndereco(novoEndereco);
-
-    // Atualiza a localização completa
-    const localizacaoCompleta = `${novoEndereco.logradouro}${novoEndereco.numero ? ', ' + novoEndereco.numero : ''}${novoEndereco.complemento ? ', ' + novoEndereco.complemento : ''}, ${novoEndereco.bairro}, ${novoEndereco.cidade} - ${novoEndereco.uf}, CEP: ${novoEndereco.cep}`;
-
-    setForm(prev => ({
-      ...prev,
-      localizacao: localizacaoCompleta
-    }));
-  };
-
   const formatCurrency = (value) => {
-    const numericValue = value.replace(/\D/g, '');
+    const numericValue = value.replace(/\D/g, "");
 
-    if (!numericValue) return '';
+    if (!numericValue) return "";
 
     const numberValue = parseInt(numericValue) / 100;
 
-    return numberValue.toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
+    return numberValue.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     });
   };
 
@@ -183,10 +138,10 @@ export default function CadastrarImovel() {
     const value = e.target.value;
     const formattedValue = formatCurrency(value);
 
-    setForm(prev => {
+    setForm((prev) => {
       const newForm = {
         ...prev,
-        valor_total: formattedValue
+        valor_total: formattedValue,
       };
 
       // Calcular valor por token automaticamente
@@ -195,12 +150,12 @@ export default function CadastrarImovel() {
 
       if (valorTotal > 0 && qtdTokens > 0) {
         const valorPorToken = valorTotal / qtdTokens;
-        newForm.valor_total_ptoken = valorPorToken.toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
+        newForm.valor_total_ptoken = valorPorToken.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
         });
       } else {
-        newForm.valor_total_ptoken = '';
+        newForm.valor_total_ptoken = "";
       }
 
       return newForm;
@@ -211,9 +166,9 @@ export default function CadastrarImovel() {
     if (!formattedValue) return 0;
 
     const numericString = formattedValue
-      .replace(/[R$\s]/g, '')
-      .replace(/\./g, '')
-      .replace(',', '.');
+      .replace(/[R$\s]/g, "")
+      .replace(/\./g, "")
+      .replace(",", ".");
 
     return parseFloat(numericString) || 0;
   };
@@ -224,28 +179,20 @@ export default function CadastrarImovel() {
 
     if (valorTotal > 0 && qtdTokens > 0) {
       const valorPorToken = valorTotal / qtdTokens;
-      return valorPorToken.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
+      return valorPorToken.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
       });
     }
-    return '';
+    return "";
   };
 
   const updateValuePerToken = () => {
     const valorPorToken = calculateValuePerToken();
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      valor_total_ptoken: valorPorToken
+      valor_total_ptoken: valorPorToken,
     }));
-  };
-
-  const handleDateChange = (date) => {
-    setDate(date);
-    setForm({
-      ...form,
-      data_tokenizacao: date ? date.toISOString().slice(0, 10) : "", // Formato YYYY-MM-DD para o backend
-    });
   };
 
   const handleImageChange = (e) => {
@@ -256,53 +203,64 @@ export default function CadastrarImovel() {
       return;
     }
 
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    const invalidFiles = files.filter(file => !validTypes.includes(file.type));
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const invalidFiles = files.filter(
+      (file) => !validTypes.includes(file.type)
+    );
 
     if (invalidFiles.length > 0) {
       toast.error("Apenas arquivos JPEG, PNG e WEBP são permitidos");
       return;
     }
 
-    const oversizedFiles = files.filter(file => file.size > 5 * 1024 * 1024);
+    const oversizedFiles = files.filter((file) => file.size > 5 * 1024 * 1024);
 
     if (oversizedFiles.length > 0) {
       toast.error("Cada imagem deve ter no máximo 5MB");
       return;
     }
 
-    setSelectedImages(prev => [...prev, ...files]);
+    setSelectedImages((prev) => [...prev, ...files]);
 
-    files.forEach(file => {
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImagePreviews(prev => [...prev, {
-          file: file,
-          url: e.target.result,
-          name: file.name
-        }]);
+        setImagePreviews((prev) => [
+          ...prev,
+          {
+            file: file,
+            url: e.target.result,
+            name: file.name,
+          },
+        ]);
       };
       reader.readAsDataURL(file);
     });
   };
 
   const removeImage = (index) => {
-    setSelectedImages(prev => prev.filter((_, i) => i !== index));
-    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
-    const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    const invalidFiles = files.filter(file => !validTypes.includes(file.type));
+    const validTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    const invalidFiles = files.filter(
+      (file) => !validTypes.includes(file.type)
+    );
 
     if (invalidFiles.length > 0) {
       toast.error("Apenas arquivos PDF, DOC e DOCX são permitidos");
       return;
     }
 
-    const oversizedFiles = files.filter(file => file.size > 5 * 1024 * 1024);
+    const oversizedFiles = files.filter((file) => file.size > 5 * 1024 * 1024);
 
     if (oversizedFiles.length > 0) {
       toast.error("Cada arquivo deve ter no máximo 5MB");
@@ -329,7 +287,48 @@ export default function CadastrarImovel() {
     setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
- 
+  const handleRentabilidadeChange = (tipo) => {
+    setRentabilidade(tipo);
+    setForm((prev) => ({
+      ...prev,
+      indicador: tipo === "indicador_juros" ? prev.indicador : "",
+      juros: tipo === "indicador_juros" || tipo === "juros" ? prev.juros : "",
+      valor_previsto: tipo === "valor_previsto" ? prev.valor_previsto : "",
+    }));
+  };
+
+  const handlePercentChange = (e) => {
+    let value = e.target.value.replace(/[^\d.,]/g, "").replace(/(,|\.)/g, ",");
+    const parts = value.split(",");
+    if (parts.length > 2) value = parts[0] + "," + parts[1];
+    value = value.replace(/^0+(\d)/, "$1");
+    if (value) value = value + "%";
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: value,
+    }));
+  };
+
+  const handleSmartContractFileChange = (e) => {
+    const files = Array.from(e.target.files).map((file) => ({
+      file,
+      description: "",
+    }));
+    setSmartContractFiles((prev) => [...prev, ...files]);
+  };
+
+  const removeSmartContractFile = (index) => {
+    setSmartContractFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSmartContractFileDescriptionChange = (index, desc) => {
+    setSmartContractFiles((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, description: desc } : item
+      )
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -338,7 +337,9 @@ export default function CadastrarImovel() {
 
     try {
       if (selectedImages.length === 0) {
-        toast.warning("Nenhuma imagem selecionada. Adicione pelo menos uma imagem.");
+        toast.warning(
+          "Nenhuma imagem selecionada. Adicione pelo menos uma imagem."
+        );
         setLoading(false);
         return;
       }
@@ -364,23 +365,34 @@ export default function CadastrarImovel() {
           description: attached.description,
           name: attached.file.name,
           type: attached.file.type,
-          size: attached.file.size
+          size: attached.file.size,
         }))
       );
+
+      let profitability = "";
+      if (rentabilidade === "indicador_juros") {
+        const indicador = form.indicador || "";
+        const juros = form.juros ? form.juros : "";
+        profitability = `${indicador} ${juros}`.trim();
+      } else if (rentabilidade === "juros") {
+        profitability = form.juros ? String(form.juros) : "";
+      } else if (rentabilidade === "valor_previsto") {
+        profitability = form.valor_previsto ? String(form.valor_previsto) : "";
+      }
+
       const payload = {
         title: form.titulo,
         description: form.descricao,
-        location: form.localizacao,
         total_value: valorTotal,
         total_tokens: parseInt(form.qtd_tokens),
         smart_contract_model_id: form.modelo_smart_id,
-        status: 'pending',
-        tokenization_date: new Date(form.data_tokenizacao).toISOString(),
-        files: filesBase64, 
-        attachments: attachedFilesBase64, 
-        profitability: parseFloat(form.profitability) || 0,
+        status: "pending",
+        files: filesBase64,
+        attachments: attachedFilesBase64,
+        profitability,
+        agent_id: form.agent_id || "",
       };
-      // console.log("Payload:", payload);
+      // console.log("Payload:", JSON.stringify(payload, null, 2));
       // console.log("response")
       await postProperties(payload);
       toast.success("Imóvel cadastrado com sucesso!");
@@ -388,29 +400,19 @@ export default function CadastrarImovel() {
       setForm({
         titulo: "",
         descricao: "",
-        localizacao: "",
         valor_total: "",
         qtd_tokens: "",
         valor_total_ptoken: "",
         modelo_smart_id: "",
         status: "ativo",
         data_tokenizacao: new Date().toISOString().slice(0, 10),
+        agent_id: "",
       });
-      setCep("");
-      setEndereco({
-        logradouro: "",
-        numero: "",
-        complemento: "",
-        bairro: "",
-        cidade: "",
-        uf: "",
-        cep: "",
-      });
+
       setDate(new Date());
       setSelectedImages([]);
       setImagePreviews([]);
       setAttachedFiles([]);
-
     } catch (err) {
       setError(err?.message || "Erro ao cadastrar imóvel");
       toast.error("Erro ao cadastrar imóvel");
@@ -418,450 +420,106 @@ export default function CadastrarImovel() {
       setLoading(false);
     }
   };
-
-
-  const submitWithAlternativeFormat = async (formData) => {
-
-    const keys = Array.from(formData.keys());
-    keys.forEach(key => {
-      if (key.includes('imagens')) {
-        formData.delete(key);
-      }
-    });
-
-    selectedImages.forEach((image, index) => {
-      formData.append(`imagens[${index}]`, image);
-    });
-
-    return await postProperties(formData);
-  };
-
+//  console.log("form", form);
   return (
     <ProtectedRoute>
       <div className="container max-w-5xl mx-auto mt-8 p-4">
         <div className="card shadow-lg border-0 rounded-4 p-5 animate__animated animate__fadeIn">
-          <h2 className="text-3xl fw-bold mb-5 text-primary d-flex align-items-center gap-2">
-            <FaHome className="text-primary" /> Cadastro de Imóvel
+          <h2 className="text-3xl fw-bold mb-5 text-dark d-flex align-items-center gap-2">
+            <FaBuilding className="text-dark" /> Cadastro de Propriedade
           </h2>
+          <Steps model={stepsModel} />
+
           <form onSubmit={handleSubmit} className="row g-4">
-            <div className="col-md-6">
-              <div className="form-floating mb-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="titulo"
-                  id="titulo"
-                  placeholder="Título"
-                  value={form.titulo}
-                  onChange={handleChange}
-                  required
+            {currentStep === 0 && (
+              <TypeContract
+                tipoContrato={tipoContrato}
+                setTipoContrato={setTipoContrato}
+                rentabilidade={rentabilidade}
+                setRentabilidade={setRentabilidade}
+                form={form}
+                setForm={setForm}
+                attachedFiles={smartContractFiles}
+                handleFileChange={handleSmartContractFileChange}
+                handleFileDescriptionChange={
+                  handleSmartContractFileDescriptionChange
+                }
+                removeAttachedFile={removeSmartContractFile}
+                isDarkMode={isDarkMode}
+                handleChange={handleChange}
+                handlePercentChange={handlePercentChange}
+                handleRentabilidadeChange={handleRentabilidadeChange}
+              />
+            )}
+
+            {currentStep === 1 && (
+              <PropertyData
+                form={form}
+                setForm={setForm}
+                attachedFiles={attachedFiles}
+                handleFileChange={handleFileChange}
+                handleFileDescriptionChange={handleFileDescriptionChange}
+                removeAttachedFile={removeAttachedFile}
+                isDarkMode={isDarkMode}
+                handleChange={handleChange}
+                handleCurrencyChange={handleCurrencyChange}
+                handlePercentChange={handlePercentChange}
+                handleRentabilidadeChange={handleRentabilidadeChange}
+                options={options}
+                imagePreviews={imagePreviews || []}
+                handleImageChange={handleImageChange}
+                removeImage={removeImage}
+                rentabilidade={rentabilidade}
+              />
+            )}
+
+            {currentStep === 2 && (
+              <div className="col-12 mb-4">
+                <PropertySummary
+                  form={form}
+                  tipoContrato={tipoContrato}
+                  rentabilidade={rentabilidade}
+                  attachedFiles={attachedFiles}
+                  smartContractFiles={smartContractFiles}
+                  imagePreviews={imagePreviews}
+                  options={options}
                 />
-                <label htmlFor="titulo"><FaHome className="me-2" /> Título</label>
               </div>
+            )}
 
-              {/* Campo de CEP */}
-              {/* <div className="mb-4">
-                <label className="form-label d-flex align-items-center gap-2">
-                  <FaMapMarkerAlt /> CEP
-                </label>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className={`form-control ${cepError ? 'is-invalid' : ''}`}
-                    placeholder="00000-000"
-                    value={cep}
-                    onChange={handleCepChange}
-                    maxLength={9}
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary"
-                    onClick={() => buscarCep(cep)}
-                    disabled={loadingCep || cep.replace(/\D/g, '').length !== 8}
-                  >
-                    {loadingCep ? <FaSpinner className="fa-spin" /> : <FaSearch />}
-                  </button>
-                  {cepError && <div className="invalid-feedback">{cepError}</div>}
-                </div>
-                <small className="text-muted">Digite o CEP para preenchimento automático do endereço</small>
-              </div> */}
-
-              {/* Campos de endereço - aparecem após buscar o CEP */}
-              {/* {endereco.logradouro && (
-                <div className="row g-3 mb-4">
-                  <div className="col-md-8">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.logradouro}
-                        onChange={(e) => handleEnderecoChange('logradouro', e.target.value)}
-                        placeholder="Logradouro"
-                      />
-                      <label>Logradouro</label>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.numero}
-                        onChange={(e) => handleEnderecoChange('numero', e.target.value)}
-                        placeholder="Número"
-                        required
-                      />
-                      <label>Número</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.complemento}
-                        onChange={(e) => handleEnderecoChange('complemento', e.target.value)}
-                        placeholder="Complemento"
-                      />
-                      <label>Complemento (opcional)</label>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.bairro}
-                        onChange={(e) => handleEnderecoChange('bairro', e.target.value)}
-                        placeholder="Bairro"
-                      />
-                      <label>Bairro</label>
-                    </div>
-                  </div>
-                  <div className="col-md-8">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.cidade}
-                        onChange={(e) => handleEnderecoChange('cidade', e.target.value)}
-                        placeholder="Cidade"
-                      />
-                      <label>Cidade</label>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="form-floating">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={endereco.uf}
-                        onChange={(e) => handleEnderecoChange('uf', e.target.value.toUpperCase())}
-                        placeholder="UF"
-                        maxLength={2}
-                      />
-                      <label>UF</label>
-                    </div>
-                  </div>
-                </div>
-              )} */}
-
-              {/* Preview da localização completa */}
-              {/* {form.localizacao && (
-                <div className="mb-4">
-                  <label className="form-label">Endereço Completo:</label>
-                  <div className="p-3 bg-light rounded border">
-                    <small className="text-muted">{form.localizacao}</small>
-                  </div>
-                </div>
-              )} */}
-
-              <div className="form-floating mb-4">
-                <textarea
-                  className="form-control h-auto"
-                  name="descricao"
-                  id="descricao"
-                  placeholder="Descrição *"
-                  value={form.descricao}
-                  onChange={handleChange}
-                  style={{ height: "130px" }}
-                  required
-                ></textarea>
-                <label htmlFor="descricao"><FaCubes className="me-2" /> Descrição *</label>
-              </div>
-
-
-              <div className="form-floating mb-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="modelo_smart_id"
-                  id="modelo_smart_id"
-                  placeholder="Modelo Smart ID *"
-                  value={form.modelo_smart_id}
-                  onChange={handleChange}
-                  required
-                />
-                <label htmlFor="modelo_smart_id"><FaMicrochip className="me-2" /> Modelo Smart ID *</label>
-              </div>
-
-              <div className="form-floating mb-4">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="valor_total"
-                  id="valor_total"
-                  placeholder="Valor Total"
-                  value={form.valor_total}
-                  onChange={handleCurrencyChange}
-                  min={0}
-                  step={0.01}
-                  required
-                />
-                <label htmlFor="valor_total"><FaCoins className="me-2" /> Valor Total (R$) *</label>
-              </div>
-
-              <div className="form-floating mb-4">
-                <input
-                  type="number"
-                  className="form-control"
-                  name="qtd_tokens"
-                  id="qtd_tokens"
-                  placeholder="Quantidade de Tokens"
-                  value={form.qtd_tokens}
-                  onChange={handleChange}
-                  min={1}
-                  required
-                />
-                <label htmlFor="qtd_tokens"><FaCubes className="me-2" /> Quantidade de Tokens *</label>
-              </div>
-
-              {/* Campo calculado automaticamente - Valor por Token */}
-              <div className="mb-4">
-                <label className="form-label d-flex align-items-center gap-2">
-                  <FaCoins className="text-warning" /> Valor por Token
-                </label>
-                <div className="card border-warning bg-warning bg-opacity-10">
-                  <div className="card-body p-3 text-center">
-                    {form.valor_total_ptoken ? (
-                      <div>
-                        <div className="d-flex align-items-center justify-content-center gap-2 mb-1">
-                          <span className="badge bg-warning text-dark fs-6 px-3 py-2">
-                            <FaCubes className="me-2" />
-                            1 Token
-                          </span>
-                          <span className="text-muted fs-5">=</span>
-                          <span className="badge bg-success fs-6 px-3 py-2">
-                            <FaCoins className="me-2" />
-                            {form.valor_total_ptoken}
-                          </span>
-                        </div>
-                        <small className="text-muted">Valor individual por token *</small>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="text-muted mb-2">
-                          <FaCoins className="me-2" size={24} />
-                        </div>
-                        <span className="text-muted">
-                          Insira o valor total e quantidade de tokens<br />
-                          para calcular o valor individual
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-floating mb-4">
-                <input
-                type="number"
-                className="form-control"
-                name="profitability"
-                id="profitability"
-                placeholder="Rentabilidade (%)"
-                value={form.profitability || ''}
-                onChange={handleChange}
-                min={0}
-                step={0.01}
-                required
-                />
-                <label htmlFor="profitability"><FaPercent className="me-2" /> Rentabilidade Prevista *</label>
-
-                </div>
-            </div>
-
-            <div className="col-md-6">
-              {/* Upload de Imagens - Movido para o topo */}
-              <div className="mb-4">
-                <label className="form-label d-flex align-items-center gap-2">
-                  <FaImage /> Imagens do Imóvel *
-                </label>
-                <div className="border border-dashed border-2 border-primary rounded-3 p-4">
-                  <div className="text-center mb-3">
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="d-none"
-                      id="imageUpload"
-                    />
-                    <label
-                      htmlFor="imageUpload"
-                      className="btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center gap-2 w-100"
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <FaImage />
-                      Selecionar Imagens (Máx. 5)
-                    </label>
-                    <small className="text-muted d-block mt-2">
-                      Formatos aceitos: JPEG, PNG, WEBP (máx. 5MB cada)
-                    </small>
-                  </div>
-
-                  {/* Preview das Imagens dentro do border */}
-                  {imagePreviews.length > 0 && (
-                    <div className="border-top pt-3">
-                      <h6 className="mb-3 text-center">Imagens Selecionadas ({imagePreviews.length}/5)</h6>
-                      <div className="row g-2">
-                        {imagePreviews.map((preview, index) => (
-                          <div key={index} className="col-6">
-                            <div className="position-relative">
-                              <Image
-                                src={preview.url}
-                                alt={`Preview ${index + 1}`}
-                                className="img-fluid rounded-2 shadow-sm"
-                                style={{ height: '100px', width: '100%', objectFit: 'cover' }}
-                                width={150}
-                                height={100}
-                              />
-                              <button
-                                type="button"
-                                className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle d-flex align-items-center justify-content-center"
-                                style={{ width: '24px', height: '24px' }}
-                                onClick={() => removeImage(index)}
-                                title="Remover imagem"
-                              >
-                                <FaTimes size={10} />
-                              </button>
-                              <div className="mt-1">
-                                <small className="text-muted text-truncate d-block" title={preview.name}>
-                                  {preview.name.length > 15 ? preview.name.substring(0, 15) + '...' : preview.name}
-                                </small>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {imagePreviews.length === 0 && (
-                    <div className="text-center text-muted py-3">
-                      <FaImage size={40} className="mb-2 opacity-50" />
-                      <p className="mb-0">Nenhuma imagem selecionada</p>
-                      <small>Clique no botão acima para adicionar imagens</small>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Upload de Arquivos Anexados */}
-              <div className="mb-4">
-                <label className="form-label d-flex align-items-center gap-2">
-                  <FaFileAlt /> Arquivos Anexados do Imóvel *
-                </label>
-                <div className="border border-dashed border-2 border-success rounded-3 p-4">
-                  <div className="text-center mb-3">
-                    <input
-                      type="file"
-                      multiple
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleFileChange}
-                      className="d-none"
-                      id="fileUpload"
-                    />
-                    <label
-                      htmlFor="fileUpload"
-                      className="btn btn-outline-success btn-lg d-flex align-items-center justify-content-center gap-2 w-100"
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <FaFileAlt />
-                      Selecionar Arquivos
-                    </label>
-                    <small className="text-muted d-block mt-2">
-                      Formatos aceitos: PDF, DOC, DOCX (máx. 5MB cada)
-                    </small>
-                  </div>
-
-                  {attachedFiles.length > 0 && (
-                    <div className="border-top pt-3">
-                      <h6 className="mb-3 text-center">Arquivos Anexados ({attachedFiles.length})</h6>
-                      <div className="row g-3">
-                        {attachedFiles.map((attached, index) => (
-                          <div key={index} className="col-12">
-                            <div className="card border-0 bg-light">
-                              <div className="card-body p-3">
-                                <div className="d-flex align-items-center gap-3 mb-2">
-                                  <FaFileAlt className="text-success" size={20} />
-                                  <div className="flex-grow-1">
-                                    <small className="text-muted d-block fw-bold">{attached.file.name}</small>
-                                    <small className="text-muted">{(attached.file.size / 1024 / 1024).toFixed(2)} MB</small>
-                                  </div>
-                                  <button
-                                    type="button"
-                                    className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                                    onClick={() => removeAttachedFile(index)}
-                                    title="Remover arquivo"
-                                  >
-                                    <FaTimes />
-                                  </button>
-                                </div>
-                                <div className="form-floating">
-                                  <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Descrição do arquivo"
-                                    value={attached.description}
-                                    onChange={(e) => handleFileDescriptionChange(index, e.target.value)}
-                                    id={`description-${index}`}
-                                  />
-                                  <label htmlFor={`description-${index}`}>Descrição do arquivo</label>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {attachedFiles.length === 0 && (
-                    <div className="text-center text-muted py-3">
-                      <FaFileAlt size={40} className="mb-2 opacity-50" />
-                      <p className="mb-0">Nenhum arquivo anexado</p>
-                      <small>Clique no botão acima para adicionar arquivos</small>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="col-12">
-              <button
-                type="submit"
-                className="btn btn-primary btn-lg w-100 d-flex align-items-center justify-content-center gap-2"
-                disabled={loading}
-              >
-                {loading ? (
-                  <span className="spinner-border spinner-border-sm"></span>
-                ) : (
-                  <FaCheckCircle />
-                )}
-                {loading ? "Cadastrando..." : "Cadastrar Imóvel"}
-              </button>
+            <div className="col-12 d-flex gap-3 justify-content-end">
+              {currentStep > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary  d-flex align-items-center gap-2"
+                  onClick={() => setCurrentStep(currentStep - 1)}
+                >
+                  <i className="fa-solid fa-arrow-left"></i>
+                  Anterior
+                </button>
+              )}
+              {currentStep < steps.length - 1 && (
+                <button
+                  type="button"
+                  className="btn btn-success ms-auto d-flex align-items-center gap-2"
+                  onClick={() => setCurrentStep(currentStep + 1)}
+                  disabled={loading || !camposValidos()}
+                >
+                  Próximo
+                  <i className="fa-solid fa-arrow-right"></i>
+                </button>
+              )}
+              {currentStep === steps.length - 1 && (
+                <button
+                  type="submit"
+                  className="btn btn-success ms-auto gap-3 d-flex align-items-center"
+                  disabled={loading}
+                >
+                
+                  {loading ? "Salvando..." : "Salvar"}
+                   <i className="fas fa-check"></i>
+                </button>
+              )}
             </div>
           </form>
         </div>
