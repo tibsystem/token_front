@@ -295,7 +295,6 @@ export default function PropertyData({
                   {imagePreviews.map((preview, index) => (
                     <div key={index} className="col-6">
                       <div className="position-relative">
-                        {/* Corrigido para garantir que src é string e evitar erro do construtor Image */}
                         {typeof preview.url === "string" && (
                           <img
                             src={preview.url}

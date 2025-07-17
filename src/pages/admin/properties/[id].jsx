@@ -15,6 +15,9 @@ import { getPropertyFinance } from '@/services/propertyFinance/getPropertyFinanc
 import { getOnePropertie } from '@/services/properties/getOnePropertie';
 import { putPropertie } from '@/services/properties/putPropertie';
 import { deletePropertie } from '@/services/properties/deletePropertie';
+// hhoks
+import UseOptionsSelect from "@/hooks/UseOptionsSelect";
+
 
 export default function ImovelAdminFinanceiro() {
   const router = useRouter();
@@ -37,6 +40,7 @@ export default function ImovelAdminFinanceiro() {
     total_tokens: '',
     status: ''
   });
+   const {optionsSmartContract, optionsRaiser} = UseOptionsSelect();
 
   useEffect(() => {
     if (!id) return;
@@ -65,7 +69,6 @@ export default function ImovelAdminFinanceiro() {
     fetchData();
   }, [id]);
 
-  // Sincroniza com eventos nativos do Bootstrap carousel
   useEffect(() => {
     const carousel = document.querySelector('#propertyCarousel');
     if (!carousel) return;
@@ -157,13 +160,11 @@ export default function ImovelAdminFinanceiro() {
     
     setIsTransitioning(true);
     
-    // Atualiza o índice imediatamente para feedback visual rápido
     setActiveImageIndex(index);
     
     const carouselElement = document.querySelector('#propertyCarousel');
     let carousel = window.bootstrap?.Carousel?.getInstance(carouselElement);
     
-    // Se não existir instância, cria uma nova
     if (!carousel && carouselElement) {
       carousel = new window.bootstrap.Carousel(carouselElement);
     }
@@ -256,7 +257,7 @@ export default function ImovelAdminFinanceiro() {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h1 className="page-header font-bold text-dark text-3xl mb-0 flex items-center gap-2">
-                <FaBuilding className="text-cyan-500" /> {dados.property.title || 'Título não disponível'}
+                <FaBuilding className="text-dark" /> {dados.property.title || 'Título não disponível'}
               </h1>
             </div>
             <div className="d-flex gap-2">
@@ -282,8 +283,7 @@ export default function ImovelAdminFinanceiro() {
           </div>
          
           <div className="d-flex flex-wrap gap-2 mb-4">
-            <span className="badge bg-secondary-subtle text-secondary px-3 py-2">Novo</span>
-            <span className="badge bg-primary-subtle text-primary px-3 py-2">Isento de IR</span>
+      
 
             {dados.property?.contract_address && (
               <a
@@ -297,7 +297,7 @@ export default function ImovelAdminFinanceiro() {
               </a>
             )}
           </div>
-          <p className="mb-4 fs-5 text-primary fw-bold">Rentabilidade Prevista: IPCA + 14,00% a.a.</p>
+          <p className="mb-4 fs-5 text-dark fw-bold">Rentabilidade: {dados.property.profitability} %</p>
 
            <div className="row mb-4">
             <div className="col-12 mb-3">
@@ -420,10 +420,10 @@ export default function ImovelAdminFinanceiro() {
                   <div key={inv.id_investidor} className="col-lg-4 col-md-6">
                     <div className="card h-100">
                       <div className="card-body text-center">
-                        <FaUser className="text-primary mb-2" size={40} />
+                        <FaUser className="text-dark mb-2" size={40} />
                         <h6 className="card-title">{inv.nome}</h6>
                         <p className="text-muted small">ID: {inv.id_investidor}</p>
-                        <span className="badge bg-primary mb-2">Tokens: {inv.qtd_tokens}</span>
+                        <span className="badge bg-dark mb-2">Tokens: {inv.qtd_tokens}</span>
                         <p className="text-muted small">{inv.email}</p>
                       </div>
                     </div>
@@ -473,16 +473,16 @@ export default function ImovelAdminFinanceiro() {
           <div className="row mb-4">
             <div className="col-lg-8">
               <h5 className="mb-3 fw-bold text-dark d-flex align-items-center gap-2">
-                <FaImage className="text-primary" /> Galeria de Imagens
+                <FaImage className="text-dark" /> Galeria de Imagens
               </h5>
               <div className="panel panel-inverse h-100">
                 <div className="panel-body p-3">
                   <div id="propertyCarousel" className="carousel slide mb-3" data-bs-ride="carousel" style={{ maxHeight: '450px', overflow: 'hidden' }}>
                     <div className="carousel-inner rounded-3 shadow-sm">
-                      {(dados.property.photos && dados.property.photos.length > 0 ? dados.property.photos : [{ path: '/assets/img/theme/default.jpg' }]).map((photo, idx) => (
+                      {(dados.property.photos && dados.property.photos.length > 0 ? dados.property.photos : []).map((photo, idx) => (
                         <div className={`carousel-item${idx === 0 ? ' active' : ''}`} key={photo.id || idx} style={{ height: '450px' }}>
                           <Image
-                            src={photo.path || '/assets/img/theme/default.jpg'}
+                            src={photo.path}
                             alt={`Imagem da propriedade ${dados.property.title}`}
                             className="d-block w-100 h-100 object-fit-cover"
                             width={800}
@@ -526,14 +526,14 @@ export default function ImovelAdminFinanceiro() {
                         {(dados.property.photos || []).map((img, index) => (
                           <div key={img.id || index} className="flex-shrink-0 position-relative">
                             <Image
-                              src={img.path || '/assets/img/theme/default.jpg'}
+                              src={img.path}
                               alt={`Imagem ${index + 1}`}
                               className={`rounded-2 object-fit-cover transition-all ${
                                 activeImageIndex === index 
-                                  ? 'border-3 border-primary shadow-lg brightness-110' 
+                                  ? 'border-3 border-dark shadow-lg brightness-110' 
                                   : isTransitioning 
                                     ? 'border border-secondary brightness-50 cursor-not-allowed' 
-                                    : 'border border-light hover:border-primary cursor-pointer hover:shadow-md brightness-75 hover:brightness-90'
+                                    : 'border border-light hover:border-dark cursor-pointer hover:shadow-md brightness-75 hover:brightness-90'
                               }`}
                               style={{ 
                                 width: '80px', 
@@ -562,7 +562,7 @@ export default function ImovelAdminFinanceiro() {
                                   pointerEvents: 'none'
                                 }}
                               >
-                                <i className="fa fa-check-circle text-primary fs-5 bg-white rounded-circle"></i>
+                                <i className="fa fa-check-circle text-dark fs-5 bg-white rounded-circle"></i>
                               </div>
                             )}
                           </div>
@@ -575,7 +575,7 @@ export default function ImovelAdminFinanceiro() {
             </div>
             <div className="col-lg-4">
               <h5 className="mb-3 fw-bold text-dark d-flex align-items-center gap-2">
-                <FaBuilding className="text-success" /> Detalhes da Propriedade
+                <FaBuilding className="text-dark" /> Detalhes da Propriedade
               </h5>
               <div className="panel panel-inverse h-100">
                 <div className="panel-body">
@@ -588,7 +588,12 @@ export default function ImovelAdminFinanceiro() {
     ? 'PENDENTE'
     : dados.property.status === 'active'
       ? 'Ativo'
-      : dados.property.status}
+      : dados.property.status === 'inactive'
+      ? 'Inativo'
+      : dados.property.status === 'sold'
+      ? 'Vendido'
+      : 'Desconhecido'
+      }
 </span>
                     </div>
                     <div className="d-flex align-items-center gap-2">
@@ -598,20 +603,15 @@ export default function ImovelAdminFinanceiro() {
                         R$ {Number(dados.property.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                       </span>
                     </div>
-                    <div className="d-flex align-items-center gap-2">
-                      <FaMapMarkerAlt className="text-info" />
-                      <span className="text-muted">Localização:</span>
-                      <span className="fw-semibold">{dados.property.location || 'Não informado'}</span>
-                    </div>
+                  
 
-                    {/* Nível de Garantia */}
                     <div className="p-3 bg-light rounded-3 mt-3">
                       <h6 className="text-muted mb-2 fw-medium">Nível de Garantia</h6>
-                      <p className="text-muted mb-2 small">Esse investimento está classificado no <strong>Nível 5</strong></p>
+                      <p className="text-muted mb-2 small">Esse investimento está classificado no <strong>Nível {dados.property.level_warrant || 1}</strong></p>
                       <div className="d-flex gap-2 align-items-end">
                         {[1, 2, 3, 4, 5].map((nivel, idx) => {
                           const coresGarantia = ['#e53935', '#f6c244', '#f6e244', '#4fc3f7', '#43a047'];
-                          const nivelAtual = 5;
+                          const nivelAtual = Number(dados.property.level_warrant) || 1;
                           return (
                             <div key={nivel} className="text-center flex-fill">
                               <div style={{ fontSize: 10, color: coresGarantia[idx], opacity: nivel === nivelAtual ? 1 : 0.3, fontWeight: 'bold' }}>
@@ -636,16 +636,7 @@ export default function ImovelAdminFinanceiro() {
                       </div>
                     )}
 
-                    {/* Informações Detalhadas do Investimento */}
-                    <div className="row row-cols-1 g-2 text-muted small mt-3">
-                      <div><strong>Devedor:</strong><br />Gran Vellas Wins Empreendimentos SPE Ltda.</div>
-                      <div><strong>Periodicidade da Remuneração:</strong><br />Cash Sweep</div>
-                      <div><strong>Fluxo de Amortização:</strong><br />Cash Sweep</div>
-                      <div><strong>Garantia:</strong><br />Imóveis, Recebíveis, Cotas e Aval</div>
-                      <div><strong>Lastro:</strong><br />Recebíveis Imobiliários</div>
-                      <div><strong>Cronograma:</strong><br />Conforme descrito no Termo de Securitização</div>
-                      <div><strong>Valor Mínimo:</strong><br />R$ 1.000</div>
-                    </div>
+              
 
                     {dados.property?.contract_address && (
                       <div className="text-center">
@@ -665,7 +656,7 @@ export default function ImovelAdminFinanceiro() {
                     {dados.property.tokenization_date && (
                       <div className="d-flex align-items-center justify-content-between p-3 bg-light rounded-3">
                         <div className="d-flex align-items-center gap-2">
-                          <i className="fa fa-calendar text-primary"></i>
+                          <i className="fa fa-calendar text-dark"></i>
                           <span className="text-muted fw-medium">Data de Tokenização</span>
                         </div>
                         <span className="fw-semibold text-dark">
@@ -686,7 +677,7 @@ export default function ImovelAdminFinanceiro() {
           <div className="row mb-4">
             <div className="col-12">
               <h5 className="mb-3 fw-bold text-dark d-flex align-items-center gap-2">
-                <i className="fa fa-file-text text-primary"></i> Documentos e Anexos
+                <i className="fa fa-file-text text-dark"></i> Documentos e Anexos
               </h5>
               <div className="panel panel-inverse">
                 <div className="panel-body">
@@ -716,7 +707,7 @@ export default function ImovelAdminFinanceiro() {
                                   href={attachment.path}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="btn btn-sm btn-outline-primary"
+                                  className="btn btn-sm btn-outline-dark"
                                   title="Baixar documento"
                                 >
                                   <i className="fa fa-download"></i>
@@ -753,13 +744,13 @@ export default function ImovelAdminFinanceiro() {
                   </div>
                   <div className="progress mb-3" style={{ height: 12 }}>
                     <div 
-                      className="progress-bar bg-primary" 
+                      className="progress-bar bg-dark" 
                       style={{ width: `${(resumo.tokens_vendidos / imovel.qtd_tokens_original) * 100}%` }}
                     ></div>
                   </div>
                   <div className="row text-center">
                     <div className="col-md-3">
-                      <div className="fw-semibold text-primary">{((resumo.tokens_vendidos / imovel.qtd_tokens_original) * 100).toFixed(1)}%</div>
+                      <div className="fw-semibold text-dark">{((resumo.tokens_vendidos / imovel.qtd_tokens_original) * 100).toFixed(1)}%</div>
                       <small className="text-muted">Vendido</small>
                     </div>
                     <div className="col-md-3">
@@ -841,7 +832,7 @@ export default function ImovelAdminFinanceiro() {
 
           <div className="row">
             
-            <div className="col-md-4 mb-3">
+            <div className="col-md-3 mb-3">
               <label htmlFor="total_value" className="form-label">Valor Total</label>
               <input
                 type="number"
@@ -854,7 +845,7 @@ export default function ImovelAdminFinanceiro() {
                 required
               />
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-3 mb-3">
               <label htmlFor="total_tokens" className="form-label">Total de Tokens</label>
               <input
                 type="number"
@@ -866,6 +857,45 @@ export default function ImovelAdminFinanceiro() {
                 required
               />
             </div>
+            <div className="col-md-3 mb-3">
+               <div className="form-floating ">
+              <select
+                className="form-select"
+                name="smart_contract"
+                id="smart_contract"
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Selecione um contrato inteligente</option>
+                {optionsSmartContract.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+              <label htmlFor="smart_contract">Smart Contract *</label>
+            </div>
+              </div>
+               <div className="col-md-3 mb-3">
+               <div className="form-floating ">
+              <select
+                className="form-select"
+                name="agent_id"
+            id="agent_id"
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Selecione um captador</option>
+                {optionsRaiser.map((option) => (
+                 <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+                ))}
+              </select>
+              <label htmlFor="agent_id">Capitador *</label>
+            </div>
+              </div>
+
           </div>
         </form>
       </CustomModal>

@@ -16,21 +16,9 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  	const { isDarkMode } = useDarkMode();
-
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const adminToken = localStorage.getItem('admin_token');
-      if (adminToken) {
-        router.replace('/dashboard');
-      } else {
-        setLoading(false);
-      }
-    }
-  }, [router]);
+  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     updateSettings({

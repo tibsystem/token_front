@@ -8,6 +8,7 @@ import { PropertyCardSkeleton } from '@/components/Skeleton/Skeleton';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import '@/styles/marketplace.css';
+import useDarkMode from '@/hooks/useDarkMode';
 
 export default function PropiedadesPage() {
   const [Propiedades, setPropiedades] = useState([]);
@@ -19,6 +20,7 @@ export default function PropiedadesPage() {
   const [viewMode, setViewMode] = useState('grid'); 
   const [filterValue, setFilterValue] = useState('todos');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const { isDarkMode } = useDarkMode();
 
   const formatDateToBR = (dateString) => {
     if (!dateString) return '-';
@@ -180,7 +182,7 @@ export default function PropiedadesPage() {
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
           <h1 className="text-3xl font-bold mb-2 text-dark d-flex align-items-center">
-            <i className="fa fa-building me-3 text-primary"></i>
+            <i className="fa fa-building me-3 text-dark"></i>
             Oportunidades de Investimento
           </h1>
           <p className="text-muted fs-5 mb-0">Diversifique seu portfólio com investimentos imobiliários tokenizados</p>
@@ -190,16 +192,13 @@ export default function PropiedadesPage() {
             <i className="fa fa-home me-2"></i>
             {stats.total} propriedades
           </div>
-          {/* <div className="badge bg-success-subtle text-success fs-6 p-2">
-            <i className="fa fa-chart-line me-2"></i>
-            IPCA + 14% a.a.
-          </div> */}
+
         </div>
       </div>
 
       {loading && (
         <div className="text-center py-5">
-          <div className="spinner-border text-primary mb-3" role="status">
+          <div className="spinner-border text-dark mb-3" role="status">
             <span className="visually-hidden">Carregando...</span>
           </div>
         </div>
@@ -231,48 +230,7 @@ export default function PropiedadesPage() {
 
       {!loading && Propiedades.length > 0 && (
         <>
-          <div className="row mb-4 g-3">
-            <div className="col-md-3">
-              <div className="card border-0 bg-primary-subtle">
-                <div className="card-body text-center py-3">
-                  <i className="fa fa-building text-primary fs-2 mb-2"></i>
-                  <div className="fw-bold fs-4 text-primary">{stats.total}</div>
-                  <small className="text-muted">Propriedades</small>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3">
-              <div className="card border-0 bg-success-subtle">
-                <div className="card-body text-center py-3">
-                  <i className="fa fa-check-circle text-success fs-2 mb-2"></i>
-                  <div className="fw-bold fs-4 text-success">
-                    {stats.ativo}
-                  </div>
-                  <small className="text-muted">Disponíveis</small>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3">
-              <div className="card border-0 bg-warning-subtle">
-                <div className="card-body text-center py-3">
-                  <i className="fa fa-coins text-warning fs-2 mb-2"></i>
-                  <div className="fw-bold fs-4 text-warning">
-                    {stats.tokens.toLocaleString()}
-                  </div>
-                  <small className="text-muted">Tokens Totais</small>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-3">
-              <div className="card border-0 bg-info-subtle">
-                <div className="card-body text-center py-3">
-                  <i className="fa fa-chart-line text-info fs-2 mb-2"></i>
-                  <div className="fw-bold fs-4 text-info">14%</div>
-                  <small className="text-muted">Rentabilidade</small>
-                </div>
-              </div>
-            </div>
-          </div>
+          
 
           <div className="row mb-4 g-3">
             <div className="col-lg-4">
@@ -286,7 +244,7 @@ export default function PropiedadesPage() {
                   placeholder="Buscar por título ou localização..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  title="Digite para buscar propriedades por nome ou localização"
+                  title="Digite para buscar propriedades por nome"
                 />
                 {searchTerm && (
                   <button 
@@ -301,19 +259,7 @@ export default function PropiedadesPage() {
               </div>
             </div>
             
-            <div className="col-lg-2">
-              <select 
-                className={`form-select ${filterStatus !== 'todos' ? 'border-success bg-success-subtle' : ''}`}
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                title="Filtrar por status"
-              >
-                <option value="todos">Todos Status</option>
-                <option value="ativo">Ativo</option>
-                <option value="inativo">Inativo</option>
-                <option value="pendente">Pendente</option>
-              </select>
-            </div>
+            
             
             <div className="col-lg-2">
               <select 
@@ -347,7 +293,9 @@ export default function PropiedadesPage() {
               <div className="btn-group w-100" role="group">
                 <button 
                   type="button" 
-                  className={`btn ${viewMode === 'grid' ? 'btn-primary' : 'btn-outline-primary'}`}
+                  className={`btn ${viewMode === 'grid' 
+                    ? (isDarkMode ? 'btn-light' : 'btn-dark') 
+                    : (isDarkMode ? 'btn-outline-light' : 'btn-outline-dark')}`}
                   onClick={() => setViewMode('grid')}
                   title="Visualização em grade"
                 >
@@ -355,7 +303,9 @@ export default function PropiedadesPage() {
                 </button>
                 <button 
                   type="button" 
-                  className={`btn ${viewMode === 'list' ? 'btn-primary' : 'btn-outline-primary'}`}
+                  className={`btn ${viewMode === 'list' 
+                    ? (isDarkMode ? 'btn-light' : 'btn-dark') 
+                    : (isDarkMode ? 'btn-outline-light' : 'btn-outline-dark')}`}
                   onClick={() => setViewMode('list')}
                   title="Visualização em lista"
                 >
@@ -509,7 +459,8 @@ export default function PropiedadesPage() {
           </div>
         )}
 
-        {!loading && PropiedadesFiltrados.map((imovel) => (
+        {!loading && PropiedadesFiltrados.filter((imovel) => imovel.status?.toLowerCase() === 'ativo' || imovel.status?.toLowerCase() === 'active')
+  .map((imovel) => (
           viewMode === 'grid' ? (
             <div key={imovel.id} className="col-xl-4 col-lg-6">
               <div className="card h-100 shadow-sm border-0 rounded-4 overflow-hidden hover-card">
