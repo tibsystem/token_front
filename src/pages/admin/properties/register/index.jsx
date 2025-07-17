@@ -54,6 +54,18 @@ export default function CadastrarImovel() {
     ...step,
     active: idx === currentStep,
   }));
+
+  // Calcular profitability para uso no resumo
+  let profitability = "";
+  if (rentabilidade === "indicador_juros") {
+    const indicador = form.indicador || "";
+    const juros = form.juros ? form.juros : "";
+    profitability = `${indicador} ${juros}`.trim();
+  } else if (rentabilidade === "juros") {
+    profitability = form.juros ? String(form.juros) : "";
+  } else if (rentabilidade === "valor_previsto") {
+    profitability = form.valor_previsto ? String(form.valor_previsto) : "";
+  }
  const camposValidos = () => {
   if (currentStep === 0) {
  
@@ -407,6 +419,7 @@ export default function CadastrarImovel() {
       setSelectedImages([]);
       setImagePreviews([]);
       setAttachedFiles([]);
+      setCurrentStep(0);
     } catch (err) {
       setError(err?.message || "Erro ao cadastrar imóvel");
       toast.error("Erro ao cadastrar imóvel");
@@ -474,7 +487,7 @@ export default function CadastrarImovel() {
                 <PropertySummary
                   form={form}
                   tipoContrato={tipoContrato}
-                  rentabilidade={rentabilidade}
+                  rentabilidade={profitability}
                   attachedFiles={attachedFiles}
                   smartContractFiles={smartContractFiles}
                   imagePreviews={imagePreviews}
@@ -513,7 +526,7 @@ export default function CadastrarImovel() {
                 >
                 
                   {loading ? "Salvando..." : "Salvar"}
-                   <i className="fas fa-check"></i>
+                   <i className={loading ? 'fas fa-spinner fa-spin' : 'fas fa-check'}></i>
                 </button>
               )}
             </div>

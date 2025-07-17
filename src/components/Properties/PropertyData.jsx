@@ -28,7 +28,7 @@ export default function PropertyData({
 }) {
   return (
     <>
-      <div className="col-md-6 mt-5">
+      <div className="col-xl-6 mt-5">
         <div className="form-floating mb-4">
           <input
             type="text"
@@ -100,37 +100,41 @@ export default function PropertyData({
           </label>
         </div>
             <h5 className="mb-4">Rentabilidade Prevista</h5>
-        <div className="d-flex gap-3 mb-4">
-          <ToggleInput
-            onLabel="Indicador + Juros"
-            offLabel="Indicador + Juros"
-            onIcon="fas fa-check"
-            offIcon="bi bi-x-lg"
-            checked={rentabilidade === "indicador_juros"}
-            onChange={() => handleRentabilidadeChange("indicador_juros")}
-          />
-          <ToggleInput
-            onLabel="Juros"
-            offLabel="Juros"
-            onIcon="fas fa-check"
-            offIcon="bi bi-x-lg"
-            checked={rentabilidade === "juros"}
-            onChange={() => handleRentabilidadeChange("juros")}
-          />
-          <ToggleInput
-            onLabel="Valor Previsto"
-            offLabel="Valor Previsto"
-            onIcon="fas fa-check"
-            offIcon="bi bi-x-lg"
-            checked={rentabilidade === "valor_previsto"}
-            onChange={() => handleRentabilidadeChange("valor_previsto")}
-          />
+        <div className="row mb-4">
+          <div className="col-xl-12">
+            <div className="d-flex gap-3 flex-wrap">
+              <ToggleInput
+                onLabel="Indicador + Juros"
+                offLabel="Indicador + Juros"
+                onIcon="fas fa-check"
+                offIcon="bi bi-x-lg"
+                checked={rentabilidade === "indicador_juros"}
+                onChange={() => handleRentabilidadeChange("indicador_juros")}
+              />
+              <ToggleInput
+                onLabel="Juros"
+                offLabel="Juros"
+                onIcon="fas fa-check"
+                offIcon="bi bi-x-lg"
+                checked={rentabilidade === "juros"}
+                onChange={() => handleRentabilidadeChange("juros")}
+              />
+              <ToggleInput
+                onLabel="Valor Previsto"
+                offLabel="Valor Previsto"
+                onIcon="fas fa-check"
+                offIcon="bi bi-x-lg"
+                checked={rentabilidade === "valor_previsto"}
+                onChange={() => handleRentabilidadeChange("valor_previsto")}
+              />
+            </div>
+          </div>
         </div>
 
         {rentabilidade === "indicador_juros" && (
           <div className="form-floating mb-4">
             <div className="row g-2 align-items-center mb-3">
-              <div className="col-6">
+              <div className="col-xl-6">
                 <select
                   className="form-select"
                   name="indicador"
@@ -255,7 +259,7 @@ export default function PropertyData({
         </div>
       </div>
 
-      <div className="col-md-6 mt-5">
+      <div className="col-xl-6 mt-5">
     
         <div className="mb-4">
           <label className="form-label d-flex align-items-center gap-2">

@@ -105,7 +105,9 @@ export default function ImovelAdminFinanceiro() {
         location: dados.property.location || '',
         total_value: dados.property.total_value || '',
         total_tokens: dados.property.total_tokens || '',
-        status: dados.property.status || ''
+        status: dados.property.status || '',
+        smart_contract_model_id: dados.property.smart_contract_model_id || '',
+        agent_id: dados.property.agent_id || ''
       });
       setShowEditModal(true);
     }
@@ -861,8 +863,9 @@ export default function ImovelAdminFinanceiro() {
                <div className="form-floating ">
               <select
                 className="form-select"
-                name="smart_contract"
+                name="smart_contract_model_id"
                 id="smart_contract"
+                value={editFormData.smart_contract_model_id || ''}
                 onChange={handleInputChange}
                 required
               >
@@ -882,6 +885,7 @@ export default function ImovelAdminFinanceiro() {
                 className="form-select"
                 name="agent_id"
             id="agent_id"
+                value={editFormData.agent_id || ''}
                 onChange={handleInputChange}
                 required
               >
