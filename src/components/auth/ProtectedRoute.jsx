@@ -11,8 +11,7 @@ export default function ProtectedRoute({ children }) {
     const checkAuth = () => {
       if (typeof window !== 'undefined') {
         const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
-        const isAdmin = Boolean(localStorage.getItem('admin_token'));
-        const loginRoute = isAdmin ? '/admin/login' : '/login';
+       
         if (!token) {
           toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
           router.push(loginRoute);
@@ -74,7 +73,6 @@ export default function ProtectedRoute({ children }) {
       if (e.key === 'token' || e.key === 'admin_token') {
         if (!e.newValue) {
           setIsAuthenticated(false);
-          toast.info('Você foi desconectado.');
           const isAdmin = Boolean(localStorage.getItem('admin_token'));
           const loginRoute = isAdmin ? '/admin/login' : '/login';
           router.push(loginRoute);

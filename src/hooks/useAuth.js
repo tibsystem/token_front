@@ -50,7 +50,7 @@ export function useAuth() {
     localStorage.removeItem('admin_token');
     setUser(null);
     setIsAuthenticated(false);
-    router.push('/login');
+    router.push('./login');
   }, [router]);
 
   useEffect(() => {

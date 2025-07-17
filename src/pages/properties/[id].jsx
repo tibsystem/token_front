@@ -120,7 +120,8 @@ export default function ImovelPage() {
       'inactive': 'Inativo',
       'cancelled': 'Cancelado',
       'completed': 'Concluído',
-      'rejected': 'Rejeitado'
+      'rejected': 'Rejeitado',
+      'sold': 'Vendido',
     };
     return statusMap[status?.toLowerCase()] || status?.toUpperCase() || 'N/A';
   };
@@ -194,7 +195,7 @@ export default function ImovelPage() {
           <div className="col-lg-7">
             <div className="mb-4">
               <h5 className="mb-3 fw-bold text-dark d-flex align-items-center gap-2">
-                <FaImage className="text-primary" /> Galeria de Imagens
+                <FaImage className="text-dark" /> Galeria de Imagens
               </h5>
               <div className="panel panel-inverse h-100">
                 <div className="panel-body p-3">
@@ -324,7 +325,7 @@ export default function ImovelPage() {
               )}
             </div>
             
-            <p className="mb-4 fs-5 text-primary fw-bold">Rentabilidade Prevista: IPCA + 14,00% a.a.</p>
+            <p className="mb-4 fs-5 text-primary fw-bold">${property.profitability}</p>
 
             <p className="mb-2 fw-semibold">Nível de Garantia</p>
             <p className="text-muted mb-2">Esse investimento está classificado no <strong>Nível 5</strong></p>
