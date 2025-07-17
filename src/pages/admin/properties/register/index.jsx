@@ -38,7 +38,7 @@ export default function CadastrarImovel() {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [rentabilidade, setRentabilidade] = useState("");
-  const { options } = UseOptionsSelect();
+  const { optionsRaiser, optionsSmartContract } = UseOptionsSelect();
   const [tipoContrato, setTipoContrato] = useState("aluguel");
   const [smartContractFiles, setSmartContractFiles] = useState([]);
 
@@ -54,19 +54,25 @@ export default function CadastrarImovel() {
     ...step,
     active: idx === currentStep,
   }));
+
+  // Calcular profitability para uso no resumo
+  let profitability = "";
+  if (rentabilidade === "indicador_juros") {
+    const indicador = form.indicador || "";
+    const juros = form.juros ? form.juros : "";
+    profitability = `${indicador} ${juros}`.trim();
+  } else if (rentabilidade === "juros") {
+    profitability = form.juros ? String(form.juros) : "";
+  } else if (rentabilidade === "valor_previsto") {
+    profitability = form.valor_previsto ? String(form.valor_previsto) : "";
+  }
  const camposValidos = () => {
   if (currentStep === 0) {
-    const smartContractValido =
-      smartContractFiles.length > 0 &&
-      smartContractFiles.every(
-        (attached) =>
-          attached.description && attached.description.trim() !== ""
-      );
+ 
     if (tipoContrato === "aluguel") {
       return (
         form.periodo_contrato &&
         form.percentual_lucro &&
-        smartContractValido &&
         rentabilidade &&
         (rentabilidade === "indicador_juros"
           ? form.indicador && form.juros
@@ -79,7 +85,7 @@ export default function CadastrarImovel() {
         form.meta_captacao &&
         form.expectativa_retorno &&
         form.prazo_retorno &&
-        smartContractValido
+        form.smart_contract
       );
     }
     return false;
@@ -385,7 +391,7 @@ export default function CadastrarImovel() {
         description: form.descricao,
         total_value: valorTotal,
         total_tokens: parseInt(form.qtd_tokens),
-        smart_contract_model_id: form.modelo_smart_id,
+        smart_contract_model_id:form.smart_contract,
         status: "pending",
         files: filesBase64,
         attachments: attachedFilesBase64,
@@ -413,6 +419,7 @@ export default function CadastrarImovel() {
       setSelectedImages([]);
       setImagePreviews([]);
       setAttachedFiles([]);
+      setCurrentStep(0);
     } catch (err) {
       setError(err?.message || "Erro ao cadastrar imóvel");
       toast.error("Erro ao cadastrar imóvel");
@@ -447,6 +454,7 @@ export default function CadastrarImovel() {
                 removeAttachedFile={removeSmartContractFile}
                 isDarkMode={isDarkMode}
                 handleChange={handleChange}
+                optionsSmartContract={optionsSmartContract}
                 handlePercentChange={handlePercentChange}
                 handleRentabilidadeChange={handleRentabilidadeChange}
               />
@@ -465,7 +473,8 @@ export default function CadastrarImovel() {
                 handleCurrencyChange={handleCurrencyChange}
                 handlePercentChange={handlePercentChange}
                 handleRentabilidadeChange={handleRentabilidadeChange}
-                options={options}
+                options={optionsRaiser}
+                optionsSmartContract={optionsSmartContract}
                 imagePreviews={imagePreviews || []}
                 handleImageChange={handleImageChange}
                 removeImage={removeImage}
@@ -478,11 +487,11 @@ export default function CadastrarImovel() {
                 <PropertySummary
                   form={form}
                   tipoContrato={tipoContrato}
-                  rentabilidade={rentabilidade}
+                  rentabilidade={profitability}
                   attachedFiles={attachedFiles}
                   smartContractFiles={smartContractFiles}
                   imagePreviews={imagePreviews}
-                  options={options}
+                  options={optionsRaiser}
                 />
               </div>
             )}
@@ -517,7 +526,7 @@ export default function CadastrarImovel() {
                 >
                 
                   {loading ? "Salvando..." : "Salvar"}
-                   <i className="fas fa-check"></i>
+                   <i className={loading ? 'fas fa-spinner fa-spin' : 'fas fa-check'}></i>
                 </button>
               )}
             </div>
