@@ -5,7 +5,7 @@ const Breadcrumb = ({ route = '', items = [], className = '' }) => {
   const formatBreadcrumbs = () => {
     if (items && items.length > 0) {
       return [
-        { label: 'Início', path: '../dashboard', icon: true },
+        { label: 'Início', path: null, icon: true },
         ...items.map(item => ({
           ...item,
           icon: false
@@ -18,7 +18,7 @@ const Breadcrumb = ({ route = '', items = [], className = '' }) => {
     const segments = route.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
     
     const breadcrumbs = [
-      { label: 'Início', path: '../dashboard', icon: true }
+      { label: 'Início', path: null, icon: true }
     ];
     
     let currentPath = '';

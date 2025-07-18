@@ -81,12 +81,7 @@ async function handleSubmit(event) {
 
   return (
     <>
-      <style jsx>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
+  
       <div className="login login-with-news-feed">
       <div className="news-feed">
         <div className="news-image" style={{backgroundImage: 'url(/assets/img/login-bg.png)'}}></div>
@@ -141,7 +136,7 @@ async function handleSubmit(event) {
               >
                 {isSubmitting ? (
                   <>
-                    <AiOutlineLoading3Quarters className="spinner-border-sm me-2" style={{animation: 'spin 1s linear infinite'}} />
+                    <i className="fas fa-spinner fa-spin me-2" />
                     Entrando...
                   </>
                 ) : (

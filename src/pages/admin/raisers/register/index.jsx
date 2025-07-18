@@ -69,7 +69,7 @@ export default function Register() {
   <ProtectedRoute>
        <Breadcrumb 
               items={[{ label: 'Captadores', path: '/admin/raisers', },
-                { label: 'Cadastrar', path: '/admin/raisers/register' }
+                { label: 'Cadastrar Captador', path: '/admin/raisers/register' }
               ]} 
               className="mb-4" />
     <div className="container max-w-5xl mx-auto mt-8 p-4">

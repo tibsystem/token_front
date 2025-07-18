@@ -4,9 +4,7 @@ import { getP2pListings } from '@/services/p2p/getP2pListings';
 import { postP2pTransactions } from '@/services/p2p/postP2pTransactions';
 import { toast } from 'react-toastify';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
-import { OfferCardSkeleton } from '@/components/Skeleton/Skeleton';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { useAuth } from '@/hooks/useAuth';
 import '@/styles/p2p-offers.css';
 
 export default function OfertasP2PPage() {
@@ -15,11 +13,9 @@ export default function OfertasP2PPage() {
   const [loading, setLoading] = useState(true);
   const [Propiedades, setPropiedades] = useState({});
   const [buyingOffers, setBuyingOffers] = useState(new Set());
-  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isAuthenticated || !user) return;
       
       try {
         const res = await getP2pListings();
@@ -57,7 +53,7 @@ export default function OfertasP2PPage() {
       }
     }
     fetchData();
-  }, [isAuthenticated, user]);
+  }, []);
 
   const handleBuyTokens = async (listing_id) => {
     if (!user || !user.id) {
@@ -207,7 +203,7 @@ export default function OfertasP2PPage() {
     <ProtectedRoute>
       <div className="container-fluid py-4">
         <BreadCrumb items={[
-          { label: 'P2P', path: '#' },
+          { label: 'P2P', path: null },
           { label: 'Ofertas', path: '/p2p/offers' }
         ]} />
         

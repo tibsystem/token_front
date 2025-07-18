@@ -290,16 +290,10 @@ export default function ImovelPage() {
             </div>
 
             <h1 className="h2 fw-bold mb-3 d-flex align-items-center gap-2">
-              <FaBuilding className="text-primary" />
+              <FaBuilding className="text-dark" />
               {property.title || 'Título não disponível'}
             </h1>
             
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <FaMapMarkerAlt className="text-info" />
-              <span className="text-muted">Localização:</span>
-              <span className="fw-semibold">{property.location || 'Não informado'}</span>
-            </div>
-
             <div className="d-flex flex-wrap gap-2 mb-4">
               <span className={`badge px-3 py-2 ${
                 property?.status?.toLowerCase() === 'pending' 
@@ -310,7 +304,6 @@ export default function ImovelPage() {
               }`}>
                 Status: {translateStatus(property.status)}
               </span>
-              <span className="badge bg-primary-subtle text-primary px-3 py-2">Isento de IR</span>
 
               {property?.contract_address && (
                 <a
@@ -324,22 +317,30 @@ export default function ImovelPage() {
                 </a>
               )}
             </div>
-            
-            <p className="mb-4 fs-5 text-primary fw-bold">${property.profitability}</p>
 
-            <p className="mb-2 fw-semibold">Nível de Garantia</p>
-            <p className="text-muted mb-2">Esse investimento está classificado no <strong>Nível 5</strong></p>
-            <div className="d-flex gap-2 mb-4 align-items-end">
-              {[1, 2, 3, 4, 5].map((nivel, idx) => (
-                <div key={nivel} className="text-center flex-fill">
-                  <div style={{ fontSize: 12, color: coresGarantia[idx], opacity: nivel === 5 ? 1 : 0.3, fontWeight: 'bold' }}>Nível {nivel}</div>
-                  <div
-                    className="rounded-pill mt-1"
-                    style={{ height: 10, backgroundColor: coresGarantia[idx], opacity: nivel === 5 ? 1 : 0.3 }}
-                  ></div>
-                </div>
-              ))}
-            </div>
+            <p className="mb-4 fs-5 text-primary fw-bold">Rentabilidade: {property.profitability}</p>
+
+  <div className="p-3 bg-light rounded-3 mt-3">
+                      <h6 className="text-muted mb-2 fw-medium">Nível de Garantia</h6>
+                      <p className="text-muted mb-2 small">Esse investimento está classificado no <strong>Nível {property.level_warrant || 1}</strong></p>
+                      <div className="d-flex gap-2 align-items-end">
+                        {[1, 2, 3, 4, 5].map((nivel, idx) => {
+                          const coresGarantia = ['#e53935', '#f6c244', '#f6e244', '#4fc3f7', '#43a047'];
+                          const nivelAtual = Number(property.level_warrant) || 1;
+                          return (
+                            <div key={nivel} className="text-center flex-fill">
+                              <div style={{ fontSize: 10, color: coresGarantia[idx], opacity: nivel === nivelAtual ? 1 : 0.3, fontWeight: 'bold' }}>
+                                Nível {nivel}
+                              </div>
+                              <div
+                                className="rounded-pill mt-1"
+                                style={{ height: 6, backgroundColor: coresGarantia[idx], opacity: nivel === nivelAtual ? 1 : 0.3 }}
+                              ></div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
 
             {property.description && (
               <div className="mb-4">

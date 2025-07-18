@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getInvestors } from '@/services/investors/getInvestors';
 import Breadcrumb from '../../../components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { ImSpinner8 } from "react-icons/im";
 
 const Investidores = () => {
   const [investidores, setInvestidores] = useState([]);
@@ -25,7 +26,21 @@ const Investidores = () => {
     fetchInvestidores();
   }, []);
 
-  if (loading) return <div className="text-gray-500 animate-pulse">Carregando investidores...</div>;
+if (loading) return (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }}>
+    <ImSpinner8 className="fa fa-spin me-2 mb-2 text-dark" style={{ fontSize: 32 }} />
+  </div>
+);
   if (error) return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>;
 
   return (
