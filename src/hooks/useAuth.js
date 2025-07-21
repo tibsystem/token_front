@@ -46,6 +46,9 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(() => {
+    console.log('🚪 [useAuth] Executando logout...');
+    console.log('🚪 [useAuth] Router pathname:', router.pathname);
+    
     localStorage.removeItem('token');
     localStorage.removeItem('admin_token');
     setUser(null);
@@ -55,6 +58,7 @@ export function useAuth() {
     const isAdminRoute = router.pathname.startsWith('/admin');
     const loginRoute = isAdminRoute ? '/admin/login' : '/login';
     
+    console.log('🚪 [useAuth] Redirecionando para:', loginRoute);
     router.push(loginRoute);
   }, [router]);
 

@@ -11,6 +11,9 @@ import useDarkMode from '@/hooks/useDarkMode';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 export default function AdminLogin() {
+  console.log('🚪 [AdminLogin] Componente AdminLogin carregado');
+  console.log('🚪 [AdminLogin] Pathname atual:', window.location?.pathname);
+  
   const { updateSettings } = useAppSettings();
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -40,13 +43,20 @@ export default function AdminLogin() {
     setError('');
     setIsSubmitting(true);
 
+    console.log('🔑 [AdminLogin] Tentando fazer login admin com:', { email });
+
     try {
       const response = await postLogin({ email, password });
 
+      console.log('🔑 [AdminLogin] Resposta do login:', response ? 'SUCCESS' : 'FAILED');
+
       if (response?.token) {
+        console.log('🔑 [AdminLogin] Token recebido, salvando como admin_token');
         localStorage.setItem('admin_token', response.token);
         localStorage.setItem('profileData', JSON.stringify(response.user));
         toast.success('Login realizado com sucesso!');
+        
+        console.log('🔑 [AdminLogin] Redirecionando para /admin/dashboard');
         window.location.href = "/admin/dashboard";
       } else {
         toast.error('Credenciais inválidas. Verifique seu e-mail e senha.');
