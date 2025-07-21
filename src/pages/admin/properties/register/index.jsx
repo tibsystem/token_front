@@ -16,6 +16,7 @@ import useDarkMode from "@/hooks/useDarkMode";
 import UseOptionsSelect from "@/hooks/UseOptionsSelect";
 //services
 import { postProperties } from "@/services/properties/postProperties";
+import Breadcrumb from "@/components/breadcrumb/breadcrumb";
 
 export default function CadastrarImovel() {
   const { isDarkMode } = useDarkMode();
@@ -91,12 +92,19 @@ export default function CadastrarImovel() {
     return false;
   }
   if (currentStep === 1) {
+    const arquivosComDescricao =
+      attachedFiles &&
+      attachedFiles.length > 0 &&
+      attachedFiles.every(
+        (fileObj) => fileObj.description && fileObj.description.trim() !== ""
+      );
     return (
       form.titulo &&
       form.descricao &&
       form.agent_id &&
       form.valor_total &&
-      form.qtd_tokens
+      form.qtd_tokens &&
+      arquivosComDescricao
     );
   }
   return true;
@@ -430,11 +438,18 @@ export default function CadastrarImovel() {
 //  console.log("form", form);
   return (
     <ProtectedRoute>
-      <div className="container max-w-5xl mx-auto mt-8 p-4">
+
+      <div className=" max-w-5xl mx-auto mt-8 p-4">
+        <Breadcrumb items={[
+          { label: 'Imóveis', path: '/admin/properties' },
+          { label: 'Cadastrar', path: '/admin/properties/register' },
+        ]} />
+  <h1 className="fw-bold mt-5 text-dark text-3xl mb-4">
+    <FaBuilding className="text-dark" /> Cadastro de Propriedade
+  </h1>
+
         <div className="card shadow-lg border-0 rounded-4 p-5 animate__animated animate__fadeIn">
-          <h2 className="text-3xl fw-bold mb-5 text-dark d-flex align-items-center gap-2">
-            <FaBuilding className="text-dark" /> Cadastro de Propriedade
-          </h2>
+          
           <Steps model={stepsModel} />
 
           <form onSubmit={handleSubmit} className="row g-4">

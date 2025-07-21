@@ -10,7 +10,8 @@ const CustomModal = ({
   cancelText = "Cancelar",
   confirmVariant = "primary",
   show = false,
-  size = "md" 
+  size = "md",
+  hideFooter = false
 }) => {
   
   const handleBackdropClick = (e) => {
@@ -46,22 +47,24 @@ const CustomModal = ({
           <div className="modal-body">
             {children}
           </div>
-          <div className="modal-footer">
-            <button 
-              type="button" 
-              className="btn btn-secondary" 
-              onClick={onCancel}
-            >
-              {cancelText}
-            </button>
-            <button 
-              type="button" 
-              className={`btn btn-${confirmVariant}`} 
-              onClick={onConfirm}
-            >
-              {confirmText}
-            </button>
-          </div>
+          {!hideFooter && (
+            <div className="modal-footer">
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                onClick={onCancel}
+              >
+                {cancelText}
+              </button>
+              <button 
+                type="button" 
+                className={`btn btn-${confirmVariant}`} 
+                onClick={onConfirm}
+              >
+                {confirmText}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
