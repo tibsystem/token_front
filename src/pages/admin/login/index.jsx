@@ -12,7 +12,6 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 export default function AdminLogin() {
   console.log('🚪 [AdminLogin] Componente AdminLogin carregado');
-  console.log('🚪 [AdminLogin] Pathname atual:', window.location?.pathname);
   
   const { updateSettings } = useAppSettings();
   const router = useRouter();
@@ -24,6 +23,8 @@ export default function AdminLogin() {
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
+    console.log('🚪 [AdminLogin] Pathname atual:', typeof window !== 'undefined' ? window.location?.pathname : 'SSR');
+    
     updateSettings({
       appHeaderNone: true,
       appSidebarNone: true,
