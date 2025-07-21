@@ -2,18 +2,22 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getProperties } from '@/services/properties/getProperties';
 import { FaMapMarkerAlt, FaCoins, FaCubes, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import useDarkMode from "@/hooks/useDarkMode";
+
 //components
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 //services
+import { getProperties } from '@/services/properties/getProperties';
+import { ImSpinner8 } from 'react-icons/im';
 
 export default function PropiedadesAdminPage() {
   const [Propiedades, setPropiedades] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { isDarkMode } = useDarkMode();
 
   const translateStatus = (status) => {
     const statusMap = {
@@ -52,14 +56,30 @@ export default function PropiedadesAdminPage() {
 
     <div className="px-4 py-5">
       <div className="row mb-4">
-        <div className="col">
-          <h1 className="text-3xl font-bold mb-8 text-dark">Propiedades</h1>
-          <p className="text-muted fs-5">Investimentos selecionados de acordo com o seu perfil</p>
+        <div className="col d-flex align-items-center justify-content-between">
+          <h1 className="text-3xl font-bold mb-8 text-dark mb-0">Propiedades</h1>
+          <Link href="/admin/properties/register" className="btn btn-lg btn-dark ms-3 mb-8">
+            <i className="fa fa-plus me-2"></i>
+            Cadastrar
+          </Link>
         </div>
       </div>
 
-      {loading && <div className="text-muted mb-4 animate-pulse fs-5">Carregando imóveis...</div>}
-
+        {loading ? (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <ImSpinner8 className="fa fa-spin me-2 mb-2 text-dark" style={{ fontSize: 32 }} />
+          </div>
+        ) : null}
       <div className="row g-4">
         {Propiedades.length === 0 && !loading && (
           <div className="col-12 text-muted fs-5">Nenhum imóvel cadastrado.</div>
@@ -104,26 +124,52 @@ export default function PropiedadesAdminPage() {
                 <div className="mb-2">
                   <small className="text-muted fs-6">Nível de Garantia</small>
                   <div className="d-flex align-items-center">
-                    <span className="text-success fw-semibold fs-6">Esse investimento está classificado no Nível 3</span>
+                    <span className="fw-semibold fs-6" style={{ color: (() => {
+                      const coresGarantia = [
+                        '#e53935', 
+                        '#f6c244', 
+                        '#f6e244', 
+                        '#4fc3f7', 
+                        '#43a047', 
+                      ];
+                      const nivel = Number(imovel.level_warrant);
+                      return nivel >= 1 && nivel <= 5 ? coresGarantia[nivel - 1] : '#999';
+                    })() }}>
+                      {imovel.level_warrant
+                        ? `Esse investimento está classificado no Nível ${imovel.level_warrant}`
+                        : 'Nível não informado'}
+                    </span>
                   </div>
                   <div className="progress bg-light mt-1" style={{ height: '6px' }}>
-                    <div className="progress-bar bg-success" style={{ width: '60%' }}></div>
+                    <div
+                      className="progress-bar"
+                      style={{
+                        width: `${imovel.level_warrant ? Math.min(Number(imovel.level_warrant) * 20, 100) : 0}%`,
+                        backgroundColor: (() => {
+                          const coresGarantia = [
+                            '#e53935', // 1
+                            '#f6c244', // 2
+                            '#f6e244', // 3
+                            '#4fc3f7', // 4
+                            '#43a047', // 5
+                          ];
+                          const nivel = Number(imovel.level_warrant);
+                          return nivel >= 1 && nivel <= 5 ? coresGarantia[nivel - 1] : '#999';
+                        })()
+                      }}
+                    ></div>
                   </div>
                 </div>
 
                 <div className="d-flex justify-content-between text-muted border-top pt-2 mt-2">
                   <div>
                     <div className="fw-semibold fs-6">Rentabilidade Prevista</div>
-                    <div className="text-primary fw-bold fs-6">IPCA + 14% a.a.</div>
+                    <div className="text-primary fw-bold fs-6">{imovel.profitability}</div>
                   </div>
-                  <div>
-                    <div className="fw-semibold fs-6">Investimento Mínimo</div>
-                    <div className="text-dark fs-6">R$ 1.000,00</div>
-                  </div>
+                
                 </div>
 
                 <div className="d-flex flex-column gap-1 mt-3 text-muted fs-6">
-                  <div className="d-flex align-items-center"><FaMapMarkerAlt className="me-2 text-primary" /> {imovel.location}</div>
                   <div className="d-flex align-items-center"><FaCoins className="me-2 text-warning" /> Valor Total: R$ {Number(imovel.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                   <div className="d-flex align-items-center"><FaCubes className="me-2 text-secondary" /> Tokens: {imovel.total_tokens}</div>
                   <div className="d-flex align-items-center">
@@ -154,7 +200,7 @@ export default function PropiedadesAdminPage() {
                   </div>
                 </div>
 
-                <Link href={`./properties/${imovel.id}`} className="btn btn-outline-primary mt-3 w-100 fs-6">
+                <Link href={`./properties/${imovel.id}`} className={`btn ${isDarkMode ? "btn-outline-light" : "btn-outline-dark"} mt-3 w-100 fs-6`}>
                   Ver Detalhes
                 </Link>
               </div>

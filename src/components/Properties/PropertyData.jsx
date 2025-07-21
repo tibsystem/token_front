@@ -6,6 +6,7 @@ import {
   FaMicrochip,
   FaTimes,
   FaFileAlt,
+  FaTrashAlt,
 } from "react-icons/fa";
 import ToggleInput from "@/components/input/ToggleInput";
 
@@ -315,12 +316,11 @@ export default function PropertyData({
                         )}
                         <button
                           type="button"
-                          className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle d-flex align-items-center justify-content-center"
-                          style={{ width: "24px", height: "24px" }}
+                          className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1   d-flex align-items-center justify-content-center"
                           onClick={() => removeImage(index)}
                           title="Remover imagem"
                         >
-                          <FaTimes size={10} />
+                          <FaTrashAlt  />
                         </button>
                         <div className="mt-1">
                           <small
@@ -349,7 +349,6 @@ export default function PropertyData({
           </div>
         </div>
 
-        {/* Upload de Arquivos Anexados */}
         <div className="mb-4">
           <label className="form-label d-flex align-items-center gap-2">
             <FaFileAlt /> Arquivos Anexados do Imóvel *
@@ -405,7 +404,9 @@ export default function PropertyData({
                               className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
                               onClick={() => removeAttachedFile(index)}
                               title="Remover arquivo"
-                            ></button>
+                            >
+                              <FaTrashAlt />
+                            </button>
                           </div>
                           <div className="form-floating">
                             <input

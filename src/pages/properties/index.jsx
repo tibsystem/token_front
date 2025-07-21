@@ -9,6 +9,7 @@ import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import '@/styles/marketplace.css';
 import useDarkMode from '@/hooks/useDarkMode';
+import { CgSpinner } from "react-icons/cg";
 
 export default function PropiedadesPage() {
   const [Propiedades, setPropiedades] = useState([]);
@@ -414,10 +415,7 @@ export default function PropiedadesPage() {
       <div className={viewMode === 'grid' ? 'row g-4' : 'row g-3'}>
         {loading && (
           <>
-            <PropertyCardSkeleton />
-            <PropertyCardSkeleton />
-            <PropertyCardSkeleton />
-            <PropertyCardSkeleton />
+            <CgSpinner className='fa fa-spin' />
           </>
         )}
 
@@ -440,7 +438,7 @@ export default function PropiedadesPage() {
               </p>
               {hasActiveFilters && (
                 <button 
-                  className="btn btn-primary"
+                  className="btn btn-dark"
                   onClick={clearAllFilters}
                 >
                   <i className="fa fa-refresh me-2"></i>
@@ -486,32 +484,54 @@ export default function PropiedadesPage() {
                 <div className="card-body d-flex flex-column">
                   <p className="text-muted fs-6 mb-3">Direito de recebimento de antecipações do segmento imobiliário</p>
 
+
                   <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <small className="text-muted fw-semibold">Nível de Garantia</small>
-                      <small className="text-success fw-bold">Nível 3</small>
+                      <small className="text-success fw-bold">{imovel.level_warrant ? `Nível ${imovel.level_warrant}` : '-'}</small>
                     </div>
                     <div className="progress bg-light" style={{ height: '6px' }}>
-                      <div className="progress-bar bg-success" style={{ width: '60%' }}></div>
+                      <div
+                        className="progress-bar"
+                        style={{
+                          width: `${imovel.level_warrant ? Math.min(Number(imovel.level_warrant) * 20, 100) : 0}%`,
+                          backgroundColor: (() => {
+                            const coresGarantia = [
+                              '#e53935', // 1
+                              '#f6c244', // 2
+                              '#f6e244', // 3
+                              '#4fc3f7', // 4
+                              '#43a047', // 5
+                            ];
+                            const nivel = Number(imovel.level_warrant);
+                            return nivel >= 1 && nivel <= 5 ? coresGarantia[nivel - 1] : '#999';
+                          })()
+                        }}
+                      ></div>
                     </div>
+                    {imovel.warrant && (
+                      <div className="mt-1  text-muted fw-bold" style={{ fontSize: 12 }}>
+                        {imovel.warrant}
+                      </div>
+                    )}
                   </div>
 
                   <div className="row g-2 mb-3">
                     <div className="col-6">
                       <div className="bg-light rounded p-2 text-center">
-                        <div className={`fw-bold ${getRentabilidadeColor(imovel.status)}`}>
-                          IPCA + 14%
+                        <div className={`fw-bold ${getRentabilidadeColor(imovel.status)}`}
+                          style={{ textTransform: 'uppercase' }}>
+                          {imovel.profitability ? imovel.profitability : '-'}
                         </div>
-                        <small className="text-muted">a.a.</small>
                       </div>
                     </div>
                     <div className="col-6">
-                      <div className="bg-light rounded p-2 text-center">
+                      {/* <div className="bg-light rounded p-2 text-center">
                         <div className="text-primary fw-bold">
                           R$ 1.000
-                        </div>
-                        <small className="text-muted">Mín.</small>
-                      </div>
+                        </div> */}
+                        {/* <small className="text-muted">Mín.</small>
+                      </div> */}
                     </div>
                   </div>
 
@@ -535,10 +555,9 @@ export default function PropiedadesPage() {
 
                   <Link 
                     href={`/properties/${imovel.id}`} 
-                    className={`btn ${(imovel.status?.toLowerCase() === 'active' || imovel.status?.toLowerCase() === 'ativo') ? 'btn-primary' : 'btn-secondary'} mt-auto w-100 d-flex align-items-center justify-content-center`}
+                    className={`btn ${(imovel.status?.toLowerCase() === 'active' || imovel.status?.toLowerCase() === 'ativo') ? 'btn-dark' : 'btn-secondary'} mt-auto w-100 d-flex align-items-center justify-content-center`}
                   >
-                    <i className="fa fa-calculator me-2"></i>
-                    {(imovel.status?.toLowerCase() === 'active' || imovel.status?.toLowerCase() === 'ativo') ? 'Simular Investimento' : 'Ver Detalhes'}
+                    {(imovel.status?.toLowerCase() === 'active' || imovel.status?.toLowerCase() === 'ativo') ? 'Investir' : 'Ver Detalhes'}
                   </Link>
                 </div>
               </div>
@@ -565,8 +584,9 @@ export default function PropiedadesPage() {
                       </span>
                     </div>
                     <div className="col-md-2 text-center">
-                      <div className="text-success fw-bold">IPCA + 14%</div>
-                      <small className="text-muted">a.a.</small>
+                      <div className={`fw-bold ${getRentabilidadeColor(imovel.status)}`} style={{ textTransform: 'uppercase' }}>
+                        {imovel.profitability ? imovel.profitability : '-'}
+                      </div>
                     </div>
                     <div className="col-md-2 text-center">
                       <div className="fw-bold">R$ {Number(imovel.total_value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
@@ -575,7 +595,7 @@ export default function PropiedadesPage() {
                     <div className="col-md-2">
                       <Link 
                         href={`/properties/${imovel.id}`} 
-                        className={`btn ${(imovel.status?.toLowerCase() === 'ativo' || imovel.status?.toLowerCase() === 'active') ? 'btn-primary' : 'btn-outline-secondary'} w-100`}
+                        className={`btn ${(imovel.status?.toLowerCase() === 'ativo' || imovel.status?.toLowerCase() === 'active') ? 'btn-dark' : 'btn-outline-secondary'} w-100`}
                       >
                         {(imovel.status?.toLowerCase() === 'ativo' || imovel.status?.toLowerCase() === 'active') ? 'Investir' : 'Ver'}
                       </Link>
