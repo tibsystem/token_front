@@ -7,7 +7,6 @@ import { postP2pListings } from '@/services/p2p/postP2pListings';
 import { toast } from 'react-toastify';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import '@/styles/marketplace.css';
 
 export default function NovaOfertaPage() {
   const [Propiedades, setPropiedades] = useState([]);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useAppSettings } from '@/config/app-settings';
 import Link from 'next/link';
 import { postInvestor } from '@/services/investors/postInvestor';

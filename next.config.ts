@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export',
+  trailingSlash: true,
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -10,7 +11,7 @@ const nextConfig: NextConfig = {
   	unoptimized: true,
   	dangerouslyAllowSVG: true,
     domains: ['placehold.co', 'img.youtube.com'], // Add the domain you're using here
-  }
+  },
 };
 
 export default nextConfig;

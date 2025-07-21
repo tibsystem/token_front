@@ -9,7 +9,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { useAppSettings } from '@/config/app-settings';
 import { slideUp } from '@/composables/slideUp';
 import { slideDown } from '@/composables/slideDown';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 export default function Sidebar() {
 	const { settings, updateSettings } = useAppSettings();

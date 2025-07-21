@@ -5,7 +5,6 @@ import { postP2pTransactions } from '@/services/p2p/postP2pTransactions';
 import { toast } from 'react-toastify';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import '@/styles/p2p-offers.css';
 
 export default function OfertasP2PPage() {
   const [ofertas, setOfertas] = useState([]);

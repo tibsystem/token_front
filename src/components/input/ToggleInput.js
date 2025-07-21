@@ -1,7 +1,5 @@
 import React from 'react';
 
-import '@/styles/index.css'
-
 const ToggleInput = ({ onLabel, offLabel, onIcon, offIcon, checked, onChange }) => {
   const handleClick = () => {
     if (onChange) {
