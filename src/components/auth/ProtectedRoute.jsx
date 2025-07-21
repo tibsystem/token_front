@@ -11,7 +11,8 @@ export default function ProtectedRoute({ children }) {
   const getLoginRoute = () => {
     const isAdminRoute = router.pathname.startsWith('/admin');
     const hasAdminToken = Boolean(localStorage.getItem('admin_token'));
-    
+    console.log('isAdminRoute:', isAdminRoute, 'hasAdminToken:', hasAdminToken);
+    console.log('isAdminRoute || hasAdminToken:', isAdminRoute || hasAdminToken);
     // Se está em rota admin OU tem token admin, redireciona para admin login
     return (isAdminRoute || hasAdminToken) ? '/admin/login' : '/login';
   };
