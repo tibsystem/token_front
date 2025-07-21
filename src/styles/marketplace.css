@@ -150,14 +150,9 @@
   color: #6c757d;
 }
 
-/* Transições suaves */
-* {
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-}
 
-/* Estilos específicos para Properties Page */
 
-/* Progress bar customizada */
+
 .progress {
   border-radius: 10px;
   overflow: hidden;
@@ -168,7 +163,6 @@
   border-radius: 10px;
 }
 
-/* Cards com diferentes estados */
 .card.hover-card {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -177,7 +171,6 @@
   border-color: #010101;
 }
 
-/* Status badges aprimorados */
 .badge {
   font-size: 0.75rem;
   padding: 0.5em 0.75em;
@@ -217,14 +210,12 @@
   background-color: rgba(108, 117, 125, 0.1) !important;
 }
 
-/* Truncar texto longo */
 .text-truncate {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Melhorias responsivas para properties */
 @media (max-width: 768px) {
   .row.g-4 .col-xl-4,
   .row.g-4 .col-lg-6 {
