@@ -8,7 +8,7 @@ import { getFinancialTransactions } from '@/services/financialTransactions/getFi
 import { getProperties } from '@/services/properties/getProperties';
 import Breadcrumb from '@/components/breadcrumb/breadcrumb';
 
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import ProtectedRoute from '@/components/auth/AdminProtectedRoute';
 import { FaCalendarAlt, FaCoins, FaCubes, FaInfoCircle } from 'react-icons/fa';
 import { ImSpinner8 } from "react-icons/im";
 import useDarkMode from "@/hooks/useDarkMode";

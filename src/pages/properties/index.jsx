@@ -7,7 +7,6 @@ import { getProperties } from '@/services/properties/getProperties';
 import { PropertyCardSkeleton } from '@/components/Skeleton/Skeleton';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import '@/styles/marketplace.css';
 import useDarkMode from '@/hooks/useDarkMode';
 import { CgSpinner } from "react-icons/cg";
 

@@ -1,11 +1,5 @@
 'use client';
 
-// css
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import '@fortawesome/fontawesome-free/css/all.css';
-import 'react-perfect-scrollbar/dist/css/styles.css';
-import '@/styles/nextjs.scss';
-
 import { useEffect, useCallback } from 'react';
 import Header from '@/components/header/header';
 import TopMenu from '@/components/top-menu/top-menu';
@@ -101,15 +95,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   }, []);
   
 	return (
-    <html lang="en">
-    	<head>
-    		<title>Color Admin | Nextjs Version</title>
-    	</head>
-      <body>
-      	<AppSettingsProvider>
-					<Layout>{children}</Layout>
-				</AppSettingsProvider>
-      </body>
-    </html>
+    <div>
+      <AppSettingsProvider>
+        <Layout>{children}</Layout>
+      </AppSettingsProvider>
+    </div>
   );
 }

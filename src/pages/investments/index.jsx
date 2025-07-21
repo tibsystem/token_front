@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 import { getInvestments } from '@/services/investments/getInvestments';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import '@/styles/investments.css';
 import { toast } from 'react-toastify';
 
 

@@ -50,7 +50,12 @@ export function useAuth() {
     localStorage.removeItem('admin_token');
     setUser(null);
     setIsAuthenticated(false);
-    router.push('./login');
+    
+    // Determinar rota de login baseada no contexto atual
+    const isAdminRoute = router.pathname.startsWith('/admin');
+    const loginRoute = isAdminRoute ? '/admin/login' : '/login';
+    
+    router.push(loginRoute);
   }, [router]);
 
   useEffect(() => {

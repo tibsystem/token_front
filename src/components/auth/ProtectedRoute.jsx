@@ -7,10 +7,20 @@ export default function ProtectedRoute({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  // Função para determinar a rota de login correta
+  const getLoginRoute = () => {
+    const isAdminRoute = router.pathname.startsWith('/admin');
+    const hasAdminToken = Boolean(localStorage.getItem('admin_token'));
+    
+    // Se está em rota admin OU tem token admin, redireciona para admin login
+    return (isAdminRoute || hasAdminToken) ? '/admin/login' : '/login';
+  };
+
   useEffect(() => {
     const checkAuth = () => {
       if (typeof window !== 'undefined') {
         const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
+        const loginRoute = getLoginRoute();
        
         if (!token) {
           toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
@@ -44,8 +54,8 @@ export default function ProtectedRoute({ children }) {
 
     const interval = setInterval(() => {
       const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
-      const isAdmin = Boolean(localStorage.getItem('admin_token'));
-      const loginRoute = isAdmin ? '/admin/login' : '/login';
+      const loginRoute = getLoginRoute();
+      
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
@@ -73,8 +83,7 @@ export default function ProtectedRoute({ children }) {
       if (e.key === 'token' || e.key === 'admin_token') {
         if (!e.newValue) {
           setIsAuthenticated(false);
-          const isAdmin = Boolean(localStorage.getItem('admin_token'));
-          const loginRoute = isAdmin ? '/admin/login' : '/login';
+          const loginRoute = getLoginRoute();
           router.push(loginRoute);
         }
       }

@@ -7,9 +7,12 @@ import '@/styles/nextjs.scss';
 import '@/styles/nextjs.scss';
 import '@/styles/nextjs.scss';
 import '@/styles/index.css';
+import '@/styles/investments.css';
+import '@/styles/marketplace.css';
+import '@/styles/p2p-offers.css';
 
 import { AppSettingsProvider } from '@/config/app-settings';
-import { Layout } from '@/app/layout';
+import { Layout } from '@/layouts/layout';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 
