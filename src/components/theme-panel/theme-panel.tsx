@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAppSettings } from "@/config/app-settings";
+import DarkModeSwitcher from "../header/DarkmodeSwitcher/DarkModeSwitcher";
 
 export default function ThemePanel() {
   const { settings, updateSettings } = useAppSettings();
@@ -42,19 +43,19 @@ export default function ThemePanel() {
 		setAppMode(isChecked ? 'dark' : 'light');
   };
 
-  const versions = [
-    { href: 'https://seantheme.com/color-admin/admin/html/index_v2.html', img: '/assets/img/version/html.jpg' },
-    { href: 'https://seantheme.com/color-admin/admin/ajax/', img: '/assets/img/version/ajax.jpg' },
-    { href: 'https://seantheme.com/color-admin/admin/angularjs/', img: '/assets/img/version/angular1x.jpg' },
-    { href: 'https://seantheme.com/color-admin/admin/angularjs19/', img: '/assets/img/version/angular10x.jpg' },
-    { href: 'https://seantheme.com/color-admin/admin/svelte/', img: '/assets/img/version/svelte.jpg' },
-    { href: '#', img: '/assets/img/version/laravel.jpg', alert: 'Laravel Version only available in downloaded version.' },
-    { href: '#', img: '/assets/img/version/django.jpg', alert: 'Django Version only available in downloaded version.' },
-    { href: 'https://seantheme.com/color-admin/admin/vue3/', img: '/assets/img/version/vuejs.jpg' },
-    { href: 'https://seantheme.com/color-admin/admin/react/', img: '/assets/img/version/reactjs.jpg' },
-    { href: '#', img: '/assets/img/version/dotnet.jpg', alert: '.NET Core MVC Version only available in downloaded version.' },
-    { href: 'https://seantheme.com/color-admin/admin/nextjs/', img: '/assets/img/version/nextjs.jpg', active: true },
-  ];
+  // const versions = [
+  //   { href: 'https://seantheme.com/color-admin/admin/html/index_v2.html', img: '/assets/img/version/html.jpg' },
+  //   { href: 'https://seantheme.com/color-admin/admin/ajax/', img: '/assets/img/version/ajax.jpg' },
+  //   { href: 'https://seantheme.com/color-admin/admin/angularjs/', img: '/assets/img/version/angular1x.jpg' },
+  //   { href: 'https://seantheme.com/color-admin/admin/angularjs19/', img: '/assets/img/version/angular10x.jpg' },
+  //   { href: 'https://seantheme.com/color-admin/admin/svelte/', img: '/assets/img/version/svelte.jpg' },
+  //   { href: '#', img: '/assets/img/version/laravel.jpg', alert: 'Laravel Version only available in downloaded version.' },
+  //   { href: '#', img: '/assets/img/version/django.jpg', alert: 'Django Version only available in downloaded version.' },
+  //   { href: 'https://seantheme.com/color-admin/admin/vue3/', img: '/assets/img/version/vuejs.jpg' },
+  //   { href: 'https://seantheme.com/color-admin/admin/react/', img: '/assets/img/version/reactjs.jpg' },
+  //   { href: '#', img: '/assets/img/version/dotnet.jpg', alert: '.NET Core MVC Version only available in downloaded version.' },
+  //   { href: 'https://seantheme.com/color-admin/admin/nextjs/', img: '/assets/img/version/nextjs.jpg', active: true },
+  // ];
 
   const themeList = ['red', 'pink', 'orange', 'yellow', 'lime', 'green', 'teal', 'cyan', 'blue', 'purple', 'indigo', 'dark'];
 
@@ -81,12 +82,12 @@ export default function ThemePanel() {
     }
   }
 
-  const handleClick = (event: React.MouseEvent, alertMessage?: string) => {
-    if (alertMessage) {
-      event.preventDefault();
-      window.alert(alertMessage);
-    }
-  };
+  // const handleClick = (event: React.MouseEvent, alertMessage?: string) => {
+  //   if (alertMessage) {
+  //     event.preventDefault();
+  //     window.alert(alertMessage);
+  //   }
+  // };
   
   const getSetting = (key: string): boolean => !!settings?.[key as keyof typeof settings];
   
@@ -136,10 +137,7 @@ export default function ThemePanel() {
 						</div>
 					</div>
 					<div className="col-4 d-flex">
-						<div className="form-check form-switch ms-auto mb-0">
-							<input type="checkbox" className="form-check-input" name="app-theme-dark-mode" onChange={handleDarkModeCheckboxChange} id="appThemeDarkMode" checked={(mode == 'dark') ? true : false} value="1" />
-							<label className="form-check-label" htmlFor="appThemeDarkMode">&nbsp;</label>
-						</div>
+						<DarkModeSwitcher checked={mode === 'dark'} onChange={handleDarkModeCheckboxChange} />
 					</div>
 				</div>
 
@@ -186,7 +184,7 @@ export default function ThemePanel() {
         <div className="theme-panel-divider"></div>
         <h5>Language Version (9)</h5>
         <div className="theme-version">
-          {versions.map(({ href, img, alert, active }, index) => (
+          {/* {versions.map(({ href, img, alert, active }, index) => (
             <div className="theme-version-item" key={index}>
               {alert ? (
                 <a href="#" onClick={(e) => handleClick(e, alert)} className="theme-version-link">
@@ -198,7 +196,7 @@ export default function ThemePanel() {
                 </a>
               )}
             </div>
-          ))}
+          ))} */}
         </div>
 
         <div className="theme-panel-divider"></div>
