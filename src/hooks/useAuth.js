@@ -54,7 +54,6 @@ export function useAuth() {
     setUser(null);
     setIsAuthenticated(false);
     
-    // Determinar rota de login baseada no contexto atual
     const isAdminRoute = router.pathname.startsWith('/admin');
     const loginRoute = isAdminRoute ? '/admin/login' : '/login';
     

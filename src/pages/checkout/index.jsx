@@ -1,4 +1,4 @@
-import PropertyCheckout from "../../components/CheckoutTokens/ConfirmPurchase";
+import PropertyCheckout from "../../components/CheckoutTokens/PropertyCheckout";
 import { useRouter } from 'next/router';
 
 export default function CheckoutPage() {

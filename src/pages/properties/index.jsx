@@ -4,7 +4,6 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { getProperties } from '@/services/properties/getProperties';
-import { PropertyCardSkeleton } from '@/components/Skeleton/Skeleton';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import useDarkMode from '@/hooks/useDarkMode';
