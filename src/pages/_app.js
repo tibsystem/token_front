@@ -16,13 +16,15 @@ import { AppSettingsProvider } from '@/config/app-settings';
 import { Layout } from '@/layouts/layout';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import { useRouter } from 'next/router';
 
 import 'react-toastify/dist/ReactToastify.css';
 import Head from 'next/head';
 
+
 function MyApp({ Component, pageProps }) {
-  console.log('🏠 [_app.js] MyApp carregando componente:', Component.name || 'Unknown');
-  console.log('🏠 [_app.js] Current URL:', typeof window !== 'undefined' ? window.location.href : 'SSR');
+  
   
   useEffect(() => {
     let isMounted = true;
@@ -44,6 +46,9 @@ function MyApp({ Component, pageProps }) {
     };
   }, []);
 
+  const router = useRouter();
+  const isProtected = !['/', '/login', '/admin', '/admin/login','/register'].includes(router.pathname);
+
   return (
     <AppSettingsProvider>
       <Head>
@@ -63,7 +68,13 @@ function MyApp({ Component, pageProps }) {
           pauseOnHover
           theme="colored"
         />
-        <Component {...pageProps} />
+        {isProtected ? (
+          <ProtectedRoute>
+            <Component {...pageProps} />
+          </ProtectedRoute>
+        ) : (
+          <Component {...pageProps} />
+        )}
       </Layout>
     </AppSettingsProvider>
   );

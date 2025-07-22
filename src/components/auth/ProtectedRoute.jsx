@@ -13,12 +13,12 @@ export default function ProtectedRoute({ children }) {
     const hasAdminToken = Boolean(localStorage.getItem('admin_token'));
     const loginRoute = (isAdminRoute || hasAdminToken) ? '/admin/login' : '/login';
     
-    console.log('🔍 [ProtectedRoute] Determinando rota de login:', {
-      pathname: router.pathname,
-      isAdminRoute,
-      hasAdminToken,
-      loginRoute
-    });
+    // console.log('🔍 [ProtectedRoute] Determinando rota de login:', {
+    //   pathname: router.pathname,
+    //   isAdminRoute,
+    //   hasAdminToken,
+    //   loginRoute
+    // });
     
     return loginRoute;
   };
@@ -41,7 +41,7 @@ export default function ProtectedRoute({ children }) {
         });
        
         if (!anyToken) {
-          console.log('❌ [ProtectedRoute] Nenhum token encontrado - redirecionando para:', loginRoute);
+          // console.log('❌ [ProtectedRoute] Nenhum token encontrado - redirecionando para:', loginRoute);
           toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
           router.push(loginRoute);
           return;
@@ -58,14 +58,14 @@ export default function ProtectedRoute({ children }) {
           });
           
           if (payload.exp && payload.exp < currentTime) {
-            console.log('⏰ [ProtectedRoute] Token expirado - limpando e redirecionando');
+            // console.log('⏰ [ProtectedRoute] Token expirado - limpando e redirecionando');
             localStorage.removeItem('token');
             localStorage.removeItem('admin_token');
             toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
             router.push(loginRoute);
             return;
           }
-          console.log('✅ [ProtectedRoute] Token válido - usuário autenticado');
+          // console.log('✅ [ProtectedRoute] Token válido - usuário autenticado');
           setIsAuthenticated(true);
         } catch (error) {
           console.error('💥 [ProtectedRoute] Erro ao validar token:', error);
@@ -74,7 +74,7 @@ export default function ProtectedRoute({ children }) {
           toast.error('Token inválido. Por favor, faça login novamente.');
           router.push(loginRoute);
         } finally {
-          console.log('🏁 [ProtectedRoute] Finalizando verificação - setIsLoading(false)');
+          // console.log('🏁 [ProtectedRoute] Finalizando verificação - setIsLoading(false)');
           setIsLoading(false);
         }
       }
@@ -82,9 +82,9 @@ export default function ProtectedRoute({ children }) {
 
     checkAuth();
 
-    console.log('⏱️ [ProtectedRoute] Configurando interval para verificação periódica (30s)');
+    // console.log('⏱️ [ProtectedRoute] Configurando interval para verificação periódica (30s)');
     const interval = setInterval(() => {
-      console.log('⏱️ [ProtectedRoute] Verificação periódica executando...');
+      // console.log('⏱️ [ProtectedRoute] Verificação periódica executando...');
       const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
       const loginRoute = getLoginRoute();
       
@@ -93,17 +93,17 @@ export default function ProtectedRoute({ children }) {
           const payload = JSON.parse(atob(token.split('.')[1]));
           const currentTime = Math.floor(Date.now() / 1000);
           if (payload.exp && payload.exp < currentTime) {
-            console.log('⏰ [ProtectedRoute] Token expirou durante verificação periódica');
+            // console.log('⏰ [ProtectedRoute] Token expirou durante verificação periódica');
             localStorage.removeItem('token');
             localStorage.removeItem('admin_token');
             localStorage.removeItem('profileData');
             toast.warning('Sua sessão expirou. Por favor, faça login novamente.');
             router.push(loginRoute);
           } else {
-            console.log('✅ [ProtectedRoute] Token ainda válido na verificação periódica');
+            // console.log('✅ [ProtectedRoute] Token ainda válido na verificação periódica');
           }
         } catch {
-          console.log('💥 [ProtectedRoute] Erro na verificação periódica - redirecionando');
+          // console.log('💥 [ProtectedRoute] Erro na verificação periódica - redirecionando');
           localStorage.removeItem('token');
           localStorage.removeItem('admin_token');
           router.push(loginRoute);
@@ -115,7 +115,7 @@ export default function ProtectedRoute({ children }) {
   }, [router]);
 
   useEffect(() => {
-    console.log('👂 [ProtectedRoute] Configurando listener para mudanças no localStorage');
+    // console.log('👂 [ProtectedRoute] Configurando listener para mudanças no localStorage');
     
     const handleStorageChange = (e) => {
       console.log('🔄 [ProtectedRoute] Mudança detectada no localStorage:', {
@@ -126,7 +126,7 @@ export default function ProtectedRoute({ children }) {
       
       if (e.key === 'token' || e.key === 'admin_token') {
         if (!e.newValue) {
-          console.log('❌ [ProtectedRoute] Token removido - desautenticando e redirecionando');
+          // console.log('❌ [ProtectedRoute] Token removido - desautenticando e redirecionando');
           setIsAuthenticated(false);
           const loginRoute = getLoginRoute();
           router.push(loginRoute);
@@ -139,7 +139,7 @@ export default function ProtectedRoute({ children }) {
   }, [router]);
 
   if (isLoading) {
-    console.log('⏳ [ProtectedRoute] Ainda carregando - mostrando spinner');
+    // console.log('⏳ [ProtectedRoute] Ainda carregando - mostrando spinner');
     return (
       <div className="d-flex justify-content-center align-items-center min-vh-100">
         <div className="spinner-border text-primary" role="status">
@@ -150,10 +150,10 @@ export default function ProtectedRoute({ children }) {
   }
 
   if (!isAuthenticated) {
-    console.log('🚫 [ProtectedRoute] Usuário não autenticado - retornando null');
+    // console.log('🚫 [ProtectedRoute] Usuário não autenticado - retornando null');
     return null;
   }
 
-  console.log('✅ [ProtectedRoute] Usuário autenticado - renderizando children');
+  // console.log('✅ [ProtectedRoute] Usuário autenticado - renderizando children');
   return children;
 }

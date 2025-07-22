@@ -87,7 +87,8 @@ export default function PropiedadesAdminPage() {
 
         {Propiedades.map((imovel) => (
           <div key={imovel.id} className="col-xl-3 col-lg-6">
-            <div className="card h-100 shadow-sm border-0 rounded-4  overflow-hidden">
+            <div className="card h-100 shadow-sm border-0 rounded-4  overflow-hidden"
+            style={{ minHeight: 520 }}>
               <img
                 src={
                   imovel.photos && imovel.photos.length > 0
@@ -117,7 +118,7 @@ export default function PropiedadesAdminPage() {
                   )}
                 </div>
               )}
-              <div className="card-body d-flex flex-column">
+              <div className="card-body d-flex flex-column" style={{ flex: 1, display: 'flex' }}>
                 <h5 className="fw-bold text-dark mb-1 fs-4">{imovel.title}</h5>
                 <p className="text-muted fs-6 mb-2">{imovel.description}</p>
 
@@ -200,9 +201,10 @@ export default function PropiedadesAdminPage() {
                   </div>
                 </div>
 
-                <Link href={`./properties/${imovel.id}`} className={`btn ${isDarkMode ? "btn-outline-light" : "btn-outline-dark"} mt-3 w-100 fs-6`}>
-                  Ver Detalhes
-                </Link>
+                  <div style={{ flexGrow: 1 }}></div>
+                  <Link href={`./properties/${imovel.id}`} className={`btn ${isDarkMode ? "btn-light" : "btn-dark"} mt-3 w-100 fs-6`} style={{ marginTop: 'auto' }}>
+                    Ver Detalhes
+                  </Link>
               </div>
             </div>
           </div>
