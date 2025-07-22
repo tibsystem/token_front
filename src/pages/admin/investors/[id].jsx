@@ -113,7 +113,7 @@ const InvestorDetails = () => {
   }
 
   return (
-    <ProtectedRoute>
+    
     <div className=" mt-4">
       <Breadcrumb 
         items={[
@@ -417,7 +417,7 @@ const InvestorDetails = () => {
         </div>
       )}
     </div>
-    </ProtectedRoute>
+    
   );
 };
 

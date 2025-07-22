@@ -199,7 +199,7 @@ export default function OfertasP2PPage() {
   }
 
   return (
-    <ProtectedRoute>
+    
       <div className="container-fluid py-4">
         <BreadCrumb items={[
           { label: 'P2P', path: null },
@@ -308,6 +308,6 @@ export default function OfertasP2PPage() {
           </>
         )}
       </div>
-    </ProtectedRoute>
+    
   );
 }

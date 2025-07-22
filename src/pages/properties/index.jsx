@@ -172,7 +172,7 @@ export default function PropiedadesPage() {
   const isSearching = searchTerm !== debouncedSearchTerm;
 
   return (
-    <ProtectedRoute>
+    
     <div className="px-4 py-5">
       <BreadCrumb 
         items={[
@@ -607,6 +607,6 @@ export default function PropiedadesPage() {
         ))}
       </div>
     </div>
-    </ProtectedRoute>
+    
   );
 }

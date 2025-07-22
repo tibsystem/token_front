@@ -58,7 +58,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-        <ProtectedRoute>
+        
 
     <div className="p-4 max-w-5xl mx-auto">
       <BreadCrumb />
@@ -112,7 +112,7 @@ export default function DashboardPage() {
       )}
      
     </div>
-        </ProtectedRoute>
+        
 
   );
 }
