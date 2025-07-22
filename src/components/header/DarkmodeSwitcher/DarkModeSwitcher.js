@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./DarkModeSwitcher.modules.css";
 
 const DarkModeSwitcher = ({ checked, onChange }) => {
   const [isChecked, setIsChecked] = useState(false);
