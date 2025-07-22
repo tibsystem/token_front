@@ -131,7 +131,7 @@ const handleConfirmDelete = async () => {
   }
 
   return (
-    <ProtectedRoute>
+    
       <div className="mt-4">
         <Breadcrumb 
           items={[{ label: 'Captadores', path: '/admin/raisers' }, { label: `Detalhes de ${raiser.name}`, path: null }]} 
@@ -388,7 +388,7 @@ const handleConfirmDelete = async () => {
                   />
 )}
   </div>
-</ProtectedRoute>
+
 );
 };
 

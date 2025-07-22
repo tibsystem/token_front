@@ -49,7 +49,7 @@ export default function PropiedadesAdminPage() {
 
   return (
     <>
-    <ProtectedRoute>
+    
       <Breadcrumb items={[
               { label: 'Imóveis', path: '/admin/properties' },
             ]} />
@@ -209,7 +209,7 @@ export default function PropiedadesAdminPage() {
         ))}
       </div>
     </div>
-    </ProtectedRoute>
+    
     </>
   );
 }

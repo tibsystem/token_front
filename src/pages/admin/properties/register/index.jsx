@@ -437,7 +437,7 @@ export default function CadastrarImovel() {
   };
 //  console.log("form", form);
   return (
-    <ProtectedRoute>
+    
 
       <div className=" max-w-5xl mx-auto mt-8 p-4">
         <Breadcrumb items={[
@@ -548,6 +548,6 @@ export default function CadastrarImovel() {
           </form>
         </div>
       </div>
-    </ProtectedRoute>
+    
   );
 }

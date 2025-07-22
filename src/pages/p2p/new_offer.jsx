@@ -246,7 +246,7 @@ export default function NovaOfertaPage() {
   }, [Propiedades]);
 
   return (
-    <ProtectedRoute>
+    
     
     <div className="py-4">
       <BreadCrumb items={[
@@ -725,6 +725,6 @@ export default function NovaOfertaPage() {
         </div>
       )}
     </div>
-    </ProtectedRoute>
+    
   );
 }

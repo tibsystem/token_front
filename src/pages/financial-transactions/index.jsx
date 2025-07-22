@@ -141,7 +141,7 @@ export default function TransacoesFinanceirasPage() {
   }, 0);
 
   return (
-      <ProtectedRoute>
+      
 
     <div className="py-4">
       <BreadCrumb items={[
@@ -290,7 +290,7 @@ export default function TransacoesFinanceirasPage() {
         ))}
       </div>
     </div>
-        </ProtectedRoute>
+        
 
   );
 }
