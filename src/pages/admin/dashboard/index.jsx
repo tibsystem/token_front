@@ -77,7 +77,6 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <ProtectedRoute>
       <div className="flex min-h-screen bg-gray-50">
         <main className="flex-1 p-8 max-w-6xl mx-auto">
           {loading ? (
@@ -373,6 +372,5 @@ export default function AdminDashboard() {
           )}
         </main>
       </div>
-    </ProtectedRoute>
   );
 }

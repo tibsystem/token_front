@@ -127,6 +127,8 @@ export default function propertyAdminFinanceiro() {
         agent_id: dados.property.agent_id || "",
         profitability: dados.property.profitability || "",
         files: dados.property.photos || [],
+        level_warrant: dados.property.level_warrant || 1,
+        tokenization_date: dados.property.tokenization_date || "",
       });
       console.log("Dados da propriedade para edição:", dados.property);
       setShowEditModal(true);
@@ -342,6 +344,7 @@ export default function propertyAdminFinanceiro() {
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div></div>
               <div className="d-flex gap-2">
+              
                 {dados.property.status === "pending" && (
                   <>
                     <button

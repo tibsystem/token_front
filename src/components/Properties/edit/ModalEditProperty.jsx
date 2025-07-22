@@ -10,7 +10,7 @@ const steps = [
   { label: "Dados Básicos" },
   { label: "Dados Financeiros" },
   { label: "Documentos da Propriedade" },
-  { label: "Resumo" },
+  { label: "Tokenizar" },
 ];
 
 const ModalEditProperty = forwardRef(({
@@ -24,13 +24,11 @@ const ModalEditProperty = forwardRef(({
   optionsSmartContract,
   optionsRaiser,
   Imagens = [],
-  Attachments = [] // Novo prop para documentos existentes
+  Attachments = [] 
 }, ref) => {
-  // Documentos anexados
-  const [attachedFiles, setAttachedFiles] = useState([]); // {file, description, isNew, id, url, name, size}
+  const [attachedFiles, setAttachedFiles] = useState([]); 
   const [removedAttachmentIds, setRemovedAttachmentIds] = useState([]);
 
-  // Carregar documentos existentes ao abrir modal
   useEffect(() => {
     if (Attachments.length > 0 && showEditModal) {
       setAttachedFiles(
@@ -49,7 +47,6 @@ const ModalEditProperty = forwardRef(({
     }
   }, [Attachments, showEditModal]);
 
-  // Upload de novos arquivos
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const validTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
@@ -77,7 +74,6 @@ const ModalEditProperty = forwardRef(({
     });
   };
 
-  // Remover arquivo anexado
   const removeAttachedFile = (index) => {
     setAttachedFiles((prev) => {
       const doc = prev[index];
@@ -86,7 +82,6 @@ const ModalEditProperty = forwardRef(({
     });
   };
 
-  // Alterar descrição
   const handleFileDescriptionChange = (index, value) => {
     setAttachedFiles((prev) => prev.map((doc, i) => i === index ? { ...doc, description: value } : doc));
   };
@@ -197,7 +192,7 @@ const ModalEditProperty = forwardRef(({
       <form>
         {currentStep === 0 && (
           <div className="row">
-            <div className="col-md-6 mb-3">
+            <div className="col-md-12 mb-3">
               <label htmlFor="title" className="form-label">
                 Título
               </label>
@@ -210,22 +205,7 @@ const ModalEditProperty = forwardRef(({
                 onChange={handleInputChange}
               />
             </div>
-            <div className="col-md-6 mb-3">
-              <label htmlFor="status" className="form-label">
-                Status
-              </label>
-              <select
-                className="form-select"
-                id="status"
-                name="status"
-                value={editFormData.status}
-                onChange={handleInputChange}
-              >
-                <option value="pending">Pendente</option>
-                <option value="active">Ativo</option>
-                <option value="inativo">Inativo</option>
-              </select>
-            </div>
+           
             <div className="mb-3">
               <label htmlFor="description" className="form-label">
                 Descrição
@@ -328,10 +308,10 @@ const ModalEditProperty = forwardRef(({
               </div>
             </div>
           </div>
+      
         )}
         {currentStep === 2 && (
           <>
-            {/* Galeria de Imagens */}
             <div className="mb-3">
               <div className="mb-4">
                 <label className="form-label d-flex align-items-center gap-2">
@@ -409,7 +389,6 @@ const ModalEditProperty = forwardRef(({
                 </div>
               </div>
             </div>
-            {/* Galeria de Documentos */}
             <div className="mb-4">
               <label className="form-label d-flex align-items-center gap-2">
                 <FaFileAlt /> Arquivos Anexados do Imóvel *
@@ -499,23 +478,92 @@ const ModalEditProperty = forwardRef(({
           </>
         )}
         {currentStep === 3 && (
-          <div className="mb-3">
-            <PropertySummary
-              form={{
-                titulo: editFormData.title,
-                descricao: editFormData.description,
-                qtd_tokens: editFormData.total_tokens,
-                valor_total: editFormData.total_value,
-                valor_total_ptoken: editFormData.total_value && editFormData.total_tokens ? (Number(editFormData.total_value) / Number(editFormData.total_tokens)).toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '-',
-                agent_id: editFormData.agent_id,
-                rentabilidade: editFormData.profitability
-              }}
-              tipoContrato={optionsSmartContract.find(opt => opt.id === editFormData.smart_contract_model_id)?.name || '-'}
-              rentabilidade={editFormData.profitability}
-              attachedFiles={attachedFiles}
-              imagePreviews={imagePreviews}
-              options={optionsRaiser}
-            />
+          <div className="mb-3 row">
+            <div className="col-md-6 mt-3">
+                <label htmlFor="status" className="form-label">
+                Status
+              </label>
+              <select
+                className="form-select"
+                id="status"
+                name="status"
+                value={editFormData.status}
+                onChange={handleInputChange}
+              >
+                <option value="pending">Pendente</option>
+                <option value="active">Ativo</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+            <div className="col-md-6">
+                <div className="p-3 rounded-3 ">
+          <h6 className="text-dark fs-5 mb-2 fw-bold">Selecione o nivel de Garantia</h6>
+          <p className=" fs-6 mb-2 ">
+            Esse investimento será classificado no <strong>Nível {editFormData.level_warrant || 1}</strong>
+          </p>
+          <div className="d-flex gap-2 align-items-end">
+            {[1, 2, 3, 4, 5].map((nivel, idx) => {
+              const coresGarantia = ["#e53935", "#f6c244", "#f6e244", "#4fc3f7", "#43a047"];
+              const nivelAtual = Number(editFormData.level_warrant) || 1;
+              return (
+                <div
+                  key={nivel}
+                  className="text-center flex-fill"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleInputChange({ target: { name: "level_warrant", value: nivel } })}
+                >
+                  <div
+                    style={{
+                      fontSize: 10,
+                      color: coresGarantia[idx],
+                      opacity: nivel === nivelAtual ? 1 : 0.3,
+                      fontWeight: "bold",
+                      textDecoration: nivel === nivelAtual ? "underline" : "none",
+                    }}
+                  >
+                    Nível {nivel}
+                  </div>
+                  <div
+                    className="rounded-pill mt-1"
+                    style={{
+                      height: 6,
+                      backgroundColor: coresGarantia[idx],
+                      opacity: nivel === nivelAtual ? 1 : 0.3,
+                    }}
+                  ></div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+            </div>
+            <div className="col-md-12 mt-3">
+            
+              <label htmlFor="tokenize" className="form-label">
+                Tokenizar Propriedade
+              </label>
+              <select
+                className="form-select"
+                id="tokenize"
+                name="tokenize"
+                value={editFormData.tokenize || ""}
+                onChange={handleInputChange}
+              >
+                <option value="">Selecione uma opção</option>
+                <option value="yes">Sim</option>
+                <option value="no">Não</option>
+              </select>
+                {editFormData.tokenize === "yes" && (
+                <div className="alert alert-warning mt-2" role="alert">
+                  Atenção: Tokenizar a propriedade é uma ação <strong>irreversível</strong>. Confirme se deseja continuar.
+                </div>
+              )}
+
+              </div>
+              
+            
+           
           </div>
         )}
         <div className="d-flex gap-3 justify-content-end mt-4">
