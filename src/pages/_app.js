@@ -10,6 +10,7 @@ import '@/styles/index.css';
 import '@/styles/investments.css';
 import '@/styles/marketplace.css';
 import '@/styles/p2p-offers.css';
+import '@/components/header/DarkmodeSwitcher/DarkModeSwitcher.css';
 
 import { AppSettingsProvider } from '@/config/app-settings';
 import { Layout } from '@/layouts/layout';

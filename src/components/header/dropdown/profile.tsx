@@ -8,7 +8,7 @@ import UseProfile from "@/hooks/UseProfile";
 
 export default function DropdownProfile() {
 
-const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile, checkAuthAndRedirect} = UseProfile ();
+const {profileData, isLoggedIn,getUserName, getUserEmail, getUserRole, loadProfile} = UseProfile ();
 
 if (!isLoggedIn) {
     return (

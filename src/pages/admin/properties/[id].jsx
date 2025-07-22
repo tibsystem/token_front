@@ -262,7 +262,7 @@ export default function propertyAdminFinanceiro() {
 
   if (loading) {
     return (
-      <ProtectedRoute>
+      
         <div
           style={{
             position: "fixed",
@@ -281,13 +281,13 @@ export default function propertyAdminFinanceiro() {
             style={{ fontSize: 32 }}
           />
         </div>
-      </ProtectedRoute>
+      
     );
   }
 
   if (error) {
     return (
-      <ProtectedRoute>
+      
         <div className="flex min-h-screen bg-gray-50">
           <main className="flex-1 p-8 max-w-6xl mx-auto text-center">
             <div
@@ -300,13 +300,13 @@ export default function propertyAdminFinanceiro() {
             </div>
           </main>
         </div>
-      </ProtectedRoute>
+      
     );
   }
 
   if (!dados) {
     return (
-      <ProtectedRoute>
+      
         <div className="flex min-h-screen bg-gray-50">
           <main className="flex-1 p-8 max-w-6xl mx-auto text-center">
             <div
@@ -319,7 +319,7 @@ export default function propertyAdminFinanceiro() {
             </div>
           </main>
         </div>
-      </ProtectedRoute>
+      
     );
   }
 
@@ -327,7 +327,7 @@ export default function propertyAdminFinanceiro() {
     dados;
 
   return (
-    <ProtectedRoute>
+    
       <div className="flex min-h-screen bg-gray-50">
         <main className="flex-1 p-8 max-w-6xl mx-auto">
           <Breadcrumb
@@ -1085,6 +1085,6 @@ export default function propertyAdminFinanceiro() {
           <p className="text-muted">Esta ação não pode ser desfeita.</p>
         </CustomModal>
       </div>
-    </ProtectedRoute>
+    
   );
 }

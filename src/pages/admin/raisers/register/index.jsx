@@ -66,7 +66,7 @@ export default function Register() {
   };
 
   return (
-  <ProtectedRoute>
+  <>
        <Breadcrumb 
               items={[{ label: 'Captadores', path: '/admin/raisers', },
                 { label: 'Cadastrar Captador', path: '/admin/raisers/register' }
@@ -151,6 +151,6 @@ export default function Register() {
 
       </TabView>
     </div>
-  </ProtectedRoute>
+  </>
   );
 }

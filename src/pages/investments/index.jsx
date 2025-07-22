@@ -178,7 +178,7 @@ export default function InvestimentosPage() {
   };
 
   return (
-    <ProtectedRoute>
+    
       <div className="container-fluid py-4">
         <BreadCrumb items={[
           { label: 'Investimentos', path: '/investments' },
@@ -409,6 +409,6 @@ export default function InvestimentosPage() {
           </>
         )}
       </div>
-    </ProtectedRoute>
+    
   );
 }

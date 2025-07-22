@@ -212,7 +212,7 @@ export default function ImovelPage() {
     return <div className="p-5 text-center">Imóvel não encontrado.</div>;
 
   return (
-    <ProtectedRoute>
+    
       <div className="container-fluid py-5">
         <BreadCrumb
           items={[
@@ -621,6 +621,6 @@ export default function ImovelPage() {
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    
   );
 }
