@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 
 const UseProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const router = useRouter();
 
   const loadProfileFromStorage = () => {
     try {
@@ -81,7 +79,7 @@ const UseProfile = () => {
       
       setProfileData(data);
       setError(null);
-    } catch (err) {
+    } catch (err)      {
       console.error("Erro ao salvar perfil no localStorage:", err);
       setError("Erro ao salvar dados do perfil");
     }
@@ -167,30 +165,6 @@ const UseProfile = () => {
     return tokenType === 'admin' || userRole === 'admin';
   };
 
-  const checkAuthAndRedirect = (redirectPath) => {
-    const token = getToken();
-    const hasValidProfile = isLoggedIn;
-    
-    if (!redirectPath) {
-      redirectPath = isAdmin() ? '/admin/login' : '/login';
-    }
-    
-    if (!token || !hasValidProfile) {
-      router.push(redirectPath);
-      return false;
-    }
-    return true;
-  };
-
-  const requireAuth = (redirectPath) => {
-    useEffect(() => {
-      if (!loading && !isLoggedIn) {
-        const finalRedirectPath = redirectPath || (isAdmin() ? '/admin/login' : '/login');
-        router.push(finalRedirectPath);
-      }
-    }, [loading, isLoggedIn, redirectPath]);
-  };
-
   return {
     profileData,
     loading,
@@ -208,8 +182,6 @@ const UseProfile = () => {
     getToken,
     getTokenType,
     isAdmin,
-    checkAuthAndRedirect,
-    requireAuth,
   };
 };
 export default UseProfile;
