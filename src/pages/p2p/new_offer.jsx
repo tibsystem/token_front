@@ -1,5 +1,7 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { getInvestments } from "@/services/investments/getInvestments";
+import { useState, useMemo, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+// components
 import BreadCrumb from "@/components/breadcrumb/breadcrumb";
 import OfferPageHeader from "@/components/p2p/new_offer/OfferPageHeader";
 import PropertyFilters from "@/components/p2p/new_offer/PropertyFilters";
@@ -7,29 +9,31 @@ import PropertyGrid from "@/components/p2p/new_offer/PropertyGrid";
 import CreateOfferModal from "@/components/p2p/new_offer/CreateOfferModal";
 import LoadingState from "@/components/p2p/new_offer/LoadingState";
 import EmptyState from "@/components/p2p/new_offer/EmptyState";
+// utils
 import { getUserIdFromToken } from "@/utils/auth"; 
 
+// services
+import { getInvestments } from "@/services/investments/getInvestments";
+
 export default function NovaOfertaPage() {
-  const [propriedades, setPropriedades] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
   const [modalImovel, setModalImovel] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("tokens");
 
-  const fetchPropriedades = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      setError("Usuário não autenticado.");
-      setLoading(false);
-      return;
-    }
-    try {
+  const userId = getUserIdFromToken();
+  const {
+    data: propriedades = [],
+    isLoading: loading,
+    error,
+    refetch
+  } = useQuery({
+    queryKey: ["investments", userId],
+    queryFn: async () => {
+      if (!userId) throw new Error("Usuário não autenticado.");
       const investments = await getInvestments(userId);
       const investimentos = Array.isArray(investments) ? investments : [investments].filter(Boolean);
-      const propriedadesFormatadas = investimentos.map((inv) => {
+      return investimentos.map((inv) => {
         const valorUnitario = (inv.tokensOriginal && inv.totalValue)
           ? Number(inv.totalValue) / Number(inv.tokensOriginal)
           : 0;
@@ -46,24 +50,16 @@ export default function NovaOfertaPage() {
           investimento_id: inv.id,
         };
       });
-      setPropriedades(propriedadesFormatadas);
-    } catch (err) {
-      console.error("Erro ao carregar investimentos:", err);
-      setError("Erro ao carregar seus investimentos.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPropriedades();
-  }, [fetchPropriedades]);
+    },
+    enabled: !!userId,
+  });
 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
+
 
   const propriedadesFiltradas = useMemo(() => {
     return [...propriedades]
@@ -100,7 +96,7 @@ export default function NovaOfertaPage() {
   const fecharModal = () => setModalImovel(null);
   const handleOfferCreated = () => {
     fecharModal();
-    fetchPropriedades();
+    refetch();
   };
 
   return (

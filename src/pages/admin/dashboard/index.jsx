@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import Sidebar from "@/components/sidebar/sidebar";
+
 import dynamic from "next/dynamic";
 import { getInvestors } from "@/services/investors/getInvestors";
 import { getFinancialTransactions } from "@/services/financialTransactions/getFinancialTransactions";
 import { getProperties } from "@/services/properties/getProperties";
 import Breadcrumb from "@/components/breadcrumb/breadcrumb";
 
-import ProtectedRoute from "@/components/auth/AdminProtectedRoute";
 import { FaCalendarAlt, FaCoins, FaCubes, FaInfoCircle } from "react-icons/fa";
 import { ImSpinner8 } from "react-icons/im";
 import useDarkMode from "@/hooks/useDarkMode";

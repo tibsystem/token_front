@@ -1,26 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
-import { getFinancialTransactions } from '@/services/financialTransactions/getFinancialTransactions';
 import BreadCrumb from '@/components/breadcrumb/breadcrumb';
-
-// rota privada
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-
-function getUserIdFromToken() {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.id || payload.user_id || payload.sub || null;
-      } catch (e) {
-        return null;
-      }
-    }
-  }
-  return null;
-}
+// utils
+import { getUserIdFromToken } from '@/utils/auth';
+// services
+import { getFinancialTransactions } from '@/services/financialTransactions/getFinancialTransactions';
 
 function formatDate(dateStr) {
   const date = new Date(dateStr);
@@ -28,7 +14,6 @@ function formatDate(dateStr) {
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
   
-  // Resetar as horas para comparação apenas da data
   today.setHours(0, 0, 0, 0);
   yesterday.setHours(0, 0, 0, 0);
   date.setHours(0, 0, 0, 0);
@@ -53,50 +38,43 @@ function formatDateTime(dateStr) {
   });
 }
 
-export default function TransacoesFinanceirasPage() {
-  const [transacoes, setTransacoes] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function FinancialTransactionsPage() {
 
-  useEffect(() => {
-    async function fetchTransacoes() {
-      const userId = getUserIdFromToken();
-      if (!userId) {
-        setError('ID do usuário não encontrado no token. Faça login novamente.');
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        setLoading(true);
-        const response = await getFinancialTransactions();
-        setTransacoes(Array.isArray(response) ? response : []);
-      } catch (err) {
-        setError(err?.response?.data?.message || err.message || 'Erro ao buscar transações financeiras');
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchTransacoes();
-  }, []);
-
-  const transacoesPorData = transacoes.reduce((acc, t) => {
-    const data = formatDate(t.data_transacao);
-    if (!acc[data]) acc[data] = [];
-    acc[data].push(t);
-    return acc;
-  }, {});
-
-  const datasOrdenadas = Object.keys(transacoesPorData).sort((a, b) => {
-    if (a === 'Hoje') return -1;
-    if (b === 'Hoje') return 1;
-    if (a === 'Ontem') return -1;
-    if (b === 'Ontem') return 1;
-    const [da, ma, ya] = a.split('/').map(Number);
-    const [db, mb, yb] = b.split('/').map(Number);
-    return new Date(yb, mb - 1, db) - new Date(ya, ma - 1, da);
+  const userId = getUserIdFromToken();
+  const {
+    data: transacoes = [],
+    isLoading: loading,
+    error
+  } = useQuery({
+    queryKey: ['financialTransactions', userId],
+    queryFn: async () => {
+      if (!userId) throw new Error('Usuário não autenticado.');
+      const response = await getFinancialTransactions();
+      return Array.isArray(response) ? response : [];
+    },
+    enabled: !!userId,
   });
+
+  const transacoesPorData = useMemo(() => {
+    return transacoes.reduce((acc, t) => {
+      const data = formatDate(t.created_at || t.data_transacao);
+      if (!acc[data]) acc[data] = [];
+      acc[data].push(t);
+      return acc;
+    }, {});
+  }, [transacoes]);
+
+  const datasOrdenadas = useMemo(() => {
+    return Object.keys(transacoesPorData).sort((a, b) => {
+      if (a === 'Hoje') return -1;
+      if (b === 'Hoje') return 1;
+      if (a === 'Ontem') return -1;
+      if (b === 'Ontem') return 1;
+      const [da, ma, ya] = a.split('/').map(Number);
+      const [db, mb, yb] = b.split('/').map(Number);
+      return new Date(yb, mb - 1, db) - new Date(ya, ma - 1, da);
+    });
+  }, [transacoesPorData]);
 
   function isCredito(tipo) {
     return [
@@ -148,10 +126,9 @@ export default function TransacoesFinanceirasPage() {
         { label: 'Extrato Financeiro', path: '/financial-transactions' },
       ]} />
       
-      <div className="d-flex align-items-center justify-content-between mb-4">
+      <div className="d-flex align-items-center justify-content-between mt-3 mb-4">
         <div>
           <h1 className="h2 fw-bold text-dark mb-1">
-            <i className="fa fa-chart-line me-2 text-primary"></i>
             Extrato Financeiro
           </h1>
           <p className="text-muted mb-0">Acompanhe todas as suas movimentações financeiras</p>
@@ -198,7 +175,7 @@ export default function TransacoesFinanceirasPage() {
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
                     <h6 className="card-subtitle mb-2 text-white-50">Última Transação</h6>
-                    <p className="mb-0 fw-semibold">{transacoes.length > 0 ? formatDateTime(transacoes[0]?.data_transacao) : '-'}</p>
+                    <p className="mb-0 fw-semibold">{transacoes.length > 0 ? formatDateTime(transacoes[0]?.created_at || transacoes[0]?.data_transacao) : '-'}</p>
                   </div>
                   <div className="bg-white bg-opacity-20 rounded-circle p-3">
                     <i className="fa fa-clock text-white fs-4"></i>
@@ -212,8 +189,7 @@ export default function TransacoesFinanceirasPage() {
       
       {loading && (
         <div className="text-center py-5">
-          <div className="spinner-border text-primary mb-3" role="status">
-            <span className="visually-hidden">Carregando...</span>
+          <div className="spinner-border text-dark mb-3" role="status">
           </div>
           <p className="text-muted">Carregando transações...</p>
         </div>
@@ -239,7 +215,7 @@ export default function TransacoesFinanceirasPage() {
         {datasOrdenadas.map((data) => (
           <div key={data} className="mb-4">
             <div className="d-flex align-items-center mb-3">
-              <div className="bg-primary text-white rounded-pill px-3 py-1 fw-semibold small">
+              <div className="bg-dark text-white rounded-pill px-3 py-1 fw-semibold small">
                 <i className="fa fa-calendar me-2"></i>
                 {data}
               </div>
@@ -269,7 +245,7 @@ export default function TransacoesFinanceirasPage() {
                             <i className="fa fa-tag me-2"></i>
                             <span className="me-4">{item.referencia}</span>
                             <i className="fa fa-clock me-2"></i>
-                            <span>{formatDateTime(item.data_transacao)}</span>
+                            <span>{formatDateTime(item.created_at || item.data_transacao)}</span>
                           </div>
                         </div>
                         <div className="text-end">

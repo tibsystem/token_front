@@ -195,13 +195,7 @@ export default function PropiedadesPage() {
         </div>
       </div>
 
-      {loading && (
-        <div className="text-center py-5">
-          <div className="spinner-border text-dark mb-3" role="status">
-            <span className="visually-hidden">Carregando...</span>
-          </div>
-        </div>
-      )}
+     
 
       {error && (
         <div className="alert alert-danger d-flex align-items-center" role="alert">
@@ -413,7 +407,7 @@ export default function PropiedadesPage() {
       <div className={viewMode === 'grid' ? 'row g-4' : 'row g-3'}>
         {loading && (
           <>
-            <CgSpinner className='fa fa-spin' />
+            <CgSpinner className='fa fa-spin' size={50} />
           </>
         )}
 

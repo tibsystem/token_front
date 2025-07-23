@@ -555,7 +555,7 @@ const ModalEditProperty = forwardRef(
                             style={{
                               fontSize: 10,
                               color: coresGarantia[idx],
-                              opacity: nivel === nivelAtual ? 1 : 0.3,
+                              opacity: nivel === nivelAtual ? 1 : 0.8,
                               fontWeight: "bold",
                               textDecoration:
                                 nivel === nivelAtual ? "underline" : "none",
@@ -568,7 +568,7 @@ const ModalEditProperty = forwardRef(
                             style={{
                               height: 6,
                               backgroundColor: coresGarantia[idx],
-                              opacity: nivel === nivelAtual ? 1 : 0.3,
+                              opacity: nivel === nivelAtual ? 2 : 0.8,
                             }}
                           ></div>
                         </div>

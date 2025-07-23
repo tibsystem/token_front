@@ -129,6 +129,7 @@ export default function propertyAdminFinanceiro() {
         files: dados.property.photos || [],
         level_warrant: dados.property.level_warrant || 1,
         tokenization_date: dados.property.tokenization_date || "",
+        location: 'franca-sp'
       });
       console.log("Dados da propriedade para edição:", dados.property);
       setShowEditModal(true);
