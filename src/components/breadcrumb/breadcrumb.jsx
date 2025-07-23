@@ -42,30 +42,31 @@ const Breadcrumb = ({ route = '', items = [], className = '' }) => {
 
   return (
     <nav className={`breadcrumb-nav ${className}`} aria-label="breadcrumb">
-      <ol className="breadcrumb mb-0">
+      <ol className="breadcrumb mb-0" style={{ fontSize: 12, padding: '4px 0', minHeight: 0 }}>
         {breadcrumbs.map((crumb, index) => {
           const isLast = index === breadcrumbs.length - 1;
-          
           return (
-            <li 
-              key={index} 
+            <li
+              key={index}
               className={`breadcrumb-item ${isLast ? 'active' : ''}`}
               aria-current={isLast ? 'page' : undefined}
+              style={{ fontWeight: isLast ? 600 : 400, fontSize: 14 }}
             >
               {isLast || !crumb.path ? (
                 <span className="d-flex align-items-center">
                   {crumb.icon && (
-                    <i className="fa fa-home me-2" aria-hidden="true"></i>
+                    <i className="fa fa-home me-2" aria-hidden="true" style={{ fontSize: 14 }}></i>
                   )}
                   {crumb.label}
                 </span>
               ) : (
-                <Link 
-                  href={crumb.path} 
+                <Link
+                  href={crumb.path}
                   className="text-decoration-none d-flex align-items-center"
+                  style={{ fontSize: 12 }}
                 >
                   {crumb.icon && (
-                    <i className="fa fa-home me-2" aria-hidden="true"></i>
+                    <i className="fa fa-home me-2" aria-hidden="true" style={{ fontSize: 14 }}></i>
                   )}
                   {crumb.label}
                 </Link>
@@ -74,9 +75,6 @@ const Breadcrumb = ({ route = '', items = [], className = '' }) => {
           );
         })}
       </ol>
-
-
-      
     </nav>
   );
 };
