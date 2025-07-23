@@ -14,7 +14,8 @@ import CheckoutPix from "./CheckoutPix";
 import Steps from "../Tab/Step";
 //services
 import { postInvestmentsPurchase } from "@/services/investments/postInvestmentsPurchase";
-import { useAuth } from "@/hooks/useAuth";
+//utils
+import { getUserIdFromToken } from "@/utils/auth";
 
 const Review = ({ property, formData, handleInputChange, valorUnitarioFinal, total, valorTaxa, totalComTaxa }) => (
   <div className="mt-4">
@@ -168,7 +169,6 @@ const Review = ({ property, formData, handleInputChange, valorUnitarioFinal, tot
 );
 
 export default function PropertyCheckout({ property }) {
-  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     amount: property?.amount ? Number(property.amount) : 1,
@@ -185,6 +185,7 @@ export default function PropertyCheckout({ property }) {
     acceptTerms: false,
     acceptPrivacy: false,
   });
+  const user = getUserIdFromToken();
 
   useEffect(() => {
     if (property) {

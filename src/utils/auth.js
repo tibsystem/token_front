@@ -1,78 +1,83 @@
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
-// Interceptador para requisições HTTP
+const TOKEN_KEY = "token";
+const ADMIN_TOKEN_KEY = "admin_token";
+
+const logoutAndRedirect = (message) => {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(ADMIN_TOKEN_KEY);
+
+  if (message) {
+    toast.error(message);
+  }
+
+  window.location.href = "/login";
+};
+
 export const httpInterceptor = {
-  // Intercepta requisições antes de enviar
   request: (config) => {
-    const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
-    
+    if (typeof window === "undefined") {
+      return config;
+    }
+
+    const token =
+      localStorage.getItem(TOKEN_KEY) || localStorage.getItem(ADMIN_TOKEN_KEY);
+
     if (token) {
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const payload = JSON.parse(atob(token.split(".")[1]));
         const currentTime = Math.floor(Date.now() / 1000);
-        
+
         if (payload.exp && payload.exp < currentTime) {
-          // Token expirado
-          localStorage.removeItem('token');
-          localStorage.removeItem('admin_token');
-          toast.error('Sua sessão expirou. Redirecionando para login...');
-          window.location.href = '/login';
-          return Promise.reject(new Error('Token expirado'));
+          logoutAndRedirect("Sua sessão expirou. Redirecionando para login...");
+          return Promise.reject(new Error("Token expirado"));
         }
-        
-        // Adiciona o token ao header
-        config.headers = {
-          ...config.headers,
-          'Authorization': `Bearer ${token}`
-        };
+
+        config.headers["Authorization"] = `Bearer ${token}`;
       } catch (error) {
-        console.error('Erro ao processar token:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('admin_token');
-        toast.error('Token inválido. Redirecionando para login...');
-        window.location.href = '/login';
-        return Promise.reject(new Error('Token inválido'));
+        console.error("Erro ao processar token:", error);
+        logoutAndRedirect("Token inválido. Redirecionando para login...");
+        return Promise.reject(new Error("Token inválido"));
       }
     }
-    
+
     return config;
   },
 
-  // Intercepta respostas
   response: (response) => {
     return response;
   },
 
   responseError: (error) => {
+    if (typeof window === "undefined") {
+      return Promise.reject(error);
+    }
+
     if (error.response) {
       const status = error.response.status;
-      
+
       if (status === 401 || status === 403) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('admin_token');
-        toast.error('Sessão expirada. Faça login novamente.');
-        window.location.href = '/login';
+        logoutAndRedirect("Sessão inválida. Faça login novamente.");
         return Promise.reject(error);
       }
-      
+
       if (status >= 500) {
-        toast.error('Erro no servidor. Tente novamente mais tarde.');
+        toast.error("Erro no servidor. Tente novamente mais tarde.");
       }
     } else if (error.request) {
-      toast.error('Erro de conexão. Verifique sua internet.');
+      toast.error("Erro de conexão. Verifique sua internet.");
     }
-    
+
     return Promise.reject(error);
-  }
+  },
 };
 
 export const setupHttpInterceptors = (axiosInstance) => {
-  if (axiosInstance && axiosInstance.interceptors) {
-    axiosInstance.interceptors.request.use(
-      httpInterceptor.request,
-      (error) => Promise.reject(error)
+  if (axiosInstance?.interceptors) {
+    axiosInstance.interceptors.request.use(httpInterceptor.request, (error) =>
+      Promise.reject(error)
     );
-    
+
     axiosInstance.interceptors.response.use(
       httpInterceptor.response,
       httpInterceptor.responseError
@@ -80,26 +85,28 @@ export const setupHttpInterceptors = (axiosInstance) => {
   }
 };
 
-// Função para verificar se o usuário está autenticado
-export const isAuthenticated = () => {
-  const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
-  
-  if (!token) return false;
-  
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Math.floor(Date.now() / 1000);
-    
-    return payload.exp ? payload.exp > currentTime : true;
-  } catch {
-    return false;
+export function getUser() {
+  if (typeof window === "undefined") {
+    return null;
   }
-};
+  const token = localStorage.getItem("token") || localStorage.getItem("admin_token");
+  if (token) {
+    try {
+      const payloadBase64 = token.split(".")[1];
+      if (!payloadBase64) return null;
+      return JSON.parse(atob(payloadBase64));
+    } catch (e) {
+      console.error("Erro ao decodificar o token:", e);
+      return null;
+    }
+  }
+  return null;
+}
 
-// Função para fazer logout
-export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('admin_token');
-  toast.info('Você foi desconectado.');
-  window.location.href = '/login';
-};
+export function getUserIdFromToken() {
+  const userPayload = getUser();
+  if (userPayload) {
+    return userPayload.id || userPayload.user_id || userPayload.sub || null;
+  }
+  return null;
+}
