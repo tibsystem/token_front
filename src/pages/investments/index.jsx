@@ -4,8 +4,11 @@ import Column from "@/components/table/Column";
 import { useQuery } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
+
 //components
 import BreadCrumb from "@/components/breadcrumb/breadcrumb";
+import CardsInvestments from '@/components/Investments/CardsInvestments';
+
 //utils
 import { getUserIdFromToken } from "@/utils/auth";
 //hooks
@@ -74,7 +77,7 @@ export default function InvestimentosPage() {
       }, 0)
     : 0;
 
-  const totalTokens = Array.isArray(transacoes)
+    const totalTokens = Array.isArray(transacoes)
     ? transacoes.reduce((acc, item) => {
         return acc + (Number(item?.qtd_tokens) || 0);
       }, 0)
@@ -169,108 +172,39 @@ export default function InvestimentosPage() {
           <div className="spinner-border text-dark mb-3" role="status">
             <span className="visually-hidden">Carregando...</span>
           </div>
-          <p className="text-muted">Carregando seus investimentos...</p>
         </div>
       )}
 
       {!loading && !error && !isError && (
         <>
-          <div className="row g-4 mb-5">
-            <div className="col-xl-4">
-              <div className="card border-0 shadow-sm h-100 investment-card gradient-purple">
-                <div className="card-body text-white p-4">
-                  <div className="d-flex align-items-center justify-content-between">
-                    <div>
-                      <h6 className="card-subtitle mb-2 text-white-50">
-                        Total Investido
-                      </h6>
-                      <h3 className="mb-0 fw-bold money-value">
-                        R${" "}
-                        {totalInvestido.toLocaleString("pt-BR", {
-                          minimumFractionDigits: 2,
-                        })}
-                      </h3>
-                      <small className="text-white-50 mt-1">
-                        <i className="fa fa-arrow-up me-1"></i>
-                        Patrimônio Total
-                      </small>
-                    </div>
-                    <div className="investment-stat-icon bg-white bg-opacity-20">
-                      <i className="fa fa-wallet text-white fs-4"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-xl-4">
-              <div className="card border-0 shadow-sm h-100 investment-card gradient-green">
-                <div className="card-body text-white p-4">
-                  <div className="d-flex align-items-center justify-content-between">
-                    <div>
-                      <h6 className="card-subtitle mb-2 text-white-50">
-                        Total de Tokens
-                      </h6>
-                      <h3 className="mb-0 fw-bold money-value">
-                        {totalTokens}
-                      </h3>
-                      <small className="text-white-50 mt-1">
-                        <i className="fa fa-coins me-1"></i>
-                        Unidades Possuídas
-                      </small>
-                    </div>
-                    <div className="investment-stat-icon bg-white bg-opacity-20">
-                      <i className="fa fa-coins text-white fs-4"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-xl-4">
-              <div className="card border-0 shadow-sm h-100 investment-card gradient-blue">
-                <div className="card-body text-white p-4">
-                  <div className="d-flex align-items-center justify-content-between">
-                    <div>
-                      <h6 className="card-subtitle mb-2 text-white-50">
-                        Ticket Médio
-                      </h6>
-                      <h3 className="mb-0 fw-bold money-value">
-                        R${" "}
-                        {ticketMedio.toLocaleString("pt-BR", {
-                          minimumFractionDigits: 2,
-                        })}
-                      </h3>
-                      <small className="text-white-50 mt-1">
-                        <i className="fa fa-chart-line me-1"></i>
-                        Por Investimento
-                      </small>
-                    </div>
-                    <div className="investment-stat-icon bg-white bg-opacity-20">
-                      <i className="fa fa-calculator text-white fs-4"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CardsInvestments
+            totalInvestido={totalInvestido}
+            totalTokens={totalTokens}
+            ticketMedio={ticketMedio}
+          />
 
           <div className="row mb-5">
             <div className="col-lg-12">
-               <div className="d-flex align-items-center justify-content-between mb-2">
-                  <div>
-                    <h5 className="mb-1 fw-bold text-dark">
-                      <i className="fa fa-chart-line me-2 text-dark"></i>
-                      Evolução dos Investimentos
-                    </h5>
-                    <small className="text-muted">
-                      Histórico de compras de tokens por período
-                    </small>
-                  </div>
+              <div className="d-flex align-items-center justify-content-between mb-2">
+                <div>
+                  <h5 className="mb-1 fw-bold text-dark">
+                    <i className="fa fa-chart-line me-2 text-dark"></i>
+                    Evolução dos Investimentos
+                  </h5>
+                  <small className="text-muted">
+                    Histórico de compras de tokens por período
+                  </small>
                 </div>
-              <div className={`mb-3${isDarkMode ? ' datatable-dark-mode' : 'datatable-light-mode'}`}> 
-               
-                <div className={`chart-container${isDarkMode ? '-dark-mode' : ''}`} style={{ minHeight: 320 }}>
+              </div>
+              <div
+                className={`mb-3${
+                  isDarkMode ? " datatable-dark-mode" : "datatable-light-mode"
+                }`}
+              >
+                <div
+                  className={`chart-container${isDarkMode ? "-dark-mode" : ""}`}
+                  style={{ minHeight: 320 }}
+                >
                   {typeof window !== "undefined" && transacoes.length > 0 ? (
                     <ApexChart
                       key={`chart-${isDarkMode ? "dark" : "light"}`}
@@ -311,7 +245,7 @@ export default function InvestimentosPage() {
                 style={{ boxShadow: "none", border: "none", padding: 0 }}
               >
                 <DataTable
-                  value={transacoes}
+  value={Array.isArray(transacoes) ? transacoes : []}
                   loading={loading}
                   emptyMessage={
                     <div className=" text-center">
@@ -322,15 +256,15 @@ export default function InvestimentosPage() {
                       <p className="text-muted">
                         Comece a investir em tokens imobiliários agora
                       </p>
-                    <div className="d-flex justify-content-center">
-                      <button
-                        className="btn btn-dark btn-lg px-4"
-                        onClick={() => (window.location.href = "/properties")}
-                      >
-                        <i className="fa fa-plus me-2"></i>
-                        <span>Fazer Primeiro Investimento</span>
-                      </button>
-                    </div>
+                      <div className="d-flex justify-content-center">
+                        <button
+                          className="btn btn-dark btn-lg px-4"
+                          onClick={() => (window.location.href = "/properties")}
+                        >
+                          <i className="fa fa-plus me-2"></i>
+                          <span>Fazer Primeiro Investimento</span>
+                        </button>
+                      </div>
                     </div>
                   }
                   paginator

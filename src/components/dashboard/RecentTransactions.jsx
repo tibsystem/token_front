@@ -56,7 +56,7 @@ const darkTheme = {
   dropdownHoverBg: '#3A3A3C',
 };
 
-export default function RecentTransactions({ transactions, title = "Transação Recentes" }) {
+export default function RecentTransactions({ transactions = [], title = "Transação Recentes" }) {
   const { isDarkMode } = useDarkMode();
   const router = useRouter();
   const [hoveredIndex, setHoveredIndex] = useState(null);

@@ -19,8 +19,8 @@ const Menu = [
 
 	// Investidor
 	{ path: '/dashboard', icon: 'fa fa-home', title: 'Dashboard', role: 'investidor' },
-	{ path: '/properties', icon: 'fa fa-building', title: 'Imóveis', role: 'investidor' },
-	{ path: '/investments', icon: 'fa fa-chart-line', title: 'Investimentos', role: 'investidor' },
+	{ path: '/properties', icon: 'fa fa-chart-pie', title: 'Investir', role: 'investidor' },
+	{ path: '/investments', icon: 'fa fa-chart-line', title: 'Meus Investimentos', role: 'investidor' },
 	{ path: '/p2p/offers', icon: 'fa fa-exchange-alt', title: 'P2P', role: 'investidor',
 		children: [
 			{ path: '/p2p/offers', title: 'Ofertas', role: 'investidor' },
