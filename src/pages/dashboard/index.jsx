@@ -1,13 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import { getWallet } from "@/services/wallet/getWallet";
-import { getProperties } from "@/services/properties/getProperties";
 import BreadCrumb from "@/components/breadcrumb/breadcrumb";
-import { getUserIdFromToken } from "@/utils/auth";
 import { CgSpinner } from "react-icons/cg";
-import WalletBallance from '@/components/Wallet/Cards/Walletbalance';
+
+//components
+import WalletBallance from "@/components/Wallet/Cards/Walletbalance";
 import WalletBlocked from "@/components/Wallet/Cards/WalletBlocked";
 import WalletTokenized from "@/components/Wallet/Cards/WalletTokenized";
-import Shortcuts from "../../components/dashboard/Shortcuts";
+import Shortcuts from "@/components/dashboard/Shortcuts";
+import RecentTransactions from "@/components/dashboard/RecentTransactions";
+import TransactionsTypes from "@/components/dashboard/Charts/TransactionsTypes";
+import BalanceEvolution from "@/components/dashboard/Charts/BalanceEvolution";
+
+//hooks
+import { getUserIdFromToken } from "@/utils/auth";
+
+//services
+import { getWallet } from "@/services/wallet/getWallet";
+import { getProperties } from "@/services/properties/getProperties";
+import { getFinancialTransactions } from "@/services/financialTransactions/getFinancialTransactions";
+import { getInvestments } from "@/services/investments/getInvestments";
 
 export default function DashboardPage() {
   const userId = getUserIdFromToken();
@@ -31,12 +42,35 @@ export default function DashboardPage() {
     queryFn: getProperties,
   });
 
-  const loading = loadingWallet || loadingProperties;
+  const {
+    data: transactions,
+    isLoading: loadingTransactions,
+    error: errorTransactions,
+  } = useQuery({
+    queryKey: ["financialTransactions", userId],
+    queryFn: () => getFinancialTransactions(userId),
+    enabled: !!userId,
+  });
+  const {
+    data: investments,
+    isLoading: loadingInvestments,
+    error: errorInvestments,
+  } = useQuery({
+    queryKey: ["investments", userId],
+    queryFn: () => getInvestments(userId),
+    enabled: !!userId,
+  });
+
+  const loading = loadingWallet || loadingProperties || loadingTransactions;
   const error =
     errorWallet?.response?.data?.message ||
     errorWallet?.message ||
     errorProperties?.response?.data?.message ||
     errorProperties?.message ||
+    errorTransactions?.response?.data?.message ||
+    errorTransactions?.message ||
+    errorInvestments?.response?.data?.message ||
+    errorInvestments?.message ||
     null;
 
   return (
@@ -46,12 +80,9 @@ export default function DashboardPage() {
           <CgSpinner className="fa fa-spin text-dark" size={50} />
         </div>
       )}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          Erro: {error}
-        </div>
-      )}
+    
       {wallet && (
+        <div className="container-fluid">
         <div className="row mb-4">
           <div className="col-xl-4  mb-4 mb-xl-0">
             <WalletBallance />
@@ -62,12 +93,22 @@ export default function DashboardPage() {
           <div className="col-xl-4 ">
             <WalletTokenized />
           </div>
-          <div className="col-12 mt-4">
-            {/* <Shortcuts /> */}
+          <div className="col-xl-6 mt-4">
+            <TransactionsTypes transactions={transactions} />
+          </div>
+          <div className="col-xl-6 mt-4">
+            <BalanceEvolution investments={investments} />
             </div>
-
+          <div className="col-xl-5 mt-4">
+            <RecentTransactions transactions={transactions} />
+          </div>
+          <div className="col-xl-7 mt-4">
+            <Shortcuts />
+          </div>
         </div>
+      </div>
       )}
     </div>
+
   );
 }

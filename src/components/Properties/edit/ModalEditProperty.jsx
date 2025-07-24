@@ -5,6 +5,8 @@ import PropertySummary from "@/components/Properties/PropertySummary";
 import CustomModal from "@/components/modal/Modal";
 import { toast } from "react-toastify";
 import useDarkMode from "@/hooks/useDarkMode";
+import { useMutation } from "@tanstack/react-query";
+import { postPropertiesTokenize } from "@/services/properties/postPropertiesTokenize";
 
 const steps = [
   { label: "Dados Básicos" },
@@ -196,6 +198,16 @@ const ModalEditProperty = forwardRef(
     useImperativeHandle(ref, () => ({
       getImagensParaEnvio,
     }));
+
+    const tokenizeMutation = useMutation({
+      mutationFn: postPropertiesTokenize,
+      onSuccess: () => {
+        toast.success("Propriedade tokenizada com sucesso!");
+      },
+      onError: (error) => {
+        toast.error("Erro ao tokenizar propriedade: " + (error?.message || "Tente novamente."));
+      },
+    });
 
     return (
       <CustomModal
@@ -642,23 +654,35 @@ const ModalEditProperty = forwardRef(
                 <i className="fa-solid fa-arrow-right"></i>
               </button>
             )}
-            {currentStep === steps.length - 1 && (
-              <button
-                type="button"
-                className="btn btn-success ms-auto gap-3 d-flex align-items-center"
-                onClick={async () => {
+          {currentStep === steps.length - 1 && (
+            <button
+              type="button"
+              className="btn btn-success ms-auto gap-3 d-flex align-items-center"
+              onClick={async () => {
+                if (editFormData.tokenize === "yes") {
+                  const dataTokenize = {
+                    contract_model_id: editFormData.smart_contract_model_id,
+                    token_name: editFormData.token_name || "ImoToken",
+                    token_symbol: editFormData.token_symbol || "IMT",
+                    total_supply: editFormData.total_tokens,
+                    id: editFormData.id,
+                  };
+                  setShowEditModal(false);
+                  tokenizeMutation.mutate(dataTokenize);
+                } else {
                   await handleSaveChanges();
-                  setCurrentStep(0);
-                }}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Salvando..." : "Salvar"}
-                <i
-                  className={
-                    isSubmitting ? "fas fa-spinner fa-spin" : "fas fa-check"
-                  }
-                ></i>
-              </button>
+                }
+                setCurrentStep(0);
+              }}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Salvando..." : "Salvar"}
+              <i
+                className={
+                  isSubmitting ? "fas fa-spinner fa-spin" : "fas fa-check"
+                }
+              ></i>
+            </button>
             )}
           </div>
         </form>

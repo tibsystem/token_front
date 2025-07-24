@@ -15,6 +15,7 @@ import {
   FaBuilding,
   FaExclamationTriangle,
   FaInfoCircle,
+  FaBitcoin,
 } from "react-icons/fa";
 import { ImSpinner8 } from "react-icons/im";
 //components
@@ -391,59 +392,68 @@ export default function propertyAdminFinanceiro() {
                 </p>
               </div>
               <div className="col-xl-3 col-md-6 mb-4">
-                <div className="widget widget-stats bg-blue">
-                  <div className="stats-icon stats-icon-lg">
-                    <FaCubes />
-                  </div>
-                  <div className="stats-content">
-                    <div className="stats-title">TOKENS ORIGINAIS</div>
-                    <div className="stats-number">
-                      {dados.property.total_tokens_original}
-                    </div>
-                    <div className="stats-desc">Total de tokens criados</div>
-                  </div>
-                </div>
+                <div className="widget widget-stats" style={{ borderRadius: 20, minHeight: 70, position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)' }}>
+      <div className="stats-icon stats-icon-lg" style={{ position: 'absolute', right: -10, top: -40, opacity: 0.08, fontSize: 150, userSelect: 'none', pointerEvents: 'none' }}>
+        <FaBitcoin style={{ color: '#fff' }} />
+      </div>
+      <div className="stats-content" style={{ position: 'relative', zIndex: 2 }}>
+        <h2 className="mb-1" style={{ color: '#fff', fontWeight: 600, fontSize: 18 }}>Tokens Originais</h2>
+        <div className="d-flex align-items-end mb-2" style={{ gap: 6 }}>
+          <span style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>
+            {dados.property.total_tokens_original}
+          </span>
+        </div>
+        <div className="stats-desc" style={{ color: '#e0e7ff', fontSize: 12 }}>Total de tokens criados</div>
+      </div>
+    </div>
               </div>
               <div className="col-xl-3 col-md-6 mb-4">
-                <div className="widget widget-stats bg-info">
-                  <div className="stats-icon stats-icon-lg">
-                    <FaCoins />
-                  </div>
-                  <div className="stats-content">
-                    <div className="stats-title">TOKENS VENDIDOS</div>
-                    <div className="stats-number">
-                      {dados.property.total_tokens_original -
-                        dados.property.total_tokens}
-                    </div>
-                    <div className="stats-desc">Total vendido</div>
-                  </div>
-                </div>
+                <div className="widget widget-stats" style={{ borderRadius: 20, minHeight: 70, position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)' }}>
+      <div className="stats-icon stats-icon-lg" style={{ position: 'absolute', right: -10, top: -40, opacity: 0.08, fontSize: 150, userSelect: 'none', pointerEvents: 'none' }}>
+        <FaCoins style={{ color: '#fff' }} />
+      </div>
+      <div className="stats-content" style={{ position: 'relative', zIndex: 2 }}>
+        <h2 className="mb-1" style={{ color: '#fff', fontWeight: 600, fontSize: 18 }}>Tokens Vendidos</h2>
+        <div className="d-flex align-items-end mb-2" style={{ gap: 6 }}>
+          <span style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>
+            {dados.property.total_tokens_original - dados.property.total_tokens}
+          </span>
+        </div>
+        <div className="stats-desc" style={{ color: '#e0fff4', fontSize: 12 }}>Total vendido</div>
+      </div>
+    </div>
               </div>
               <div className="col-xl-3 col-md-6 mb-4">
-                <div className="widget widget-stats bg-purple">
-                  <div className="stats-icon stats-icon-lg">
-                    <FaCubes />
-                  </div>
-                  <div className="stats-content">
-                    <div className="stats-title">TOKENS DISPONÍVEIS</div>
-                    <div className="stats-number">
-                      {dados.property.total_tokens}
-                    </div>
-                    <div className="stats-desc">Disponível para venda</div>
-                  </div>
-                </div>
+                <div className="widget widget-stats" style={{ borderRadius: 20, minHeight: 70, position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%)' }}>
+      <div className="stats-icon stats-icon-lg" style={{ position: 'absolute', right: -10, top: -40, opacity: 0.08, fontSize: 150, userSelect: 'none', pointerEvents: 'none' }}>
+        <FaCubes style={{ color: '#fff' }} />
+      </div>
+      <div className="stats-content" style={{ position: 'relative', zIndex: 2 }}>
+        <h2 className="mb-1" style={{ color: '#fff', fontWeight: 600, fontSize: 18 }}>Tokens Disponíveis</h2>
+        <div className="d-flex align-items-end mb-2" style={{ gap: 6 }}>
+          <span style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>
+            {dados.property.total_tokens}
+          </span>
+        </div>
+        <div className="stats-desc" style={{ color: '#f3e8ff', fontSize: 12 }}>Disponível para venda</div>
+      </div>
+    </div>
               </div>
               <div className="col-xl-3 col-md-6 mb-4">
-                <div className="widget widget-stats bg-dark">
-                  <div className="stats-icon stats-icon-lg">
-                    <FaUsers />
-                  </div>
-                  <div className="stats-content">
-                    <div className="stats-title">INVESTIDORES ÚNICOS</div>
-                    <div className="stats-number">0</div>
-                    <div className="stats-desc">Total de investidores</div>
-                  </div>
-                </div>
+                <div className="widget widget-stats" style={{ borderRadius: 20, minHeight: 70, position: 'relative', overflow: 'hidden', background: 'linear-gradient(135deg, #232526 0%, #414345 100%)' }}>
+      <div className="stats-icon stats-icon-lg" style={{ position: 'absolute', right: -10, top: -40, opacity: 0.08, fontSize: 150, userSelect: 'none', pointerEvents: 'none' }}>
+        <FaUsers style={{ color: '#fff' }} />
+      </div>
+      <div className="stats-content" style={{ position: 'relative', zIndex: 2 }}>
+        <h2 className="mb-1" style={{ color: '#fff', fontWeight: 600, fontSize: 18 }}>Investidores Únicos</h2>
+        <div className="d-flex align-items-end mb-2" style={{ gap: 6 }}>
+          <span style={{ fontSize: 28, fontWeight: 700, color: '#fff' }}>
+            {resumo?.investidores_unicos ?? 0}
+          </span>
+        </div>
+        <div className="stats-desc" style={{ color: '#e0e0e0', fontSize: 12 }}>Total de investidores</div>
+      </div>
+    </div>
               </div>
             </div>
 
