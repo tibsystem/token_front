@@ -121,7 +121,6 @@ export default function ImovelPage() {
 
   const coresGarantia = ["#e53935", "#f6c244", "#f6e244", "#4fc3f7", "#43a047"];
 
-  // Função para traduzir status
   const translateStatus = (status) => {
     const statusMap = {
       pending: "Pendente",
@@ -599,9 +598,10 @@ export default function ImovelPage() {
                 <button
                   className="btn btn-success w-100 py-2 fs-5"
                   onClick={() => {
+                    const propertyWithAmount = { ...property, amount, valorUnitario };
                     router.push({
                       pathname: '/checkout',
-                      query: { property: encodeURIComponent(JSON.stringify(property)) }
+                      query: { property: encodeURIComponent(JSON.stringify(propertyWithAmount)) }
                     });
                   }}
                   disabled={
