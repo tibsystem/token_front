@@ -1,8 +1,8 @@
 import api from '@/services/api';
 
-export async function getInvestments(userId) {
+export async function getInvestments() {
   try {
-    const response = await api.get(`/investments/${userId}`);
+    const response = await api.get(`/investments`);
     return response.data;
   } catch (error) {
     // console.error('Erro ao buscar investimentos:', error);

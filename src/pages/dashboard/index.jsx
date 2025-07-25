@@ -82,27 +82,27 @@ export default function DashboardPage() {
       )}
     
       {wallet && (
-        <div className="container-fluid">
-        <div className="row mb-4">
-          <div className="col-xl-4  mb-4 mb-xl-0">
+        <div className="px-0">
+        <div className="row g-2">
+          <div className="col-xl-4">
             <WalletBallance />
           </div>
-          <div className="col-xl-4  mb-4 mb-xl-0">
+          <div className="col-xl-4">
             <WalletBlocked />
           </div>
-          <div className="col-xl-4 ">
+          <div className="col-xl-4">
             <WalletTokenized />
           </div>
-          <div className="col-xl-6 mt-4">
+          <div className="col-xl-6">
             <TransactionsTypes transactions={transactions} />
           </div>
-          <div className="col-xl-6 mt-4">
+          <div className="col-xl-6">
             <BalanceEvolution investments={investments} />
-            </div>
-          <div className="col-xl-5 mt-4">
+          </div>
+          <div className="col-xl-5">
             <RecentTransactions transactions={transactions} />
           </div>
-          <div className="col-xl-7 mt-4">
+          <div className="col-xl-7">
             <Shortcuts />
           </div>
         </div>

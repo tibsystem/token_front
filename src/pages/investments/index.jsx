@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 //components
 import BreadCrumb from "@/components/breadcrumb/breadcrumb";
-import CardsInvestments from '@/components/Investments/CardsInvestments';
+import CardsInvestments from "@/components/Investments/CardsInvestments";
 
 //utils
 import { getUserIdFromToken } from "@/utils/auth";
@@ -69,7 +69,7 @@ export default function InvestimentosPage() {
     },
   });
 
-  const totalInvestido = Array.isArray(transacoes)
+const totalInvestido = Array.isArray(transacoes)
     ? transacoes.reduce((acc, item) => {
         const valorUnitario = Number(item?.valor_unitario) || 0;
         const qtdTokens = Number(item?.qtd_tokens) || 0;
@@ -77,7 +77,7 @@ export default function InvestimentosPage() {
       }, 0)
     : 0;
 
-    const totalTokens = Array.isArray(transacoes)
+  const totalTokens = Array.isArray(transacoes)
     ? transacoes.reduce((acc, item) => {
         return acc + (Number(item?.qtd_tokens) || 0);
       }, 0)
@@ -245,7 +245,7 @@ export default function InvestimentosPage() {
                 style={{ boxShadow: "none", border: "none", padding: 0 }}
               >
                 <DataTable
-  value={Array.isArray(transacoes) ? transacoes : []}
+                  value={Array.isArray(transacoes) ? transacoes : []}
                   loading={loading}
                   emptyMessage={
                     <div className=" text-center">

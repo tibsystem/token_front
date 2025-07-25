@@ -130,10 +130,10 @@ export default function AdminDashboard() {
             />
             <div className="panel mb-4">
               <div className="row g-4">
-                <div className="col-lg-8">
+                <div className="col-xl-8">
                   <DashboardChart graficoData={graficoData} />
                 </div>
-                <div className="col-lg-4">
+                <div className="col-xl-4">
                   <Dashboardsummary
                     Propiedades={Propiedades}
                     investidores={investidores}

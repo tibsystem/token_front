@@ -90,16 +90,22 @@ const menuRef = useRef(null)
       boxShadow: isDarkMode ? '0 4px 24px rgba(0,0,0,0.2)' : '0 4px 24px rgba(0,0,0,0.06)',
       transition: 'background 0.3s',
       minHeight: '240px',
+      maxHeight: '240px',
+      height: '420px',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       <h3 style={{
         fontWeight: 700,
         fontSize: '20px',
         color: theme.textColor,
-        marginBottom: '24px'
+        marginBottom: '24px',
+        flex: '0 0 auto',
       }}>
         {title}
       </h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', flex: '1 1 0', minHeight: 0 }}>
         {transactions.map((transaction, index) => {
           const iconClassName = getTipoIcon(transaction.tipo);
           const label = getTipoLabel(transaction.tipo);

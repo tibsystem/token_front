@@ -181,7 +181,6 @@ export default function PropiedadesPage() {
       <div className="d-flex justify-content-between align-items-start mb-4">
         <div>
           <h1 className="text-3xl font-bold mb-2 text-dark d-flex align-items-center">
-            <i className="fa fa-building me-3 text-dark"></i>
             Oportunidades de Investimento
           </h1>
           <p className="text-muted fs-5 mb-0">Diversifique seu portfólio com investimentos imobiliários tokenizados</p>

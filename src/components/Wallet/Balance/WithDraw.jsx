@@ -1,126 +1,212 @@
-
-import React, { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { getWallet } from '@/services/wallet/getWallet';
-import { postWithdrawFunds } from '@/services/wallet/postWithDrawFonds';
-import { getUserIdFromToken } from '@/utils/auth';
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getWallet } from "@/services/wallet/getWallet";
+import { postWithdrawFunds } from "@/services/wallet/postWithDrawFonds";
+import { getUserIdFromToken } from "@/utils/auth";
+import useDarkMode from "@/hooks/useDarkMode";
 
 export default function WalletWithdraw() {
+  const { isDarkMode } = useDarkMode();
+  const queryClient = useQueryClient();
+
+  const lightTheme = {
+    bg: "#fff",
+    cardBg: "#fff",
+    hoverBg: "#f5f7fa",
+    textColor: "#212529",
+    secondaryTextColor: "#6c757d",
+    iconColor: "#333",
+    iconBg: "#e9ecef",
+    borderColor: "#e9ecef",
+    dropdownBg: "#f1f3f5",
+    dropdownShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    dropdownHoverBg: "#f8f9fa",
+    bgBtn: "#1C1C1E",
+    text: "#fff",
+  };
+
+  const darkTheme = {
+    bg: "#1C1C1E",
+    cardBg: "#1C1C1E",
+    hoverBg: "#2C2C2E",
+    textColor: "#f8f9fa",
+    secondaryTextColor: "#adb5bd",
+    iconColor: "#f8f9fa",
+    iconBg: "#3A3A3C",
+    borderColor: "#3A3A3C",
+    dropdownBg: "#2C2C2E",
+    dropdownShadow: "0 4px 8px rgba(0,0,0,0.2)",
+    dropdownHoverBg: "#3A3A3C",
+    bgBtn: "#fff",
+    text: "#1C1C1E",
+  };
+  const theme = isDarkMode ? darkTheme : lightTheme;
+
   const userId = getUserIdFromToken();
-  const [amount, setAmount] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [amount, setAmount] = useState("");
 
   const { data: wallet, isLoading } = useQuery({
-    queryKey: ['wallet', userId],
+    queryKey: ["wallet", userId],
     queryFn: () => getWallet(userId),
     enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
   });
 
-  const mutation = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: ({ userId, amount }) => postWithdrawFunds(userId, amount),
     onSuccess: () => {
-      setSuccess(true);
-      setErrorMsg('');
-      setAmount('');
+      setAmount("");
+      queryClient.invalidateQueries({ queryKey: ["wallet", userId] });
+      toast.success("Saque realizado com sucesso!");
     },
     onError: (err) => {
-      setSuccess(false);
-      setErrorMsg(err?.response?.data?.message || 'Erro ao sacar.');
+      toast.error(
+        err?.response?.data?.message || "Ocorreu um erro ao processar o saque."
+      );
     },
   });
 
   const handleWithdraw = (e) => {
     e.preventDefault();
-    setSuccess(false);
-    setErrorMsg('');
     if (!amount || isNaN(amount) || Number(amount) <= 0) {
-      setErrorMsg('Informe um valor válido.');
+      toast.error("Por favor, informe um valor de saque válido.");
       return;
     }
     if (Number(amount) > (wallet?.balance ?? 0)) {
-      setErrorMsg('Saldo insuficiente.');
+      toast.error("Seu saldo disponível é insuficiente.");
       return;
     }
-    mutation.mutate({ userId, amount: Number(amount) });
+    mutate({ userId, amount: Number(amount) });
   };
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: 320, width: '100%' }}>
-      <div style={{
-        width: '100%',
-        maxWidth: 400,
-        borderRadius: 18,
-        background: 'linear-gradient(135deg, #23272f 0%, #111 100%)',
-        boxShadow: '0 2px 16px 0 #0002',
-        padding: 32,
-        color: '#fff',
-        position: 'relative',
-        marginBottom: 24,
-      }}>
-        <div style={{ fontSize: 15, color: '#b2dfdb', marginBottom: 8, fontWeight: 500 }}>
+    <div className="w-100">
+      <aside
+        className="panel-wallet-withdraw"
+        style={{
+          background: theme.bg,
+          color: theme.textColor,
+          border: `1px solid ${theme.gridColor}`,
+          borderRadius: 24,
+          padding: 24,
+          minHeight: 400,
+          boxShadow: isDarkMode
+            ? "0 8px 32px rgba(0,0,0,0.2)"
+            : "0 4px 24px rgba(0,0,0,0.06)",
+          marginLeft: 0,
+          marginRight: "auto",
+        }}
+      >
+        <div
+          className="fw-semibold mb-2"
+          style={{ color: theme.lineColor, fontSize: 15, opacity: 0.9 }}
+        >
           Seu saldo disponível
         </div>
-        <div style={{ fontSize: 32, fontWeight: 700, marginBottom: 18, letterSpacing: 1 }}>
-          {isLoading ? '...' : (wallet?.balance ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: wallet?.currency || 'BRL' })}
+        <div
+          className="fw-bold mb-4 d-flex align-items-center"
+          style={{
+            fontSize: 32,
+            letterSpacing: 1,
+            minHeight: 48,
+            color: theme.textColor,
+          }}
+        >
+          {isLoading ? (
+            <div
+              className="placeholder-glow w-75"
+              style={{
+                height: 36,
+                borderRadius: 8,
+                background: isDarkMode ? "#23272f" : "#e9ecef",
+              }}
+            ></div>
+          ) : (
+            (wallet?.balance ?? 0).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: wallet?.currency || "BRL",
+            })
+          )}
         </div>
         <form onSubmit={handleWithdraw} autoComplete="off">
-          <label htmlFor="withdraw-amount" style={{ fontSize: 14, color: '#bbb', marginBottom: 4, display: 'block' }}>Valor para saque</label>
-          <input
-            id="withdraw-amount"
-            type="number"
-            min="1"
-            step="0.01"
-            placeholder="Digite o valor"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 16px',
-              borderRadius: 10,
-              border: '1.5px solid #444',
-              background: '#181a20',
-              color: '#fff',
-              fontSize: 18,
-              marginBottom: 16,
-              outline: 'none',
-              fontWeight: 500,
-              boxSizing: 'border-box',
-              transition: 'border 0.2s',
-            }}
-            disabled={mutation.isLoading}
-          />
-          <button
-            type="submit"
-            className="btn w-100 mt-2"
-            style={{
-              background: 'linear-gradient(90deg, #1976d2 0%, #43a047 100%)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 10,
-              fontWeight: 600,
-              fontSize: 18,
-              padding: '12px 0',
-              boxShadow: '0 2px 8px 0 #1976d222',
-              transition: 'background 0.18s',
-              letterSpacing: 0.5,
-            }}
-            disabled={mutation.isLoading}
-          >
-            {mutation.isLoading ? 'Processando...' : 'Confirmar Saque'}
-          </button>
+          <div className="row">
+            <div className="col-xl-8">
+              <label
+                htmlFor="withdraw-amount"
+                className="form-label mb-1"
+                style={{
+                  fontSize: 14,
+                  color: isDarkMode ? "#adb5bd" : "#6c757d",
+                }}
+              >
+                Valor para saque
+              </label>
+              <input
+                id="withdraw-amount"
+                type="number"
+                min="1"
+                step="0.01"
+                placeholder="Ex: 100,00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="form-control mb-3"
+                style={{
+                  borderRadius: 10,
+                  fontSize: 18,
+                  fontWeight: 500,
+                  background: isDarkMode ? "#23272f" : "#fff",
+                  color: theme.textColor,
+                  border: `1.5px solid ${theme.gridColor}`,
+                }}
+                disabled={isPending}
+              />
+            </div>
+            <div className="col-xl-4">
+              <button
+                type="submit"
+                className="btn w-100 mt-3 fw-semibold d-flex align-items-center justify-content-center gap-2"
+                style={{
+                  background: theme.lineColor,
+                  color: theme.text,
+                  borderRadius: 10,
+                  fontSize: 18,
+                  padding: "12px 0",
+                  opacity: isPending ? 0.7 : 1,
+                  cursor: isPending ? "not-allowed" : "pointer",
+                  letterSpacing: 0.5,
+                  boxShadow: isPending
+                    ? "0 0 0 0.2rem rgba(13,110,253,.25)"
+                    : "none",
+                  transition: "background 0.2s, opacity 0.2s, box-shadow 0.2s",
+                  background: theme.bgBtn,
+                }}
+                disabled={isPending}
+                aria-busy={isPending}
+              >
+                {isPending ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <i
+                      className="fa fa-paper-plane me-2"
+                      aria-hidden="true"
+                    ></i>
+                    Confirmar Saque
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </form>
-        {success && (
-          <div className="alert alert-success mt-3" style={{ fontSize: 15, borderRadius: 8, padding: 10 }}>
-            Saque realizado com sucesso!
-          </div>
-        )}
-        {errorMsg && (
-          <div className="alert alert-danger mt-3" style={{ fontSize: 15, borderRadius: 8, padding: 10 }}>
-            {errorMsg}
-          </div>
-        )}
-      </div>
+      </aside>
     </div>
   );
 }

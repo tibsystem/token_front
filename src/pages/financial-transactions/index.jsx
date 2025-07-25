@@ -7,6 +7,7 @@ import BreadCrumb from '@/components/breadcrumb/breadcrumb';
 import { getUserIdFromToken } from '@/utils/auth';
 // services
 import { getFinancialTransactions } from '@/services/financialTransactions/getFinancialTransactions';
+import CardTransactions from '../../components/financial-transactions/CardTransactions';
 
 function formatDate(dateStr) {
   const date = new Date(dateStr);
@@ -136,55 +137,12 @@ export default function FinancialTransactionsPage() {
       </div>
 
       {transacoes.length > 0 && !loading && (
-        <div className="row g-3 mb-4">
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-              <div className="card-body text-white" style={{ minHeight: '100px' }}>
-                <div className="d-flex align-items-center justify-content-between">
-                  <div>
-                    <h6 className="card-subtitle mb-2 text-white-50">Total de Transações</h6>
-                    <h3 className="mb-0 fw-bold">{transacoes.length}</h3>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-circle p-3">
-                    <i className="fa fa-list text-white fs-4"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm h-100" style={{ background: totalTransacoes >= 0 ? 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' : 'linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%)' }}>
-              <div className="card-body text-white">
-                <div className="d-flex align-items-center justify-content-between">
-                  <div>
-                    <h6 className="card-subtitle mb-2 text-white-50">Saldo Total</h6>
-                    <h3 className="mb-0 fw-bold">
-                      R$ {Math.abs(totalTransacoes).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </h3>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-circle p-3">
-                    <i className={`fa ${totalTransacoes >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'} text-white fs-4`}></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
-              <div className="card-body text-white">
-                <div className="d-flex align-items-center justify-content-between">
-                  <div>
-                    <h6 className="card-subtitle mb-2 text-white-50">Última Transação</h6>
-                    <p className="mb-0 fw-semibold">{transacoes.length > 0 ? formatDateTime(transacoes[0]?.created_at || transacoes[0]?.data_transacao) : '-'}</p>
-                  </div>
-                  <div className="bg-white bg-opacity-20 rounded-circle p-3">
-                    <i className="fa fa-clock text-white fs-4"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <>
+      <CardTransactions
+  transacoes={transacoes}
+  totalTransacoes={totalTransacoes}
+  formatDateTime={formatDateTime}
+/></>
       )}
       
       {loading && (

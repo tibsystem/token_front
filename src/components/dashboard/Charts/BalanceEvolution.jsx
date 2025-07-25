@@ -26,9 +26,15 @@ export default function BalanceEvolution({ investments = [] }) {
   const saldoPorMes = {};
   const arrInvestments = Array.isArray(investments) ? investments : [];
   arrInvestments.forEach(item => {
-    const date = new Date(item.data_investimento || item.data_transacao);
+    const rawDate = item.data_investimento || item.data_transacao;
+    const valueRaw = item.valor ?? item.saldo;
+    const value = Number(valueRaw);
+    if (!rawDate) return;
+    const date = new Date(rawDate);
+    if (isNaN(date.getTime())) return; 
+    if (isNaN(value)) return; 
     const key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
-    saldoPorMes[key] = (saldoPorMes[key] || 0) + Number(item.valor || item.saldo || 0);
+    saldoPorMes[key] = (saldoPorMes[key] || 0) + value;
   });
   const sortedKeys = Object.keys(saldoPorMes).sort();
   let acumulado = 0;
